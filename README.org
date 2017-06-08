@@ -11,6 +11,11 @@ This emacs configuration uses the package "use-package" to install and configure
      - smex
 
 Org-Mode and Python are other major modes customized. 
+ob-ipython is used as a interactive notebook in Org-Mode.
 Org-Mode uses org-ref as it's citation/bibliography manager.
 Python uses Elpy to customize a integrated development environment.
 AUCTeX is used as the backend to edit LaTeX files.
+
+* Installation
+
+ob-ipython won't automatically be installed causing the configuration to become broken. To fix use "M-x list-packages" to manually install and restart Emacs.

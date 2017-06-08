@@ -1,0 +1,16 @@
+#+TITLE: Emacs Configuration
+#+Author: J. C. Koch
+#+EMAIL: jckoch@ualberta.ca
+
+* Emacs Configuration
+
+This emacs configuration uses the package "use-package" to install and configure additional packages. General packages used are:
+
+     - auto-complete
+     - IDO
+     - smex
+
+Org-Mode and Python are other major modes customized. 
+Org-Mode uses org-ref as it's citation/bibliography manager.
+Python uses Elpy to customize a integrated development environment.
+AUCTeX is used as the backend to edit LaTeX files.

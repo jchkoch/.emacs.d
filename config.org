@@ -16,13 +16,17 @@ Set a user name and email address for Emacs to use if needed.
 * Sane Defaults
 ** General
 Sane defaults to customize Emacs configuration for the 21st century. 
-
 First globally turn on visual line mode and line numbers for all buffer/file types.
+Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
 
 #+begin_src emacs-lisp
 (global-visual-line-mode 1)
+(diminish 'visual-line-mode)
 (global-linum-mode 1) ; 1 for on, 0 for off.
 #+END_SRC
+
+#+RESULTS:
+: t
 
 Next set the default coding system to /UTF-8/ (i.e. unicode).
 
@@ -161,7 +165,8 @@ This package helps provide suggestions to finish key completion.
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
   :ensure t
-  :config (which-key-mode))
+  :config (which-key-mode)
+  :diminish which-key-mode)
 #+END_SRC
 
 #+RESULTS:
@@ -259,7 +264,6 @@ You must manually install ob-ipython using "M-x list-packages". Otherwise manual
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ob-ipython")
-;;(require 'ob-ipython)
 (use-package ob-ipython
    :ensure t
    :config

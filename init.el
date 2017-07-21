@@ -8,7 +8,6 @@
 
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
-
 (package-initialize)
 
 ;; Bootstrap `use-package`

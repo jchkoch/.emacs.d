@@ -8,3 +8,13 @@ elpa/
 /issues~
 /smex-items
 /ac-comphist.dat
+*.org-id-locations
+/bookmarks
+eshell/
+/recentf
+/recentf~
+snippets/
+url/
+custom.el
+/config.org_archive
+site-lisp/

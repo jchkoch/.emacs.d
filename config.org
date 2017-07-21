@@ -1,9 +1,8 @@
 #+TITLE: Emacs Configuration File 
 #+AUTHOR: J. C . Koch
 #+EMAIL: jckoch@ualberta.ca
-#+TODO: TODO NOT-ENABLED | ENABLED
 
-* ENABLED Personal Information
+* Personal Information
 Set a user name and email address for Emacs to use if needed.
 
 #+begin_src emacs-lisp
@@ -14,48 +13,78 @@ Set a user name and email address for Emacs to use if needed.
 #+RESULTS:
 : jckoch@ualberta.ca
 
-* ENABLED Sane Defaults
-** ENABLED General
+* Sane Defaults
+** General
 Sane defaults to customize Emacs configuration for the 21st century. 
 
+First globally turn on visual line mode and line numbers for all buffer/file types.
+
 #+begin_src emacs-lisp
-;; Globally turn on visual-line-mode 
 (global-visual-line-mode 1)
 (global-linum-mode 1) ; 1 for on, 0 for off.
+#+END_SRC
 
-;; UTF-8 please
+Next set the default coding system to /UTF-8/ (i.e. unicode).
+
+#+BEGIN_SRC emacs-lisp
 (setq locale-coding-system 'utf-8) ; pretty
 (set-terminal-coding-system 'utf-8) ; pretty
 (set-keyboard-coding-system 'utf-8) ; pretty
 (set-selection-coding-system 'utf-8) ; please
 (prefer-coding-system 'utf-8) ; with sugar on top
-(setq-default indent-tabs-mode nil)
+#+END_SRC
+
+Set the default tab width to 4 spaces. Change the default behaviour to answering questions to simple 'y' and 'n' characters.
+
+#+BEGIN_SRC emacs-lisp
+(setq tab-width 4)
 
 ;; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
 
-;; Set Emacs to split buffers side by side
-(setq split-height-threshold nil)
-(setq split-width-threshold 0)
+Stop Emacs from beeping.
 
-;; Don't beep at me
+#+BEGIN_SRC emacs-lisp
 (setq visible-bell t)
 #+end_src
 
+Set the Buffer List buffer as to default with "ibuffer".
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-saved-filter-groups
+    (quote (("default"
+             ("dired" (mode . dired-mode))
+	     ("org" (name . "^.*org$"))
+	     ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+	     ("programming" (or
+	                     (mode . python-mode)
+			     (mode . octave-mode)))
+             ("emacs" (or
+	               (name . "^\\*scratch\\*$")
+		       (name . "^\\*Messages\\*$")))
+             ))))
+
+(add-hook 'ibuffer-mode-hook
+        (lambda ()
+	  (ibuffer-auto-mode 1)
+	  (ibuffer-switch-to-saved-filter-groups "default")))
+#+END_SRC
+
 #+RESULTS:
-: t
+| lambda | nil | (ibuffer-auto-mode 1) | (ibuffer-switch-to-saved-filter-groups default) |
 
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
-;; Set default directory for emacs to open in
-(setq default-directory "~")
+(setq default-directory "/winc/jk/myLife")
 #+end_src
 
 #+RESULTS:
-: /winc/jk
+: /winc/jk/myLife
 
-** ENABLED IDO
+** IDO
 IDO "Interactively DO Things" Mode super-charges Emac's completion engine by improving the speed at which you open files/buffers and switch buffers. IDO Mode completion engine uses so-called flex matching so that it can match anywhere in the name. This means that you can type a few characters until you find a match or you narrow down the list of matches to a manageable subset. Typing //, like in most Linux shells ignores the preceding path and goes back to the top-most directory, works the same in IDO Mode but it also is interactive: it will go to the root (or the root of the current drive in Windows). 
 
 #+begin_src emacs-lisp
@@ -70,21 +99,25 @@ IDO "Interactively DO Things" Mode super-charges Emac's completion engine by imp
 #+RESULTS:
 : t
 
-** ENABLED Auto Complete
+** Auto Complete
 Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs. It does not provide auto completion support in Org-Mode (see [[Org-Mode][Org-Mode]] section for auto completion in org buffers).
 
 #+begin_src emacs-lisp
 (use-package auto-complete
+  :init
+  (require 'org-ac)
   :ensure t
+  :diminish auto-complete
   :config
   (global-auto-complete-mode t)
-  (ac-config-default))
+  (ac-config-default)
+  :bind
+  ("<f1>" . org-ac/setup-current-buffer))
 #+end_src
 
 #+RESULTS:
-: t
 
-** ENABLED Smex
+** Smex
 Smex provides interactive auto completion support for Emacs M-x command.
 
 #+begin_src emacs-lisp
@@ -96,9 +129,47 @@ Smex provides interactive auto completion support for Emacs M-x command.
 
 #+RESULTS:
 
-* ENABLED Emacs Appearance
-** ENABLED Window Splitting Commands
-These custom emacs-lisp functions redefine vertically and horizontal window splitting emacs functions in order to switch to the other window when the emacs window is split into two windos. 
+** Undo-Tree
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :config
+  (global-undo-tree-mode 1) ;;turn on everywhere
+  (global-set-key (kbd "C-z") 'undo)
+  (defalias 'redo 'undo-tree-redo)
+  (global-set-key (kbd "C-S-z") 'redo)
+  :diminish undo-tree-mode)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+** Try Other Packages
+A package to try other Emacs Packages without having to install the package.
+
+#+BEGIN_SRC emacs-lisp
+(use-package try
+  :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
+** Which Key Help Package
+This package helps provide suggestions to finish key completion.
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Emacs Appearance
+** Window Splitting Commands
+These custom emacs-lisp functions redefine vertically and horizontal window splitting emacs functions in order to switch to the other window when the emacs window is split into two windows. 
 
 #+begin_src emacs-lisp
 (defun vsplit-other-window ()
@@ -119,12 +190,17 @@ These custom emacs-lisp functions redefine vertically and horizontal window spli
 #+RESULTS:
 : hsplit-other-window
 
-** ENABLED Themes
+** Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.
 
 #+begin_src emacs-lisp
 (load-theme 'tango-dark)
+
+;; Alternative Black and White Basic Theme
+;;(set-background-color "black")
+;;(set-foreground-color "white")
+;;(set-cursor-color "coral")
 
 (add-to-list 'default-frame-alist
              '(font . "Monospace-14"))
@@ -136,10 +212,9 @@ Set the cursor to stop blinking.
  #+RESULTS:
 
 *** Switch Themes
-The following emacs-lisp function allows for easy switching of themes and the ability to disable the active theme.
+The following emacs-lisp function allows for easy switching of themes and the ability to disable the active theme. M-<F12> can be used to switch themes while M-<F11> to disable current theme.
 
 #+begin_src emacs-lisp
-;; lisp function to switch themes easily
 (defun switch-theme (theme)
   "Disables any currently active themes and loads THEME."
   ;; This interactive call is taken from `load-theme'
@@ -158,41 +233,100 @@ The following emacs-lisp function allows for easy switching of themes and the ab
   (interactive)
   (mapc #'disable-theme custom-enabled-themes))
 
-(bind-key "M-<f12>" 'switch-theme) ;; key binding to switch theme
-(bind-key "M-<f11>" 'disable-active-themes) ;; key binding to disable active theme
+(bind-key "M-<f12>" 'switch-theme) 
+(bind-key "M-<f11>" 'disable-active-themes)
  #+end_src
 
  #+RESULTS:
  : disable-active-themes
-* ENABLED Org-Mode
-** ENABLED Org-Ref
+* Python
+Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-prefer-user-labels nil)
-(bind-key "\C-c i" 'org-ref-helm-insert-ref-link)
-#+END_SRC
-
-#+RESULTS:
-: org-ref-helm-insert-ref-link
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-ref 
+(use-package elpy 
   :ensure t
   :config
-  (require 'org-ref)
-  (require 'doi-utils)
-  (setq org-ref-bibliography-notes "~/references/notes.org"
-        org-ref-default-bibliography '("~/references.bib")
-        org-ref-pdf-directory "~/references/bibtex-pdfs/")
-  (setq bibtex-completion-pdf-open-function
-    (lambda (fpath)
-      (start-process "open" "*open*" "open" fpath))))
+  (elpy-enable)
+  (setq python-shell-prompt-detect-failure-warning nil))
 #+END_SRC
 
 #+RESULTS:
 : t
 
-** ENABLED Org Export Backend
+ob-ipython is used for interactive python source blocks in Org-Mode.
+Note: At the moment this will break the configuration. 
+You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ob-ipython")
+;;(require 'ob-ipython)
+(use-package ob-ipython
+   :ensure t
+   :config
+   (setq python-shell-completion-native-enable t)
+   (setq python-shell-prompt-detect-failure-warning nil))
+#+END_SRC
+
+#+RESULTS:
+: t
+* Org-Mode
+** *TODO* Keywords
+
+This defines a basic workflow of TODO keywords.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+#+END_SRC
+
+#+RESULTS:
+| TODO      | :foreground | red          | :weight | bold |
+| NEXT      | :foreground | blue         | :weight | bold |
+| DONE      | :foreground | forest green | :weight | bold |
+| WAITING   | :foreground | orange       | :weight | bold |
+| HOLD      | :foreground | magenta      | :weight | bold |
+| CANCELLED | :foreground | forest green | :weight | bold |
+| MEETING   | :foreground | forest green | :weight | bold |
+| PHONE     | :foreground | forest green | :weight | bold |
+
+** Set Often Used Keys
+
+#+begin_src emacs-lisp
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cl" 'org-insert-link)
+(global-set-key "\C-o" 'org-open-at-point)
+(bind-key "\C-c \C-x F" 'org-agenda-file-to-front)
+(bind-key "\C-c \C-x r" 'org-remove-file)
+#+end_src
+
+#+RESULTS:
+: org-remove-file
+
+** Set Agenda Files
+Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files (quote ("/winc/jk/myLife/")))
+#+END_SRC
+
+#+RESULTS:
+| /winc/jk/myLife/ |
+
+** Export Backend Customization
+*** Org Export Backend
+OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
+
 
 #+BEGIN_SRC emacs-lisp
 (setq org-export-backends '(ascii beamer html icalendar latex odt))
@@ -201,31 +335,8 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 #+RESULTS:
 | ascii | beamer | html | icalendar | latex | odt |
 
-** ENABLED Org Babel Languages
-Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
-Note: Running IPython in Emacs requires the "ob-ipython" package. See activation in [[Python]]. 
-
-#+begin_src emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages (quote ((emacs-lisp . t)
-                                     (latex . t)
-                                     (python . t)
-                                     (octave . t)
-                                     (sh . t)
-                                     (ledger . t))))
-
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-src-fontify-natively t)
-  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-  (bind-key "<f2>" 'org-edit-src-code)
-  (bind-key "<f3>" 'org-edit-src-exit)
-#+end_src
-
-#+RESULTS:
-: org-edit-src-exit
-
-** ENABLED LaTeX to PDF Process 
-The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX.
+*** LaTeX to PDF Process 
+The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX. Some tweaks may be necessary for this to work on Windows (a TeX distribution is necessary).
 
 #+begin_src emacs-lisp
 ;; Set the pdf export process from org-mode
@@ -240,7 +351,7 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 #+RESULTS:
 | pdflatex -interaction nonstopmode -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -output-directory %o %f | pdflatex -interaction nonstopmode -output-directory %o %f |
 
-** ENABLED LaTeX Beamer
+*** LaTeX Beamer
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 
 #+begin_src emacs-lisp
@@ -259,9 +370,70 @@ Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 #+end_src
 
 #+RESULTS:
+** Org-Ref Citation Manager
+Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref to a default (general) BibTeX file as the default bibliography as well as a directory containing the article as a PDF file. The Org-Ref documentation also suggests setting a notes file (currently I am not using this feature).
 
-** ENABLED cdlatex mode
-Math character input mode.
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref 
+  :ensure t
+  :config
+  (require 'org-ref)
+  (require 'doi-utils)
+  (setq org-ref-bibliography-notes "~/references/notes.org"
+        org-ref-default-bibliography '("~/references/REFERENCES.bib")
+        org-ref-pdf-directory "~/references/bibtex-pdfs/")
+  (setq bibtex-completion-pdf-open-function
+    (lambda (fpath)
+      (start-process "open" "*open*" "open" fpath))))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+Org-Ref is also great at Figure/Table/Equation references. The default key binding to insert a ref link for this type of cross-reference conflicts with the Org-Mode add file to Agenda list so is therefore changed to "C-c i". On some systems it may also be necessary on export to LaTeX/PDF to set the variable 'org-latex-prefer-user-labels' to nil (this is known bug in the Org-Ref GitHub repository).
+
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-prefer-user-labels nil)
+(bind-key "\C-c i" 'org-ref-helm-insert-ref-link)
+#+END_SRC
+
+#+RESULTS:
+: org-ref-helm-insert-ref-link
+
+** Org Babel Languages
+Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
+Note: Running IPython in Emacs requires the "ob-ipython" package. See activation in [[Python]]. 
+
+#+begin_src emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages (quote ((emacs-lisp . t)
+                                     (latex . t)
+                                     (python . t)
+				     (ipython . t)
+                                     (octave . t)
+                                     (sh . t)
+                                     (ledger . t)
+				     (R . t))))
+
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-src-fontify-natively t)
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+  (bind-key "<f2>" 'org-edit-src-code)
+  (bind-key "<f3>" 'org-edit-src-exit)
+#+end_src
+
+#+RESULTS:
+: org-edit-src-exit
+** Clock Report Customizations
+This changes the default behaviour of clock reports greater than 24 hours to report as "1 day + X hours" to be reported as "X hours:Y minutes".
+
+#+BEGIN_SRC emacs-lisp
+(setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
+#+END_SRC
+
+** CDLATEX Mode for Math Characters
+Math character input mode can be turned on/off with the new key binding "C-c C-g".
+This allows for the "`" character to be used other than for inserting math characters.
 
 #+BEGIN_SRC emacs-lisp
 (use-package cdlatex
@@ -271,31 +443,39 @@ Math character input mode.
 
 #+RESULTS:
 
-** ENABLED Auto Complete
-AutoComplete for Org-Mode.
+** Org-Capture-Templates
+These are some org-capture-templates taken from [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
+Currently not using these but will look to see whether they are useful.
 
-#+begin_src emacs-lisp
-(use-package org-ac
-  :ensure t
-  :bind ("<f1>" . org-ac/setup-current-buffer))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "/winc/jk/myLife/refile.org")
+
+(global-set-key (kbd "C-c c") 'org-capture)
+
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+(setq org-capture-templates
+      (quote (("t" "todo" entry (file "~/Desktop/refile.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("r" "respond" entry (file "~/Desktop/refile.org")
+               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+              ("n" "note" entry (file "~/Desktop/refile.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("j" "Journal" entry (file+datetree "~/Desktop/diary.org")
+               "* %?\n%U\n" :clock-in t :clock-resume t)
+              ("w" "org-protocol" entry (file "~/Desktop/refile.org")
+               "* TODO Review %c\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "~/Desktop/refile.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ("p" "Phone call" entry (file "~/Desktop/refile.org")
+               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ("h" "Habit" entry (file "~/Desktop/refile.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+#+END_SRC
 
 #+RESULTS:
-** ENABLED Set Often Used Keys
-
-#+begin_src emacs-lisp
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cl" 'org-insert-link)
-(global-set-key "\C-o" 'org-open-at-point)
-(bind-key "\C-c \C-x F" 'org-agenda-file-to-front)
-(bind-key "\C-c \C-x r" 'org-remove-file)
-#+end_src
-
-#+RESULTS:
-: org-remove-file
-
-* ENABLED LaTeX
-** ENABLED AUCTeX
+| t | todo | entry | (file ~/Desktop/refile.org) | * TODO %? |
+* LaTeX
+** AUCTeX
 Configure AUCTeX to edit TeX files.
 
 #+begin_src emacs-lisp
@@ -314,8 +494,9 @@ Configure AUCTeX to edit TeX files.
 #+RESULTS:
 : t
 
-** ENABLED RefTeX
+** RefTeX
 Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
+For when working on TeX files.
 
 #+begin_src emacs-lisp
 (use-package reftex
@@ -324,16 +505,14 @@ Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
   :config
   (setq reftex-plug-into-AUCTeX t)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
-
-;; (add-hook 'org-mode-hook 'turn-on-reftex)
-;;   (setq reftex-default-bibliography '("~/references.bib"))
 #+end_src
 
 #+RESULTS:
 : t
-
-* ENABLED Flyspell
-Enable Flyspell Mode. If you keep your spell check personal dictionary in particular location, change this variable as desired.
+* Flyspell
+Enable Flyspell Mode. 
+If you keep your spell check personal dictionary in particular location, change this variable as desired. 
+Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spellcheck_emacs).
 
 #+begin_src emacs-lisp
 (use-package ispell
@@ -342,37 +521,24 @@ Enable Flyspell Mode. If you keep your spell check personal dictionary in partic
          ("M-<f8>" . flyspell-mode))
   :config 
   (setq-default ispell-program-name "aspell")
-  (setq ispell-personal-dictionary "C:/emacs/.emacs.d/.ispell"))
+  (setq ispell-personal-dictionary "~/.emacs.d/.ispell")
+  (dolist (hook '(text-mode-hook))
+     (add-hook hook (lambda () (flyspell-mode 1))))
+  (dolist (mode '(emacs-lisp-mode-hook
+                  python-mode-hook
+		  R-mode-hook))
+     (add-hook mode (lambda () (flyspell-prog-mode))))
+  (defun flyspell-check-next-highlighted-word ()
+    "Custom function to spell check next highlighted word"
+    (interactive)
+    (flyspell-goto-next-error)
+    (ispell-word))
+  :diminish flyspell-mode)
 #+end_src
 
 #+RESULTS:  
 
-* ENABLED Python
-Elpy is used to customize python in emacs to a fullfledged IDE.
-
-#+BEGIN_SRC emacs-lisp
-(use-package elpy 
-  :ensure t
-  :config
-  (elpy-enable)
-  (elpy-use-ipython))
-#+END_SRC
-
-#+RESULTS:
-: t
-
-ob-ipython is used for interactive python source blocks in Org-Mode.
-Note: At the moment this will break the configuration. 
-You must manually install ob-ipython using "M-x list-packages".
-
-#+BEGIN_SRC emacs-lisp
-(require 'ob-ipython)
-#+END_SRC
-
-#+RESULTS:
-: jupyter
-
-* ENABLED Magit
+* Magit
 Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp

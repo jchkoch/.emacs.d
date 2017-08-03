@@ -88,17 +88,16 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
-** IDO
-IDO "Interactively DO Things" Mode super-charges Emac's completion engine by improving the speed at which you open files/buffers and switch buffers. IDO Mode completion engine uses so-called flex matching so that it can match anywhere in the name. This means that you can type a few characters until you find a match or you narrow down the list of matches to a manageable subset. Typing //, like in most Linux shells ignores the preceding path and goes back to the top-most directory, works the same in IDO Mode but it also is interactive: it will go to the root (or the root of the current drive in Windows). 
+** Ivy-Mode
 
-#+begin_src emacs-lisp
-(use-package ido
-  :ensure t
+#+BEGIN_SRC emacs-lisp
+(use-package ivy :ensure t
+  :diminish (ivy-mode . "")
   :config
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (ido-mode 1))
-#+end_src
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "%d/%d"))
+#+END_SRC
 
 #+RESULTS:
 : t
@@ -108,27 +107,11 @@ Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto
 
 #+begin_src emacs-lisp
 (use-package auto-complete
-  :init
-  (require 'org-ac)
   :ensure t
   :diminish auto-complete
   :config
   (global-auto-complete-mode t)
-  (ac-config-default)
-  :bind
-  ("<f1>" . org-ac/setup-current-buffer))
-#+end_src
-
-#+RESULTS:
-
-** Smex
-Smex provides interactive auto completion support for Emacs M-x command.
-
-#+begin_src emacs-lisp
-(use-package smex
-  :ensure t
-  :bind (("M-x" . smex))
-  :config (smex-initialize))
+  (ac-config-default))
 #+end_src
 
 #+RESULTS:
@@ -171,6 +154,33 @@ This package helps provide suggestions to finish key completion.
 
 #+RESULTS:
 : t
+
+** IDO - OBSOLETE
+IDO "Interactively DO Things" Mode super-charges Emac's completion engine by improving the speed at which you open files/buffers and switch buffers. IDO Mode completion engine uses so-called flex matching so that it can match anywhere in the name. This means that you can type a few characters until you find a match or you narrow down the list of matches to a manageable subset. Typing //, like in most Linux shells ignores the preceding path and goes back to the top-most directory, works the same in IDO Mode but it also is interactive: it will go to the root (or the root of the current drive in Windows). 
+
+#+begin_src emacs-lisp
+;; (use-package ido
+;;   :ensure t
+;;   :config
+;;   (setq ido-enable-flex-matching t)
+;;   (setq ido-everywhere t)
+;;   (ido-mode 1))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Smex - OBSOLETE
+Smex provides interactive auto completion support for Emacs M-x command.
+
+#+begin_src emacs-lisp
+;; (use-package smex
+;;   :ensure t
+;;   :bind (("M-x" . smex))
+;;   :config (smex-initialize))
+#+end_src
+
+#+RESULTS:
 
 * Emacs Appearance
 ** Window Splitting Commands
@@ -381,6 +391,7 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
 (use-package org-ref 
   :ensure t
   :config
+  (setq org-ref-completion-library 'org-ref-ivy-bibtex)
   (require 'org-ref)
   (require 'doi-utils)
   (setq org-ref-bibliography-notes "~/references/notes.org"

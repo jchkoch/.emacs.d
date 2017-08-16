@@ -19,3 +19,6 @@ custom.el
 /config.org_archive
 site-lisp/
 /configure.sh~
+/.ispell
+/ido.last
+/ido.last~

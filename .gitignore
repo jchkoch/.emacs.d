@@ -20,5 +20,3 @@ custom.el
 site-lisp/
 /configure.sh~
 /.ispell
-/ido.last
-/ido.last~

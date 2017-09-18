@@ -4,18 +4,21 @@
 
 * Emacs Configuration
 
-This emacs configuration uses the package "use-package" to install and configure additional packages. General packages used are:
-
-     - auto-complete
-     - IDO
-     - smex
-
+This emacs configuration uses the package "use-package" to install and configure additional packages. General packages used are auto-complete, IDO mode, and smex mode.
 Org-Mode and Python are other major modes customized. 
-ob-ipython is used as a interactive notebook in Org-Mode.
+ob-ipython is used as a interactive notebook in Org-Mode (see [[Known Issues]] for trouble installing).
 Org-Mode uses org-ref as it's citation/bibliography manager.
 Python uses Elpy to customize a integrated development environment.
 AUCTeX is used as the backend to edit LaTeX files.
 
 * Installation
 
-ob-ipython won't automatically be installed causing the configuration to become broken. To fix use "M-x list-packages" to manually install and restart Emacs.
+Clone the git repository on GitHub (https://github.com/jchkoch/.emacs.d.git).
+Modify all user specified file paths in the file "config.org".
+If not modified, Emacs may not load the configuration file properly.
+
+* Known Issues
+
+ob-ipython is used for interactive python source blocks in Org-Mode.
+Note: At the moment this will break the configuration. 
+You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.

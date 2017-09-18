@@ -6,12 +6,9 @@
 Set a user name and email address for Emacs to use if needed.
 
 #+begin_src emacs-lisp
-(setq user-full-name "J. C. Koch"
-      user-mail-address "jckoch@ualberta.ca")
+(setq user-full-name "Full Name"
+      user-mail-address "fullname@gmail.com")
 #+end_src
-
-#+RESULTS:
-: jckoch@ualberta.ca
 
 * Sane Defaults
 ** General
@@ -20,7 +17,7 @@ First globally turn on visual line mode and line numbers for all buffer/file typ
 Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
 
 #+begin_src emacs-lisp
-(global-visual-line-mode 1)
+(global-visual-line-mode 1) ; 1 for on, 0 for off.
 (diminish 'visual-line-mode)
 (global-linum-mode 1) ; 1 for on, 0 for off.
 #+END_SRC
@@ -30,11 +27,11 @@ Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all 
 Next set the default coding system to /UTF-8/ (i.e. unicode).
 
 #+BEGIN_SRC emacs-lisp
-(setq locale-coding-system 'utf-8) ; pretty
-(set-terminal-coding-system 'utf-8) ; pretty
-(set-keyboard-coding-system 'utf-8) ; pretty
-(set-selection-coding-system 'utf-8) ; please
-(prefer-coding-system 'utf-8) ; with sugar on top
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
 #+END_SRC
 
 Set the default tab width to 4 spaces. Change the default behaviour to answering questions to simple 'y' and 'n' characters.
@@ -81,11 +78,8 @@ Set the Buffer List buffer as to default with "ibuffer".
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
-(setq default-directory "/winc/jk/myLife")
+(setq default-directory "~/Documents")
 #+end_src
-
-#+RESULTS:
-: /winc/jk/myLife
 
 ** Ivy-Mode
 
@@ -104,7 +98,11 @@ Change the default directory that emacs opens in to fit your needs.
 : t
 
 ** Auto Complete
+<<<<<<< HEAD
 Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs.
+=======
+Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs. It does not provide auto completion support in Org-Mode.
+>>>>>>> b329219a0a8837650c4a406981375136e5354784
 
 #+begin_src emacs-lisp
 (use-package auto-complete
@@ -115,9 +113,8 @@ Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto
   (ac-config-default))
 #+end_src
 
-#+RESULTS:
-
 ** Undo-Tree
+Package improves undo/redo commands within Emacs. Note that custom key binding for undo "C-z" replaces (removes) normal command to minimize the Emacs window.
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
@@ -332,16 +329,12 @@ This defines a basic workflow of TODO keywords.
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files (quote ("/winc/jk/myLife/")))
+(setq org-agenda-files (quote ("~/Documents")))
 #+END_SRC
-
-#+RESULTS:
-| /winc/jk/myLife/ |
 
 ** Export Backend Customization
 *** Org Export Backend
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
-
 
 #+BEGIN_SRC emacs-lisp
 (setq org-export-backends '(ascii beamer html icalendar latex odt))
@@ -451,7 +444,7 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
 #+RESULTS:
 : org-edit-src-exit
 ** Clock Report Customizations
-This changes the default behaviour of clock reports greater than 24 hours to report as "1 day + X hours" to be reported as "X hours:Y minutes".
+This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
 
 #+BEGIN_SRC emacs-lisp
 (setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))

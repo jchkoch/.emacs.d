@@ -26,7 +26,6 @@ Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all 
 #+END_SRC
 
 #+RESULTS:
-: t
 
 Next set the default coding system to /UTF-8/ (i.e. unicode).
 
@@ -91,19 +90,21 @@ Change the default directory that emacs opens in to fit your needs.
 ** Ivy-Mode
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "")
+(use-package ivy
+  :ensure t
+  :diminish ivy-mode
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "%d/%d"))
+  (setq ivy-count-format "%d/%d")
+  (bind-key "C-c C-r" 'ivy-resume))
 #+END_SRC
 
 #+RESULTS:
 : t
 
 ** Auto Complete
-Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs. It does not provide auto completion support in Org-Mode (see [[Org-Mode][Org-Mode]] section for auto completion in org buffers).
+Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs.
 
 #+begin_src emacs-lisp
 (use-package auto-complete
@@ -390,16 +391,24 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref 
   :ensure t
-  :config
-  (setq org-ref-completion-library 'org-ref-ivy-bibtex)
+  :init
   (require 'org-ref)
   (require 'doi-utils)
-  (setq org-ref-bibliography-notes "~/references/notes.org"
-        org-ref-default-bibliography '("~/references/REFERENCES.bib")
-        org-ref-pdf-directory "~/references/bibtex-pdfs/")
+  (require 'org-ref-pdf)
+  (setq org-ref-bibliography-notes "~/Documents/references/notes.org"
+        org-ref-default-bibliography '("~/Documents/references/REFERENCES.bib")
+        org-ref-pdf-directory "~/Documents/references/bibtex-pdfs/")
   (setq bibtex-completion-pdf-open-function
     (lambda (fpath)
-      (start-process "open" "*open*" "open" fpath))))
+      (start-process "open" "*open*" "open" fpath)))
+  :config
+  (setq bibtex-autokey-year-length 4
+        bibtex-autokey-name-year-separator "_"
+        bibtex-autokey-year-title-separator "_"
+        bibtex-autokey-titleword-separator ""
+        bibtex-autokey-titlewords 3
+        bibtex-autokey-titlewords-stretch 1
+        bibtex-autokey-titleword-length 5))
 #+END_SRC
 
 #+RESULTS:
@@ -423,10 +432,12 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
   (org-babel-do-load-languages
    'org-babel-load-languages (quote ((emacs-lisp . t)
                                      (latex . t)
+				     (ditaa . t)
                                      (python . t)
 				     (ipython . t)
                                      (octave . t)
-                                     (sh . t)
+                                     (shell . t)
+				     (maxima . t)
                                      (ledger . t)
 				     (R . t))))
 
@@ -458,33 +469,11 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 
-** Org-Capture-Templates
-These are some org-capture-templates taken from [[http://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]
-Currently not using these but will look to see whether they are useful.
+** Org Notes File
+Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-default-notes-file "/winc/jk/myLife/refile.org")
-
-(global-set-key (kbd "C-c c") 'org-capture)
-
-;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-(setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/Desktop/refile.org")
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("r" "respond" entry (file "~/Desktop/refile.org")
-               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ("n" "note" entry (file "~/Desktop/refile.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("j" "Journal" entry (file+datetree "~/Desktop/diary.org")
-               "* %?\n%U\n" :clock-in t :clock-resume t)
-              ("w" "org-protocol" entry (file "~/Desktop/refile.org")
-               "* TODO Review %c\n%U\n" :immediate-finish t)
-              ("m" "Meeting" entry (file "~/Desktop/refile.org")
-               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("p" "Phone call" entry (file "~/Desktop/refile.org")
-               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-              ("h" "Habit" entry (file "~/Desktop/refile.org")
-               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 #+END_SRC
 
 #+RESULTS:

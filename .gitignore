@@ -20,3 +20,7 @@ custom.el
 site-lisp/
 /configure.sh~
 /.ispell
+/elispProjects/
+/projectile-bookmarks.eld
+/srecode-map.el
+/tramp

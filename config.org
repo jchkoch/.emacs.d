@@ -149,33 +149,6 @@ This package helps provide suggestions to finish key completion.
 #+RESULTS:
 : t
 
-** IDO - OBSOLETE
-IDO "Interactively DO Things" Mode super-charges Emac's completion engine by improving the speed at which you open files/buffers and switch buffers. IDO Mode completion engine uses so-called flex matching so that it can match anywhere in the name. This means that you can type a few characters until you find a match or you narrow down the list of matches to a manageable subset. Typing //, like in most Linux shells ignores the preceding path and goes back to the top-most directory, works the same in IDO Mode but it also is interactive: it will go to the root (or the root of the current drive in Windows). 
-
-#+begin_src emacs-lisp
-;; (use-package ido
-;;   :ensure t
-;;   :config
-;;   (setq ido-enable-flex-matching t)
-;;   (setq ido-everywhere t)
-;;   (ido-mode 1))
-#+end_src
-
-#+RESULTS:
-: t
-
-** Smex - OBSOLETE
-Smex provides interactive auto completion support for Emacs M-x command.
-
-#+begin_src emacs-lisp
-;; (use-package smex
-;;   :ensure t
-;;   :bind (("M-x" . smex))
-;;   :config (smex-initialize))
-#+end_src
-
-#+RESULTS:
-
 * Emacs Appearance
 ** Window Splitting Commands
 These custom emacs-lisp functions redefine vertically and horizontal window splitting emacs functions in order to switch to the other window when the emacs window is split into two windows. 

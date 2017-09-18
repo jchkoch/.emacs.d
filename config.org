@@ -98,11 +98,7 @@ Change the default directory that emacs opens in to fit your needs.
 : t
 
 ** Auto Complete
-<<<<<<< HEAD
-Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs.
-=======
 Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs. It does not provide auto completion support in Org-Mode.
->>>>>>> b329219a0a8837650c4a406981375136e5354784
 
 #+begin_src emacs-lisp
 (use-package auto-complete

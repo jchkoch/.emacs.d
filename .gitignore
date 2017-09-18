@@ -20,12 +20,7 @@ custom.el
 site-lisp/
 /configure.sh~
 /.ispell
-<<<<<<< HEAD
 /elispProjects/
 /projectile-bookmarks.eld
 /srecode-map.el
 /tramp
-=======
-/ido.last
-/ido.last~
->>>>>>> b329219a0a8837650c4a406981375136e5354784

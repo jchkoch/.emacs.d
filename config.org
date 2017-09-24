@@ -78,8 +78,11 @@ Set the Buffer List buffer as to default with "ibuffer".
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
-(setq default-directory "~/Documents")
+(setq default-directory "/winc/jk/myLife")
 #+end_src
+
+#+RESULTS:
+: /winc/jk/myLife
 
 ** Ivy-Mode
 
@@ -298,8 +301,24 @@ This defines a basic workflow of TODO keywords.
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files (quote ("~/Documents")))
+(setq org-agenda-files (quote ("/winc/jk/myLife")))
 #+END_SRC
+
+#+RESULTS:
+| /winc/jk/myLife |
+
+** Enable Org-Habits
+Enable org-habits from within org-modules to start tracking some habits.
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-habit)
+(setq org-habit-show-habits-only-for-today t)
+(bind-key "<f7>" 'org-habit-toggle-habits)
+#+END_SRC
+
+
+#+RESULTS:
+: org-habit-toggle-habits
 
 ** Export Backend Customization
 *** Org Export Backend
@@ -398,7 +417,7 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
                                      (python . t)
 				     (ipython . t)
                                      (octave . t)
-                                     (shell . t)
+                                     (sh . t)
 				     (maxima . t)
                                      (ledger . t)
 				     (R . t))))
@@ -412,6 +431,16 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
 
 #+RESULTS:
 : org-edit-src-exit
+** Clock In/Out Easier Key Bindings
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "<f5>" 'org-clock-in)
+(bind-key "<f6>" 'org-clock-out)
+#+END_SRC
+
+#+RESULTS:
+: org-clock-out
+
 ** Clock Report Customizations
 This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
 
@@ -439,7 +468,8 @@ Sets a global ``refile`` org-mode file for temporary TODO items.
 #+END_SRC
 
 #+RESULTS:
-| t | todo | entry | (file ~/Desktop/refile.org) | * TODO %? |
+: /winc/jk/myLife/refile.org
+
 * LaTeX
 ** AUCTeX
 Configure AUCTeX to edit TeX files.

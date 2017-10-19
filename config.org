@@ -302,10 +302,21 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-files (quote ("/winc/jk/myLife")))
+
+;; Set Custom Agenda View
+(setq org-agenda-custom-commands
+      '(("c" "Simple agenda view"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "")
+          (tags "PRIORITY=\"B\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "Lower-priority unfinished tasks:")))))))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife |
+| c | Simple agenda view | ((tags PRIORITY="A" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header High-priority unfinished tasks:))) (agenda ) (tags PRIORITY="B" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header Lower-priority unfinished tasks:)))) |
 
 ** Enable Org-Habits
 Enable org-habits from within org-modules to start tracking some habits.
@@ -431,6 +442,7 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
 
 #+RESULTS:
 : org-edit-src-exit
+
 ** Clock In/Out Easier Key Bindings
 
 #+BEGIN_SRC emacs-lisp
@@ -502,6 +514,19 @@ For when working on TeX files.
   (setq reftex-plug-into-AUCTeX t)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
 #+end_src
+
+#+RESULTS:
+: t
+* Ledger-Mode
+Plain-text double-entry accounting program.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ledger-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode))
+  (ledger-use-iso-dates t))
+#+END_SRC
 
 #+RESULTS:
 : t

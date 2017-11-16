@@ -6,8 +6,8 @@
 Set a user name and email address for Emacs to use if needed.
 
 #+begin_src emacs-lisp
-(setq user-full-name "Full Name"
-      user-mail-address "fullname@gmail.com")
+(setq user-full-name "James Koch"
+      user-mail-address "jckoch@ualberta.ca")
 #+end_src
 
 * Sane Defaults
@@ -253,6 +253,7 @@ You must manually install ob-ipython using "M-x list-packages". Otherwise manual
 
 #+RESULTS:
 : t
+
 * Org-Mode
 ** *TODO* Keywords
 
@@ -322,14 +323,14 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 Enable org-habits from within org-modules to start tracking some habits.
 
 #+BEGIN_SRC emacs-lisp
-(require 'org-habit)
-(setq org-habit-show-habits-only-for-today t)
-(bind-key "<f7>" 'org-habit-toggle-habits)
+(use-package org-habit
+  :ensure t
+  :config
+  (setq org-habit-show-habits-only-for-today nil)
+  :bind ("<f7>" . org-habit-toggle-habits))
 #+END_SRC
 
-
 #+RESULTS:
-: org-habit-toggle-habits
 
 ** Export Backend Customization
 *** Org Export Backend
@@ -467,7 +468,9 @@ This allows for the "`" character to be used other than for inserting math chara
 #+BEGIN_SRC emacs-lisp
 (use-package cdlatex
   :ensure t
-  :bind ("\C-c \C-g" . org-cdlatex-mode))
+  :bind ("\C-c \C-g" . cdlatex-math-symbol)
+  :config (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+  :diminish org-cdlatex-mode)
 #+END_SRC
 
 #+RESULTS:
@@ -481,6 +484,23 @@ Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+RESULTS:
 : /winc/jk/myLife/refile.org
+
+** Miscellaneous
+
+#+BEGIN_SRC emacs-lisp
+;; ignore_heading tag in Org mode, based on the manual and func docs
+(defun ignored-headlines-removal (backend)
+  "Remove all headlines with tag ignore_heading in the current buffer.
+     BACKEND is the export back-end being used, as a symbol."
+  (org-map-entries
+   (lambda () (delete-region (point) (progn (forward-line) (point))))
+   "ignore_heading"))
+
+(add-hook 'org-export-before-parsing-hook 'ignored-headlines-removal)
+#+END_SRC
+
+#+RESULTS:
+| ignored-headlines-removal |
 
 * LaTeX
 ** AUCTeX
@@ -517,6 +537,7 @@ For when working on TeX files.
 
 #+RESULTS:
 : t
+
 * Ledger-Mode
 Plain-text double-entry accounting program.
 
@@ -524,12 +545,12 @@ Plain-text double-entry accounting program.
 (use-package ledger-mode
   :ensure t
   :config
-  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode))
-  (ledger-use-iso-dates t))
+  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode)))
 #+END_SRC
 
 #+RESULTS:
 : t
+
 * Flyspell
 Enable Flyspell Mode. 
 If you keep your spell check personal dictionary in particular location, change this variable as desired. 

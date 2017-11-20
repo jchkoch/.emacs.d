@@ -228,15 +228,24 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
-(use-package elpy 
+(use-package elpy
   :ensure t
   :config
+  (exec-path-from-shell-copy-env "PATH")
   (elpy-enable)
-  (setq python-shell-prompt-detect-failure-warning nil))
+  (elpy-use-ipython))
 #+END_SRC
 
 #+RESULTS:
 : t
+
+#+BEGIN_SRC emacs-lisp
+; (use-package exec-path-from-shell
+;   :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
 
 ob-ipython is used for interactive python source blocks in Org-Mode.
 Note: At the moment this will break the configuration. 
@@ -245,10 +254,10 @@ You must manually install ob-ipython using "M-x list-packages". Otherwise manual
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/site-lisp/ob-ipython")
 (use-package ob-ipython
-   :ensure t
-   :config
-   (setq python-shell-completion-native-enable t)
-   (setq python-shell-prompt-detect-failure-warning nil))
+  :ensure t
+  :config
+  (setq python-shell-completion-native-enable t)
+  (setq python-shell-prompt-detect-failure-warning nil))
 #+END_SRC
 
 #+RESULTS:
@@ -285,6 +294,28 @@ This defines a basic workflow of TODO keywords.
 | MEETING   | :foreground | forest green | :weight | bold |
 | PHONE     | :foreground | forest green | :weight | bold |
 
+TODO state tag triggers.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+#+END_SRC
+
+#+RESULTS:
+| CANCELLED | (CANCELLED . t) |             |        |
+| WAITING   | (WAITING . t)   |             |        |
+| HOLD      | (WAITING)       | (HOLD . t)  |        |
+| done      | (WAITING)       | (HOLD)      |        |
+| TODO      | (WAITING)       | (CANCELLED) | (HOLD) |
+| NEXT      | (WAITING)       | (CANCELLED) | (HOLD) |
+| DONE      | (WAITING)       | (CANCELLED) | (HOLD) |
+
 ** Set Often Used Keys
 
 #+begin_src emacs-lisp
@@ -313,24 +344,23 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
           (agenda "")
           (tags "PRIORITY=\"B\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "Lower-priority unfinished tasks:")))))))
+                 (org-agenda-overriding-header "Longer-term unfinished tasks:")))))))
 #+END_SRC
 
 #+RESULTS:
-| c | Simple agenda view | ((tags PRIORITY="A" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header High-priority unfinished tasks:))) (agenda ) (tags PRIORITY="B" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header Lower-priority unfinished tasks:)))) |
+| c | Simple agenda view | ((tags PRIORITY="A" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header High-priority unfinished tasks:))) (agenda ) (tags PRIORITY="B" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header Longer-term unfinished tasks:)))) |
 
 ** Enable Org-Habits
 Enable org-habits from within org-modules to start tracking some habits.
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-habit
-  :ensure t
-  :config
-  (setq org-habit-show-habits-only-for-today nil)
-  :bind ("<f7>" . org-habit-toggle-habits))
+(require 'org-habit)
+(setq org-habit-show-habits-only-for-today nil)
+(bind-key "<f7>" 'org-habit-toggle-habits)
 #+END_SRC
 
 #+RESULTS:
+: org-habit-toggle-habits
 
 ** Export Backend Customization
 *** Org Export Backend

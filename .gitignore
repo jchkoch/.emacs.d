@@ -30,3 +30,5 @@ site-lisp/
 /ido.last~
 >>>>>>> b329219a0a8837650c4a406981375136e5354784
 /session.101c917617111a000150764412100000027320010
+/dev-pkgs/ox-extra.el
+/dev-pkgs/ox-ipynb/

@@ -17,6 +17,7 @@ First globally turn on visual line mode and line numbers for all buffer/file typ
 Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
 
 #+begin_src emacs-lisp
+(setq use-package-always-ensure t)
 (global-visual-line-mode 1) ; 1 for on, 0 for off.
 (diminish 'visual-line-mode)
 (global-linum-mode 1) ; 1 for on, 0 for off.
@@ -84,12 +85,18 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
+** Diminish Mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package diminish)
+#+END_SRC
+
+#+RESULTS:
+
 ** Ivy-Mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
-  :ensure t
-  :diminish ivy-mode
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -105,25 +112,24 @@ Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto
 
 #+begin_src emacs-lisp
 (use-package auto-complete
-  :ensure t
-  :diminish auto-complete
   :config
   (global-auto-complete-mode t)
   (ac-config-default))
 #+end_src
+
+#+RESULTS:
+: t
 
 ** Undo-Tree
 Package improves undo/redo commands within Emacs. Note that custom key binding for undo "C-z" replaces (removes) normal command to minimize the Emacs window.
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
-  :ensure t
   :config
   (global-undo-tree-mode 1) ;;turn on everywhere
   (global-set-key (kbd "C-z") 'undo)
   (defalias 'redo 'undo-tree-redo)
-  (global-set-key (kbd "C-S-z") 'redo)
-  :diminish undo-tree-mode)
+  (global-set-key (kbd "C-S-z") 'redo))
 #+END_SRC
 
 #+RESULTS:
@@ -133,8 +139,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 A package to try other Emacs Packages without having to install the package.
 
 #+BEGIN_SRC emacs-lisp
-(use-package try
-  :ensure t)
+(use-package try)
 #+END_SRC
 
 #+RESULTS:
@@ -144,9 +149,7 @@ This package helps provide suggestions to finish key completion.
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
-  :ensure t
-  :config (which-key-mode)
-  :diminish which-key-mode)
+  :config (which-key-mode))
 #+END_SRC
 
 #+RESULTS:
@@ -228,12 +231,12 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
-(use-package elpy
-  :ensure t
-  :config
-  (exec-path-from-shell-copy-env "PATH")
-  (elpy-enable)
-  (elpy-use-ipython))
+; (use-package elpy
+;   :ensure t
+;   :config
+;   (exec-path-from-shell-copy-env "PATH")
+;   (elpy-enable)
+;   (elpy-use-ipython))
 #+END_SRC
 
 #+RESULTS:
@@ -241,7 +244,7 @@ Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
 ; (use-package exec-path-from-shell
-;   :ensure t)
+;  :ensure t)
 #+END_SRC
 
 #+RESULTS:
@@ -252,16 +255,13 @@ Note: At the moment this will break the configuration.
 You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/site-lisp/ob-ipython")
-(use-package ob-ipython
-  :ensure t
-  :config
-  (setq python-shell-completion-native-enable t)
-  (setq python-shell-prompt-detect-failure-warning nil))
+(use-package ob-ipython)
+;   :config
+;   (setq python-shell-completion-native-enable t)
+;   (setq python-shell-prompt-detect-failure-warning nil))
 #+END_SRC
 
 #+RESULTS:
-: t
 
 * Org-Mode
 ** *TODO* Keywords
@@ -270,13 +270,14 @@ This defines a basic workflow of TODO keywords.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "IN-PROGRESS(i)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
+              ("IN-PROGRESS" :foreground "yellow" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
@@ -285,14 +286,15 @@ This defines a basic workflow of TODO keywords.
 #+END_SRC
 
 #+RESULTS:
-| TODO      | :foreground | red          | :weight | bold |
-| NEXT      | :foreground | blue         | :weight | bold |
-| DONE      | :foreground | forest green | :weight | bold |
-| WAITING   | :foreground | orange       | :weight | bold |
-| HOLD      | :foreground | magenta      | :weight | bold |
-| CANCELLED | :foreground | forest green | :weight | bold |
-| MEETING   | :foreground | forest green | :weight | bold |
-| PHONE     | :foreground | forest green | :weight | bold |
+| TODO        | :foreground | red          | :weight | bold |
+| NEXT        | :foreground | blue         | :weight | bold |
+| DONE        | :foreground | forest green | :weight | bold |
+| IN-PROGRESS | :foreground | yellow       | :weight | bold |
+| WAITING     | :foreground | orange       | :weight | bold |
+| HOLD        | :foreground | magenta      | :weight | bold |
+| CANCELLED   | :foreground | forest green | :weight | bold |
+| MEETING     | :foreground | forest green | :weight | bold |
+| PHONE       | :foreground | forest green | :weight | bold |
 
 TODO state tag triggers.
 
@@ -413,7 +415,6 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref 
-  :ensure t
   :init
   (require 'org-ref)
   (require 'doi-utils)
@@ -497,13 +498,12 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+BEGIN_SRC emacs-lisp
 (use-package cdlatex
-  :ensure t
-  :bind ("\C-c \C-g" . cdlatex-math-symbol)
   :config (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
   :diminish org-cdlatex-mode)
 #+END_SRC
 
 #+RESULTS:
+: t
 
 ** Org Notes File
 Sets a global ``refile`` org-mode file for temporary TODO items.
@@ -514,6 +514,29 @@ Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+RESULTS:
 : /winc/jk/myLife/refile.org
+
+** Prepare Meeting Notes
+Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
+
+#+BEGIN_SRC emacs-lisp
+(defun bh/prepare-meeting-notes ()
+  "Prepare meeting notes for email
+   Take selected region and convert tabs to spaces, mark TODOs with leading >>>, and copy to kill ring for pasting"
+  (interactive)
+  (let (prefix)
+    (save-excursion
+      (save-restriction
+        (narrow-to-region (region-beginning) (region-end))
+        (untabify (point-min) (point-max))
+        (goto-char (point-min))
+        (while (re-search-forward "^\\( *-\\\) \\(TODO\\|DONE\\): " (point-max) t)
+          (replace-match (concat (make-string (length (match-string 1)) ?>) " " (match-string 2) ": ")))
+        (goto-char (point-min))
+        (kill-ring-save (point-min) (point-max))))))
+#+END_SRC
+
+#+RESULTS:
+: bh/prepare-meeting-notes
 
 ** Miscellaneous
 
@@ -538,7 +561,6 @@ Configure AUCTeX to edit TeX files.
 
 #+begin_src emacs-lisp
 (use-package tex
-  :ensure auctex
   :defer t
   :config
   (setq TeX-auto-save t)
@@ -558,7 +580,6 @@ For when working on TeX files.
 
 #+begin_src emacs-lisp
 (use-package reftex
-  :ensure t
   :defer t
   :config
   (setq reftex-plug-into-AUCTeX t)
@@ -573,7 +594,6 @@ Plain-text double-entry accounting program.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ledger-mode
-  :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode)))
 #+END_SRC
@@ -588,7 +608,6 @@ Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spel
 
 #+begin_src emacs-lisp
 (use-package ispell
-  :ensure t
   :bind (("<f8>" . ispell-word)
          ("M-<f8>" . flyspell-mode))
   :config 
@@ -604,20 +623,18 @@ Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spel
     "Custom function to spell check next highlighted word"
     (interactive)
     (flyspell-goto-next-error)
-    (ispell-word))
-  :diminish flyspell-mode)
+    (ispell-word)))
 #+end_src
 
 #+RESULTS:  
+: flyspell-mode
 
 * Magit
 Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
-  :bind ("C-x g" . magit-status)
-  :defer t)
+  :bind (("C-x g" . magit-status))
 #+end_src
 
 #+RESULTS:

@@ -32,3 +32,7 @@ site-lisp/
 /session.101c917617111a000150764412100000027320010
 /dev-pkgs/ox-extra.el
 /dev-pkgs/ox-ipynb/
+/.gnus.el
+*~
+/org-mode.org
+/dev-pkgs/org-mode/

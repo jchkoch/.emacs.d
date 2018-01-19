@@ -14,16 +14,17 @@ Set a user name and email address for Emacs to use if needed.
 ** General
 Sane defaults to customize Emacs configuration for the 21st century. 
 First globally turn on visual line mode and line numbers for all buffer/file types.
-Also, diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
+Introduce the diminish package to diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
 
 #+begin_src emacs-lisp
-(setq use-package-always-ensure t)
 (global-visual-line-mode 1) ; 1 for on, 0 for off.
+(use-package diminish)
 (diminish 'visual-line-mode)
 (global-linum-mode 1) ; 1 for on, 0 for off.
 #+END_SRC
 
 #+RESULTS:
+: t
 
 Next set the default coding system to /UTF-8/ (i.e. unicode).
 
@@ -87,16 +88,24 @@ Change the default directory that emacs opens in to fit your needs.
 
 ** Diminish Mode
 
+
+#+RESULTS:
+
+** Use-Package Configuration
+Basic 'use-package' configuratioin.
+
 #+BEGIN_SRC emacs-lisp
-(use-package diminish)
+(setq use-package-always-ensure t)
 #+END_SRC
 
 #+RESULTS:
+: t
 
 ** Ivy-Mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
+  :diminish ivy-mode
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -112,6 +121,7 @@ Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto
 
 #+begin_src emacs-lisp
 (use-package auto-complete
+  :diminish auto-complete-mode
   :config
   (global-auto-complete-mode t)
   (ac-config-default))
@@ -125,6 +135,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
+  :diminish undo-tree-mode
   :config
   (global-undo-tree-mode 1) ;;turn on everywhere
   (global-set-key (kbd "C-z") 'undo)
@@ -139,7 +150,8 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 A package to try other Emacs Packages without having to install the package.
 
 #+BEGIN_SRC emacs-lisp
-(use-package try)
+(use-package try
+  :diminish try-mode)
 #+END_SRC
 
 #+RESULTS:
@@ -149,6 +161,7 @@ This package helps provide suggestions to finish key completion.
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
+  :diminish whick-key-mode
   :config (which-key-mode))
 #+END_SRC
 
@@ -227,42 +240,6 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 
  #+RESULTS:
  : disable-active-themes
-* Python
-Elpy is used to customize python in emacs to a fullfledged IDE.
-
-#+BEGIN_SRC emacs-lisp
-; (use-package elpy
-;   :ensure t
-;   :config
-;   (exec-path-from-shell-copy-env "PATH")
-;   (elpy-enable)
-;   (elpy-use-ipython))
-#+END_SRC
-
-#+RESULTS:
-: t
-
-#+BEGIN_SRC emacs-lisp
-; (use-package exec-path-from-shell
-;  :ensure t)
-#+END_SRC
-
-#+RESULTS:
-
-
-ob-ipython is used for interactive python source blocks in Org-Mode.
-Note: At the moment this will break the configuration. 
-You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-ipython)
-;   :config
-;   (setq python-shell-completion-native-enable t)
-;   (setq python-shell-prompt-detect-failure-warning nil))
-#+END_SRC
-
-#+RESULTS:
-
 * Org-Mode
 ** *TODO* Keywords
 
@@ -340,17 +317,17 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 ;; Set Custom Agenda View
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view"
-         ((tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (agenda "")
-          (tags "PRIORITY=\"B\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "Longer-term unfinished tasks:")))))))
+         ((tags-todo "WORK"
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done 'waiting 'hold))
+                 (org-agenda-overriding-header "Unfinished Work Tasks:")))
+          (tags-todo "ADMIN"
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done 'waiting 'hold))
+                 (org-agenda-overriding-header "Administrative Tasks:")))
+          (agenda "")))))
 #+END_SRC
 
 #+RESULTS:
-| c | Simple agenda view | ((tags PRIORITY="A" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header High-priority unfinished tasks:))) (agenda ) (tags PRIORITY="B" ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done)))) (org-agenda-overriding-header Longer-term unfinished tasks:)))) |
+| c | Simple agenda view | ((tags-todo WORK ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Unfinished Work Tasks:))) (tags-todo ADMIN ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Administrative Tasks:))) (agenda )) |
 
 ** Enable Org-Habits
 Enable org-habits from within org-modules to start tracking some habits.
@@ -453,6 +430,7 @@ Default of emacs-lisp, ipython, python, and shell languages supported for org-ba
 Note: Running IPython in Emacs requires the "ob-ipython" package. See activation in [[Python]]. 
 
 #+begin_src emacs-lisp
+  (setq org-ditaa-jar-path "/usr/share/emacs/25.3/lisp/contrib/scripts/ditaa0_9.jar")
   (org-babel-do-load-languages
    'org-babel-load-languages (quote ((emacs-lisp . t)
                                      (latex . t)
@@ -478,6 +456,7 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
 ** Clock In/Out Easier Key Bindings
 
 #+BEGIN_SRC emacs-lisp
+(setq org-clock-into-drawer t)
 (bind-key "<f5>" 'org-clock-in)
 (bind-key "<f6>" 'org-clock-out)
 #+END_SRC
@@ -554,7 +533,41 @@ Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/or
 
 #+RESULTS:
 | ignored-headlines-removal |
+* Python
+Elpy is used to customize python in emacs to a fullfledged IDE.
 
+#+BEGIN_SRC emacs-lisp
+;; (use-package elpy
+;;   :ensure t
+;;   :config
+;;   (exec-path-from-shell-copy-env "PATH")
+;;   (elpy-enable)
+;;   (elpy-use-ipython))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+#+BEGIN_SRC emacs-lisp
+; (use-package exec-path-from-shell
+;  :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
+
+ob-ipython is used for interactive python source blocks in Org-Mode.
+Note: At the moment this will break the configuration. 
+You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.
+
+#+BEGIN_SRC emacs-lisp
+;(use-package ob-ipython)
+;   :config
+;   (setq python-shell-completion-native-enable t)
+;   (setq python-shell-prompt-detect-failure-warning nil))
+#+END_SRC
+
+#+RESULTS:
 * LaTeX
 ** AUCTeX
 Configure AUCTeX to edit TeX files.
@@ -588,7 +601,6 @@ For when working on TeX files.
 
 #+RESULTS:
 : t
-
 * Ledger-Mode
 Plain-text double-entry accounting program.
 
@@ -608,6 +620,7 @@ Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spel
 
 #+begin_src emacs-lisp
 (use-package ispell
+  :defer t
   :bind (("<f8>" . ispell-word)
          ("M-<f8>" . flyspell-mode))
   :config 
@@ -634,7 +647,7 @@ Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp
 (use-package magit
-  :bind (("C-x g" . magit-status))
+  :bind (("C-x g" . magit-status)))
 #+end_src
 
 #+RESULTS:

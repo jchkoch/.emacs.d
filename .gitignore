@@ -36,3 +36,7 @@ site-lisp/
 *~
 /org-mode.org
 /dev-pkgs/org-mode/
+/dev-pkgs/ltxpng/test_3bd1ca847e51d53cdee9c06088608f5f91062ea5.png
+/ltxpng/*
+/dev-pkgs/*
+/tutorial/*

@@ -86,11 +86,6 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
-** Diminish Mode
-
-
-#+RESULTS:
-
 ** Use-Package Configuration
 Basic 'use-package' configuratioin.
 
@@ -241,8 +236,8 @@ The following emacs-lisp function allows for easy switching of themes and the ab
  #+RESULTS:
  : disable-active-themes
 * Org-Mode
-** *TODO* Keywords
-
+** General Setup
+*** *TODO* Keywords
 This defines a basic workflow of TODO keywords.
 
 #+BEGIN_SRC emacs-lisp
@@ -295,20 +290,99 @@ TODO state tag triggers.
 | NEXT      | (WAITING)       | (CANCELLED) | (HOLD) |
 | DONE      | (WAITING)       | (CANCELLED) | (HOLD) |
 
-** Set Often Used Keys
+*** Set Often Used Keys
 
 #+begin_src emacs-lisp
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cl" 'org-insert-link)
 (global-set-key "\C-o" 'org-open-at-point)
+(global-set-key "\C-cc" 'org-capture)
 (bind-key "\C-c \C-x F" 'org-agenda-file-to-front)
 (bind-key "\C-c \C-x r" 'org-remove-file)
 #+end_src
 
 #+RESULTS:
 : org-remove-file
+*** Org-Refile
+Set up org-refile to easily refile notes elsewhere. This elisp code is based on the article from the following blog: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html.
 
-** Set Agenda Files
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
+(setq org-refile-use-outline-path 'file)
+#+END_SRC
+
+#+RESULTS:
+: file
+*** Org-Capture
+Sets a global ``refile`` org-mode file for temporary TODO items.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "/winc/jk/myLife/refile.org")
+#+END_SRC
+
+#+RESULTS:
+: /winc/jk/myLife/refile.org
+
+When a new task occurs and needs to be added, org-capture allows me to easily capture it.
+I categorize it into a few new groups that I use as templates:
+  + A new task (t)
+  + A meeting (m)
+  + A email I need to respond to (e)
+  + A phone call (p)
+  + A new note (n)
+  + A interruption (i)
+  + A new habit (h)
+  + A org protocol (w)
+
+#+BEGIN_SRC emacs-lisp
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+(setq org-capture-templates
+      (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("e" "respond" entry (file "/winc/jk/myLife/refile.org")
+               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("n" "note" entry (file "/winc/jk/myLife/refile.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("i" "Journal" entry (file+datetree "/winc/jk/myLife/diary.org")
+               "* %?\n%U\n" :clock-in t :clock-resume t)
+              ("w" "org-protocol" entry (file "/winc/jk/myLife/refile.org")
+               "* TODO Review %c\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "/winc/jk/myLife/refile.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ("p" "Phone call" entry (file "/winc/jk/myLife/refile.org")
+               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+#+END_SRC
+
+#+RESULTS:
+| t | todo         | entry | (file /winc/jk/myLife/refile.org)         | * TODO %?\n%U\n%a\n                                                                                                                          | :clock-in         | t | :clock-resume | t |
+| e | respond      | entry | (file /winc/jk/myLife/refile.org)         | * NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n                                                                               | :clock-in         | t | :clock-resume | t |
+| n | note         | entry | (file /winc/jk/myLife/refile.org)         | * %? :NOTE:\n%U\n%a\n                                                                                                                        | :clock-in         | t | :clock-resume | t |
+| i | Journal      | entry | (file+datetree /winc/jk/myLife/diary.org) | * %?\n%U\n                                                                                                                                   | :clock-in         | t | :clock-resume | t |
+| w | org-protocol | entry | (file /winc/jk/myLife/refile.org)         | * TODO Review %c\n%U\n                                                                                                                       | :immediate-finish | t |               |   |
+| m | Meeting      | entry | (file /winc/jk/myLife/refile.org)         | * MEETING with %? :MEETING:\n%U                                                                                                              | :clock-in         | t | :clock-resume | t |
+| p | Phone call   | entry | (file /winc/jk/myLife/refile.org)         | * PHONE %? :PHONE:\n%U                                                                                                                       | :clock-in         | t | :clock-resume | t |
+| h | Habit        | entry | (file /winc/jk/myLife/refile.org)         | * NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string "%<<%Y-%m-%d %a .+1d/3d>>")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n |                   |   |               |   |
+
+And the following setup to remove these empty LOGBOOK drawers if they occur.
+
+#+BEGIN_SRC emacs-lisp
+;; Remove empty LOGBOOK drawers on clock out
+(defun bh/remove-empty-drawer-on-clock-out ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line 0)
+    (org-remove-empty-drawer-at "LOGBOOK" (point))))
+
+(add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
+#+END_SRC
+
+#+RESULTS:
+| org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out |
+
+** Agenda Setup
+*** Set Agenda Files
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
@@ -322,14 +396,12 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
                  (org-agenda-overriding-header "Unfinished Work Tasks:")))
           (tags-todo "ADMIN"
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done 'waiting 'hold))
-                 (org-agenda-overriding-header "Administrative Tasks:")))
-          (agenda "")))))
+                 (org-agenda-overriding-header "Administrative Tasks:")))))))
 #+END_SRC
 
 #+RESULTS:
-| c | Simple agenda view | ((tags-todo WORK ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Unfinished Work Tasks:))) (tags-todo ADMIN ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Administrative Tasks:))) (agenda )) |
-
-** Enable Org-Habits
+| c | Simple agenda view | ((tags-todo WORK ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Unfinished Work Tasks:))) (tags-todo ADMIN ((org-agenda-skip-function (quote (org-agenda-skip-entry-if (quote todo) (quote done) (quote waiting) (quote hold)))) (org-agenda-overriding-header Administrative Tasks:)))) |
+*** Enable Org-Habits
 Enable org-habits from within org-modules to start tracking some habits.
 
 #+BEGIN_SRC emacs-lisp
@@ -340,9 +412,9 @@ Enable org-habits from within org-modules to start tracking some habits.
 
 #+RESULTS:
 : org-habit-toggle-habits
-
-** Export Backend Customization
-*** Org Export Backend
+** Exporting Customization
+*** Export Backend Customization
+**** Org Export Backend
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
 
 #+BEGIN_SRC emacs-lisp
@@ -352,23 +424,23 @@ OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. 
 #+RESULTS:
 | ascii | beamer | html | icalendar | latex | odt |
 
-*** LaTeX to PDF Process 
+**** LaTeX to PDF Process 
 The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX. Some tweaks may be necessary for this to work on Windows (a TeX distribution is necessary).
 
 #+begin_src emacs-lisp
 ;; Set the pdf export process from org-mode
 ;; done to ensure citations and bibiographies are exported to LaTeX properly
 (setq org-latex-pdf-process
-    '("pdflatex -interaction nonstopmode -output-directory %o %f"
+    '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
       "bibtex %b" 
-      "pdflatex -interaction nonstopmode -output-directory %o %f" 
-      "pdflatex -interaction nonstopmode -output-directory %o %f"))
+      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f" 
+      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
 #+end_src
 
 #+RESULTS:
-| pdflatex -interaction nonstopmode -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -output-directory %o %f | pdflatex -interaction nonstopmode -output-directory %o %f |
+| pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f |
 
-*** LaTeX Beamer
+**** LaTeX Beamer
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 
 #+begin_src emacs-lisp
@@ -387,10 +459,12 @@ Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 #+end_src
 
 #+RESULTS:
-** Org-Ref Citation Manager
+*** Org-Ref Citation Manager
 Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref to a default (general) BibTeX file as the default bibliography as well as a directory containing the article as a PDF file. The Org-Ref documentation also suggests setting a notes file (currently I am not using this feature).
 
 #+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/dev-pkgs/")
+
 (use-package org-ref 
   :init
   (require 'org-ref)
@@ -409,7 +483,8 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
         bibtex-autokey-titleword-separator ""
         bibtex-autokey-titlewords 3
         bibtex-autokey-titlewords-stretch 1
-        bibtex-autokey-titleword-length 5))
+        bibtex-autokey-titleword-length 5)
+  (require 'ox-word))
 #+END_SRC
 
 #+RESULTS:
@@ -425,18 +500,18 @@ Org-Ref is also great at Figure/Table/Equation references. The default key bindi
 #+RESULTS:
 : org-ref-helm-insert-ref-link
 
-** Org Babel Languages
+*** Org Babel Languages
 Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
 Note: Running IPython in Emacs requires the "ob-ipython" package. See activation in [[Python]]. 
 
 #+begin_src emacs-lisp
-  (setq org-ditaa-jar-path "/usr/share/emacs/25.3/lisp/contrib/scripts/ditaa0_9.jar")
+  (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
   (org-babel-do-load-languages
    'org-babel-load-languages (quote ((emacs-lisp . t)
                                      (latex . t)
 				     (ditaa . t)
                                      (python . t)
-				     (ipython . t)
+                                     (ipython . t)
                                      (octave . t)
                                      (sh . t)
 				     (maxima . t)
@@ -452,26 +527,69 @@ Note: Running IPython in Emacs requires the "ob-ipython" package. See activation
 
 #+RESULTS:
 : org-edit-src-exit
-
-** Clock In/Out Easier Key Bindings
+*** Miscellaneous
+Workaround code to ensure _References_ header is not duplicated on export to pdf through latex.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-clock-into-drawer t)
-(bind-key "<f5>" 'org-clock-in)
-(bind-key "<f6>" 'org-clock-out)
+;; ignore_heading tag in Org mode, based on the manual and func docs
+(defun ignored-headlines-removal (backend)
+  "Remove all headlines with tag ignore_heading in the current buffer.
+     BACKEND is the export back-end being used, as a symbol."
+  (org-map-entries
+   (lambda () (delete-region (point) (progn (forward-line) (point))))
+   "ignore_heading"))
+
+(add-hook 'org-export-before-parsing-hook 'ignored-headlines-removal)
 #+END_SRC
 
 #+RESULTS:
-: org-clock-out
+| ignored-headlines-removal |
+** Time Clocking
+*** Clock In/Out Easier Key Bindings
 
-** Clock Report Customizations
+#+BEGIN_SRC emacs-lisp
+;; Separate drawers for clocking and logs
+(setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
+;; Save clock data and state changes and notes in the LOGBOOK drawer
+(setq org-clock-into-drawer t)
+(bind-key "S-<f5>" 'org-clock-report) 
+(bind-key "S-<f6>" 'org-clock-in-last) 
+(bind-key "<f5>" 'org-clock-in)
+(bind-key "<f6>" 'org-clock-out)
+(bind-key "<f7>" 'org-clock-goto) 
+;; Clock out when moving task to a done state
+(setq org-clock-out-when-done t)
+;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persist t)
+;; Do not prompt to resume an active clock
+(setq org-clock-persist-query-resume nil)
+;; Include current clocking task in clock reports
+(setq org-clock-report-include-clocking-task t)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+*** Clock Report Customizations
 This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
 
 #+BEGIN_SRC emacs-lisp
 (setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
 #+END_SRC
+** Previewing Equations and Symbols
+*** Preview Latex Fragments
+Fix to have white latex equation text on a dark background.
 
-** CDLATEX Mode for Math Characters
+#+BEGIN_SRC emacs-lisp
+(setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
+#+END_SRC
+
+#+RESULTS:
+| :foreground | White | :background | default | :scale | 1.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
+
+*** CDLATEX Mode for Math Characters
 Math character input mode can be turned on/off with the new key binding "C-c C-g".
 This allows for the "`" character to be used other than for inserting math characters.
 
@@ -483,16 +601,6 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 : t
-
-** Org Notes File
-Sets a global ``refile`` org-mode file for temporary TODO items.
-
-#+BEGIN_SRC emacs-lisp
-(setq org-default-notes-file "/winc/jk/myLife/refile.org")
-#+END_SRC
-
-#+RESULTS:
-: /winc/jk/myLife/refile.org
 
 ** Prepare Meeting Notes
 Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
@@ -516,23 +624,38 @@ Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/or
 
 #+RESULTS:
 : bh/prepare-meeting-notes
+* LaTeX
+** AUCTeX
+Configure AUCTeX to edit TeX files.
 
-** Miscellaneous
-
-#+BEGIN_SRC emacs-lisp
-;; ignore_heading tag in Org mode, based on the manual and func docs
-(defun ignored-headlines-removal (backend)
-  "Remove all headlines with tag ignore_heading in the current buffer.
-     BACKEND is the export back-end being used, as a symbol."
-  (org-map-entries
-   (lambda () (delete-region (point) (progn (forward-line) (point))))
-   "ignore_heading"))
-
-(add-hook 'org-export-before-parsing-hook 'ignored-headlines-removal)
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package auctex
+  :defer t
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-save-query nil)
+  (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
+  (setq TeX-view-program-selection '((output-dvi "Okular")
+                                     (output-pdf "Okular"))))
+#+end_src
 
 #+RESULTS:
-| ignored-headlines-removal |
+
+** RefTeX
+Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
+For when working on TeX files.
+
+#+begin_src emacs-lisp
+(use-package reftex
+  :defer t
+  :config
+  (setq reftex-plug-into-AUCTeX t)
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
+#+end_src
+
+#+RESULTS:
+: t
 * Python
 Elpy is used to customize python in emacs to a fullfledged IDE.
 
@@ -549,8 +672,8 @@ Elpy is used to customize python in emacs to a fullfledged IDE.
 : t
 
 #+BEGIN_SRC emacs-lisp
-; (use-package exec-path-from-shell
-;  :ensure t)
+(use-package exec-path-from-shell
+ :ensure t)
 #+END_SRC
 
 #+RESULTS:
@@ -561,43 +684,11 @@ Note: At the moment this will break the configuration.
 You must manually install ob-ipython using "M-x list-packages". Otherwise manually clone the git repository of "ob-ipython" and add to the Emacs load path.
 
 #+BEGIN_SRC emacs-lisp
-;(use-package ob-ipython)
+;(use-package ob-ipython
 ;   :config
 ;   (setq python-shell-completion-native-enable t)
 ;   (setq python-shell-prompt-detect-failure-warning nil))
 #+END_SRC
-
-#+RESULTS:
-* LaTeX
-** AUCTeX
-Configure AUCTeX to edit TeX files.
-
-#+begin_src emacs-lisp
-(use-package tex
-  :defer t
-  :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq TeX-save-query nil)
-  (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
-  (setq TeX-view-program-selection '((output-dvi "Okular")
-                                     (output-pdf "Okular"))))
-#+end_src
-
-#+RESULTS:
-: t
-
-** RefTeX
-Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
-For when working on TeX files.
-
-#+begin_src emacs-lisp
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-plug-into-AUCTeX t)
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
-#+end_src
 
 #+RESULTS:
 : t

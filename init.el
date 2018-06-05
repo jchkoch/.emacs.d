@@ -10,6 +10,11 @@
              '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
+;; Bootstrap `diminish`
+(unless (package-installed-p 'diminish)
+  (package-refresh-contents)
+  (package-install 'diminish))
+
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)

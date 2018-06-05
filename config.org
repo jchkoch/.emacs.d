@@ -272,7 +272,8 @@ Taken from the following [[http://pragmaticemacs.com/page/4/][blog post]].
 #+END_SRC
 
 #+RESULTS:
-* Python
+* TODO Python
+** Elpy
 Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
@@ -288,15 +289,16 @@ Elpy is used to customize python in emacs to a fullfledged IDE.
 #+RESULTS:
 : t
 
+** Pyenv
 Enable pyenv-mode to manage python environments.
 
 #+BEGIN_SRC emacs-lisp
-(defun pyenv-init()
-  "Initialize pyenv's current version to the global one."
-  (let ((global-pyenv (replace-regexp-in-string "\n" "" (shell-command-to-string "pyenv global"))))
-    (message (concat "Setting pyenv version to " global-pyenv))
-    (pyenv-mode-set global-pyenv)
-    (setq pyenv-current-version global-pyenv)))
+;; (defun pyenv-init()
+;;   "Initialize pyenv's current version to the global one."
+;;   (let ((global-pyenv (replace-regexp-in-string "\n" "" (shell-command-to-string "pyenv global"))))
+;;     (message (concat "Setting pyenv version to " global-pyenv))
+;;     (pyenv-mode-set global-pyenv)
+;;     (setq pyenv-current-version global-pyenv)))
 
 (use-package pyenv-mode
   :ensure t
@@ -305,13 +307,13 @@ Enable pyenv-mode to manage python environments.
   (setenv "WORKON_HOME" "~/.pyenv/versions/")
   (defvar pyenv-current-version nil nil)
   :config
-  (pyenv-mode)
-  (add-hook 'after-init-hook 'pyenv-init))
+  (pyenv-mode))
 #+END_SRC
 
 #+RESULTS:
 : t
 
+** ob-ipython (with scimax improvments)
 ob-ipython is used for interactive python source blocks in Org-Mode.
 Manual installation of ob-ipython from Github is required plus dependencies (i.e. dash).
 
@@ -323,6 +325,9 @@ Manual installation of ob-ipython from Github is required plus dependencies (i.e
 ;; load ob-ipython
 (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ob-ipython")
 (require 'ob-ipython)
+
+;; load scimax ob-ipython improvements
+(add-to-list 'load-path "~/Documents/scimax")
 (require 'scimax-org-babel-ipython-upstream)
 #+END_SRC
 

@@ -42,3 +42,4 @@ site-lisp/
 /tutorial/*
 /org-gcal/  
 /lisp/  
+/org-clock-save.el

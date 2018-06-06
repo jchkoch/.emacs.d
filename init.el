@@ -3,11 +3,17 @@
 
 ;; Install Packages
 ;; ------------------------------------------------
-
 (require 'package)
 
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
+(setq package-archives
+      '(("GNU ELPA"     . "http://elpa.gnu.org/packages/")
+        ("MELPA Stable" . "https://stable.melpa.org/packages/")
+        ("MELPA"        . "https://melpa.org/packages/"))
+      package-archive-priorities
+      '(("MELPA Stable" . 10)
+        ("MELPA"        . 5)	
+        ("GNU ELPA"     . 0)))
+
 (package-initialize)
 
 ;; Bootstrap `diminish`
@@ -22,7 +28,6 @@
 
 ;; Basic Customizations
 ;; ------------------------------------------------
-
 (when window-system
   (menu-bar-mode -1)
   (tool-bar-mode -1)
@@ -34,16 +39,13 @@
 
 ;; Start the server
 ;; ------------------------------------------------
-
 (server-start)
 
 ;; Load the config
 ;; ------------------------------------------------
-
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 
 ;; Set customized variables to seperate file
 ;; ------------------------------------------------
-
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)

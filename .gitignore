@@ -26,3 +26,5 @@ tramp
 *.eld
 org-mode.org
 /dev-pkgs/*.org
+/magithub/*  
+/themes/*    

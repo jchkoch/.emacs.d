@@ -16,7 +16,7 @@
 
 (package-initialize)
 
-;; Bootstrap `diminish`
+;; Bootstrap `diminish` and `dash`
 (unless (package-installed-p 'diminish)
   (package-refresh-contents)
   (package-install 'diminish))

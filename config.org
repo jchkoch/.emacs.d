@@ -304,22 +304,25 @@ ob-ipython is used for interactive python source blocks in Org-Mode.
 Manual installation of ob-ipython from Github is required plus dependencies (i.e. dash).
 
 #+BEGIN_SRC emacs-lisp
-;; Enable dependencies of ob-ipython
-(add-to-list 'load-path "~/.emacs.d/dev-pkgs/dash.el")
-(require 'dash)
+  ;; Enable dependencies of ob-ipython
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/dash.el")
+  (require 'dash)
 
-;; load ob-ipython
-(add-to-list 'load-path "~/.emacs.d/dev-pkgs/ob-ipython")
-(require 'ob-ipython)
+  ;; load ob-ipython
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ob-ipython")
+  (require 'ob-ipython)
+  (setq ob-ipython-suppress-execution-count t)
 
-;; load scimax ob-ipython improvements
-(add-to-list 'load-path "~/Documents/scimax")
-(require 'scimax-org-babel-ipython-upstream)
-(global-set-key (kbd "<f7>") 'scimax-obi/body)
+  ;; load scimax ob-ipython improvements
+  (add-to-list 'load-path "~/Documents/scimax")
+  (require 'scimax-org-babel-ipython-upstream)
+  (global-set-key (kbd "<f7>") 'scimax-obi/body)
 #+END_SRC
 
 #+RESULTS:
-: scimax-obi/body
+: t
+
+*** ob-ipython develop new features
 * Org-Mode
 ** FIXED General Setup
 *** *TODO* Keywords
@@ -410,11 +413,12 @@ TODO state tag triggers.
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files (quote ("/winc/jk/myLife")))
+  (setq org-agenda-files (quote ("/winc/jk/myLife"
+                                 "/winc/jk/myLife/gcal-sync")))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife |
+| /winc/jk/myLife | /winc/jk/myLife/gcal-sync |
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-q" 'toggle-truncate-lines)
@@ -438,7 +442,7 @@ Enable org-habits from within org-modules to start tracking some habits.
 ; position the habit graph on the agenda to the right of the default
 (setq org-habit-graph-column 45)
 
-(setq org-habit-show-habits-only-for-today nil)
+(setq org-habit-show-habits-only-for-today t)
 (bind-key "<f7>" 'org-habit-toggle-habits)
 #+END_SRC
 
@@ -465,6 +469,11 @@ Enable org-habits from within org-modules to start tracking some habits.
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
 
 #+BEGIN_SRC emacs-lisp
+  (setq org-agenda-start-day "1d")
+  (setq org-agenda-start-on-weekday nil)
+  (setq org-agenda-span 1)
+  (setq org-agenda-use-time-grid t)
+
   (setq org-agenda-custom-commands
         (quote (("N" "Notes" tags "NOTE"
                  ((org-agenda-overriding-header "Notes")
@@ -621,7 +630,7 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
     "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
     This is normally used by skipping functions where this variable is already local to the agenda."
     (if (marker-buffer org-agenda-restrict-begin)
-        (setq org-tags-match-list-sublevels 'indented)
+        (setq org- tags-match-list-sublevels 'indented)
       (setq org-tags-match-list-sublevels nil))
     nil)
 
@@ -1157,8 +1166,6 @@ OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. 
 The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX. Some tweaks may be necessary for this to work on Windows (a TeX distribution is necessary).
 
 #+begin_src emacs-lisp
-(setq org-latex-listings 'minted
-      org-latex-packages-alist '(("" "minted")))
 ;; Set the pdf export process from org-mode
 ;; done to ensure citations and bibiographies are exported to LaTeX properly
 (setq org-latex-pdf-process
@@ -1170,6 +1177,17 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 
 #+RESULTS:
 | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f |
+
+*** FIXED LaTeX Export Settings
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted")))
+  ;; (add-to-list 'org-latex-minted-langs '(ipython "python"))
+#+END_SRC
+
+#+RESULTS:
+|   | minted |
 
 *** FIXED LaTeX Beamer
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.

@@ -469,9 +469,7 @@ Enable org-habits from within org-modules to start tracking some habits.
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-start-day "1d")
-  (setq org-agenda-start-on-weekday nil)
-  (setq org-agenda-span 1)
+  (setq org-agenda-span 'day)
   (setq org-agenda-use-time-grid t)
 
   (setq org-agenda-custom-commands
@@ -846,7 +844,6 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 
 #+RESULTS:
 : org-clock-convenience-fill-gap-both
-
 ** FIXED Org-Capture
 Sets a global ``refile`` org-mode file for temporary TODO items.
 
@@ -1076,23 +1073,17 @@ And remove empty LOGBOOK drawers.
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/punch-in (arg)
-    "Start continuous clocking and set the default task to the
-  selected task.  If no task is selected set the Organization task
-  as the default task."
+    "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
     (interactive "p")
     (setq bh/keep-clock-running t)
     (if (equal major-mode 'org-agenda-mode)
-        ;;
         ;; We're in the agenda
-        ;;
         (let* ((marker (org-get-at-bol 'org-hd-marker))
                (tags (org-with-point-at marker (org-get-tags-at))))
           (if (and (eq arg 4) tags)
               (org-agenda-clock-in '(16))
             (bh/clock-in-organization-task-as-default)))
-      ;;
       ;; We are not in the agenda
-      ;;
       (save-restriction
         (widen)
         ; Find the tags on the current task
@@ -1150,7 +1141,6 @@ This changes the default behaviour of clock reports greater than 24 hours to rep
 
 #+RESULTS:
 | :hours | %d | :require-hours | t | :minutes | :%02d | :require-minutes | t |
-
 ** FIXED Exporting Customization
 *** FIXED Org Export Backend
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
@@ -1217,9 +1207,9 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
   (require 'org-ref)
   (require 'doi-utils)
   (require 'org-ref-pdf)
-  (setq org-ref-bibliography-notes "/winc/jk/Work/NSERC_USRA/references/notes.org"
-        org-ref-default-bibliography '("/winc/jk/Work/NSERC_USRA/references/nserc_usra.bib")
-        org-ref-pdf-directory "/winc/jk/Work/NSERC_USRA/references/pdfs/")
+  (setq org-ref-bibliography-notes "/winc/jk/work/NSERC_USRA/references/notes.org"
+        org-ref-default-bibliography '("/winc/jk/work/NSERC_USRA/references/nserc_usra.bib")
+        org-ref-pdf-directory "/winc/jk/work/NSERC_USRA/references/pdfs/")
   (setq bibtex-completion-pdf-open-function
     (lambda (fpath)
       (start-process "open" "*open*" "open" fpath)))
@@ -1268,7 +1258,6 @@ The *ignore_heading* tag based on the manual and function docs in order to imple
 
 #+RESULTS:
 | ignored-headlines-removal |
-
 ** FIXED Org Babel Languages
 Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
 Note: Running IPython in Emacs requires the "ob-ipython" package which currently does not work.
@@ -1320,6 +1309,21 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 : t
+** FIXME Org-Publishing
+
+#+BEGIN_SRC emacs-lisp
+    (setq org-publish-project-alist
+          `(("org-main"
+             :base-directory "/winc/jk/jchkoch.github.io/org"
+             :recursive t
+             :publishing-directory "/winc/jk/jchkoch.github.io"
+             :publishing-function org-html-publish-to-html
+             :html-head-extra "<link rel=\"stylesheet\" href=\"./css/style.css\">")
+            ))
+#+END_SRC
+
+#+RESULTS:
+| org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
 
 ** FIXED Prepare Meeting Notes
 Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.

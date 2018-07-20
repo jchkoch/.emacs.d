@@ -413,12 +413,19 @@ TODO state tag triggers.
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("/winc/jk/myLife"
-                                 "/winc/jk/myLife/gcal-sync")))
+  (setq org-agenda-files (quote ("/winc/jk/myLife/"
+		                       "/winc/jk/myLife/gcal-sync/")))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife | /winc/jk/myLife/gcal-sync |
+| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ |
+
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
+#+END_SRC
+
+#+RESULTS:
+: t
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-q" 'toggle-truncate-lines)
@@ -1171,13 +1178,12 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 *** FIXED LaTeX Export Settings
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-listings 'minted
-        org-latex-packages-alist '(("" "minted")))
+  ;; (setq org-latex-listings 'minted
+  ;;      org-latex-packages-alist '(("" "minted")))
   ;; (add-to-list 'org-latex-minted-langs '(ipython "python"))
 #+END_SRC
 
 #+RESULTS:
-|   | minted |
 
 *** FIXED LaTeX Beamer
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
@@ -1482,6 +1488,7 @@ For when working on TeX files.
 
 #+RESULTS:
 : t
+
 * Tramp
 
 #+BEGIN_SRC emacs-lisp

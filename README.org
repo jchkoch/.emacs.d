@@ -6,8 +6,8 @@
 This emacs configuration uses the package "use-package" to install and configure additional packages. General packages used are auto-complete and ivy.
 The major modes heavily customized is org-mode.
 Org-Mode uses org-ref as it's citation/bibliography manager.
-Python modes are also included in the configuration but mostly commented out since there exists bugs in the way I would like to run python in Emacs.
-AUCTeX is used as the backend to edit LaTeX files.
+Python mode uses elpy and ob-ipython to customize python functionality in python files and in org babel source blocks in org-mode.
+Ob-ipython uses additional functions from John Kitchin's scimax as a workaround to fix existing bugs in ob-ipython.
 * Installation
 Clone the git repository on GitHub (https://github.com/jchkoch/.emacs.d.git).
 Modify all user specified file paths in the file "config.org".

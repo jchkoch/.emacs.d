@@ -19,7 +19,6 @@ Introduce the diminish package to diminish 'visual-line-mode' minor mode display
 
 #+begin_src emacs-lisp
 (global-visual-line-mode 1) ; 1 for on, 0 for off.
-(diminish 'visual-line-mode)
 (global-linum-mode 1) ; 1 for on, 0 for off.
 #+END_SRC
 
@@ -64,24 +63,25 @@ Change the default directory that emacs opens in to fit your needs.
 Set the Buffer List buffer as to default with "ibuffer".
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(setq ibuffer-saved-filter-groups
-    (quote (("default"
-             ("dired" (mode . dired-mode))
-	     ("org" (name . "^.*org$"))
-	     ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
-	     ("programming" (or
-	                     (mode . python-mode)
-			     (mode . octave-mode)))
-             ("emacs" (or
-	               (name . "^\\*scratch\\*$")
-		       (name . "^\\*Messages\\*$")))
-             ))))
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+  (setq ibuffer-saved-filter-groups
+        (quote (("default"
+                 ("dired" (mode . dired-mode))
+                 ("org" (name . "^.*org$"))
+                 ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+                 ("programming" (or
+                                 (mode . python-mode)
+                                 (mode . octave-mode)))
+                 ("emacs" (or
+                           (name . "^\\*scratch\\*$")
+                           (name . "^\\*Messages\\*$")))
+                 ("magit" (mode . Magit)) 
+                 ))))
 
-(add-hook 'ibuffer-mode-hook
-        (lambda ()
-	  (ibuffer-auto-mode 1)
-	  (ibuffer-switch-to-saved-filter-groups "default")))
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-auto-mode 1)
+              (ibuffer-switch-to-saved-filter-groups "default")))
 #+END_SRC
 
 #+RESULTS:
@@ -408,17 +408,19 @@ TODO state tag triggers.
 
 #+RESULTS:
 : -77
+
 ** FIXED Agenda Setup
 *** FIXED Set Agenda Files
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files (quote ("/winc/jk/myLife/"
-		                       "/winc/jk/myLife/gcal-sync/")))
+		                       "/winc/jk/myLife/gcal-sync/ualberta-gcal.org"
+		                       "/winc/jk/myLife/gcal-sync/private-gcal.org")))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ |
+| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org |
 
 #+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
@@ -464,9 +466,9 @@ Enable org-habits from within org-modules to start tracking some habits.
   :config
   (setq org-gcal-client-id "277923490904-avim4dqfj9rrnbelljoughrk06elurdl.apps.googleusercontent.com"
         org-gcal-client-secret "S5MNloOHpvejXGOqBnzHuQKq"
-        org-gcal-file-alist '(("jckoch@ualberta.ca" . "/winc/jk/myLife/ualberta.org")
-                              ("ualberta.ca_bf9hqpg6k7rgk3lpf7lh9qs6c8@group.calendar.google.com" . "/winc/jk/myLife/private.org")))
-  :bind ("S-g" . org-gcal-sync))
+        org-gcal-file-alist '(("jckoch@ualberta.ca" . "/winc/jk/myLife/gcal-sync/ualberta-gcal.org")
+                              ("ualberta.ca_bf9hqpg6k7rgk3lpf7lh9qs6c8@group.calendar.google.com" . "/winc/jk/myLife/gcal-sync/private-gcal.org")))
+  :bind ("C-S-g" . org-gcal-sync))
 #+END_SRC
 
 #+RESULTS:
@@ -1498,3 +1500,19 @@ For when working on TeX files.
 
 #+RESULTS:
 : ssh
+* Pamparam
+Spaced repetition memorization.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pamparam
+    :config
+    (setq pamparam-alist
+          '(("/winc/jk/chalmers/learnSwedish/swedish.org"
+             . "/winc/jk/chalmers/learnSwedish/git/swedish.pam")))
+    (setq pamparam-path "/winc/jk/chalmers/learnSwedish/git/swedish.pam")
+    :bind (("C-c m" . pamparam-drill)))
+#+END_SRC
+
+#+RESULTS:
+: pamparam-drill
+

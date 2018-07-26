@@ -1,6 +1,10 @@
 ;; init.el --- Emacs Configuration
 ;; ------------------------------------------------
 
+;; Ensure at least Emacs Version 25.0 or greater
+(when (version< emacs-version "25.0")
+  (warn "You probably need at least Emacs 25. You should upgrade. You may need to install leuven-theme manually."))
+
 ;; Install Packages
 ;; ------------------------------------------------
 (require 'package)

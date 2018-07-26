@@ -4,3 +4,6 @@
 [submodule "dash"]
 	path = dev-pkgs/dash.el
 	url = https://github.com/magnars/dash.el.git
+[submodule "dev-pkgs/pamparam"]
+	path = dev-pkgs/pamparam
+	url = https://github.com/abo-abo/pamparam.git

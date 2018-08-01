@@ -7,9 +7,12 @@
 Set a user name and email address for Emacs to use if needed.
 
 #+begin_src emacs-lisp
-(setq user-full-name "James Koch"
-      user-mail-address "jckoch@ualberta.ca")
+  (setq user-full-name "James Koch"
+        user-mail-address "jckoch@ualberta.ca")
 #+end_src
+
+#+RESULTS:
+: jckoch@ualberta.ca
 
 * Sane Defaults
 ** General
@@ -153,6 +156,15 @@ A package to try other Emacs Packages without having to install the package.
 #+END_SRC
 
 #+RESULTS:
+
+** Set Input Method
+
+#+BEGIN_SRC emacs-lisp
+  (set-input-method "swedish-postfix")
+#+END_SRC
+
+#+RESULTS:
+: swedish-postfix
 
 * Emacs Appearance
 ** Load Themes

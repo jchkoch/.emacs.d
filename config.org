@@ -157,39 +157,16 @@ A package to try other Emacs Packages without having to install the package.
 
 #+RESULTS:
 
-** Set Input Method
-
-#+BEGIN_SRC emacs-lisp
-  (set-input-method "swedish-postfix")
-#+END_SRC
-
-#+RESULTS:
-: swedish-postfix
-
 * Emacs Appearance
 ** Load Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.
 
 #+begin_src emacs-lisp
-;; (add-to-list 'load-path "~/.emacs.d/themes")
-;; (require 'tango-2-theme)
-;; (load-theme 'tango-2)
-
 (load-theme 'tango-dark)
 
 (set-default 'cursor-type 'hbar)
-;; (set-cursor-color "red")
 (blink-cursor-mode -1)
-
-;; (custom-set-faces
-;;  '(org-block-begin-line ((t (:underline "#A9A9A9" :foreground "#A9A9A9" :background "#2d3e56"))))
-;;  '(org-block ((t (:background "#1a2432"))))
-;;  '(org-block-end-line ((t (:underline "#A9A9A9" :foreground "#A9A9A9" :background "#2d3e56"))))
-;;  '(org-block-results-line ((t (:underline "#A9A9A9" :foreground "#A9A9A9" :background "#2d3e56"))))
-;;  )
-
-;; (load-theme 'tangotango)
 
 ;; Alternative Black and White Basic Theme
 ;;(set-background-color "black")
@@ -230,6 +207,7 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 
  #+RESULTS:
  : disable-active-themes
+
 ** Window Splitting Commands
 These custom emacs-lisp functions redefine vertically and horizontal window splitting emacs functions in order to switch to the other window when the emacs window is split into two windows. 
 
@@ -263,6 +241,7 @@ For easier navigation with many windows open.
 
 #+RESULTS:
 : ace-window
+
 * Python
 ** Elpy Mode
 Elpy is used to customize python in emacs to a fullfledged IDE.
@@ -334,7 +313,6 @@ Manual installation of ob-ipython from Github is required plus dependencies (i.e
 #+RESULTS:
 : t
 
-*** ob-ipython develop new features
 * Org-Mode
 ** FIXED General Setup
 *** *TODO* Keywords
@@ -391,6 +369,7 @@ TODO state tag triggers.
 | TODO      | (WAITING)       | (CANCELLED) | (HOLD) |
 | NEXT      | (WAITING)       | (CANCELLED) | (HOLD) |
 | DONE      | (WAITING)       | (CANCELLED) | (HOLD) |
+
 *** Set Often Used Keys
 
 #+begin_src emacs-lisp
@@ -406,7 +385,7 @@ TODO state tag triggers.
 *** Org-Indent-Mode
 
 #+BEGIN_SRC emacs-lisp
-(setq org-startup-indented t)
+  (setq org-startup-indented t)
 #+END_SRC
 
 #+RESULTS:
@@ -426,20 +405,19 @@ TODO state tag triggers.
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("/winc/jk/myLife/"
-		                       "/winc/jk/myLife/gcal-sync/ualberta-gcal.org"
-		                       "/winc/jk/myLife/gcal-sync/private-gcal.org")))
-#+END_SRC
-
-#+RESULTS:
-| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org |
-
-#+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
 #+END_SRC
 
 #+RESULTS:
 : t
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files (quote ("/winc/jk/myLife/"
+		                       "/winc/jk/myLife/gcal-sync/")))
+#+END_SRC
+
+#+RESULTS:
+| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ |
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-q" 'toggle-truncate-lines)
@@ -1522,9 +1500,18 @@ Spaced repetition memorization.
           '(("/winc/jk/chalmers/learnSwedish/swedish.org"
              . "/winc/jk/chalmers/learnSwedish/git/swedish.pam")))
     (setq pamparam-path "/winc/jk/chalmers/learnSwedish/git/swedish.pam")
-    :bind (("C-c m" . pamparam-drill)))
+    :bind (("C-c m" . hydra-pamparam/body)))
 #+END_SRC
 
 #+RESULTS:
-: pamparam-drill
+: hydra-pamparam/body
+* pdf-tools
 
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :disabled t
+    :ensure t
+    :init (pdf-tools-install))
+#+END_SRC
+
+#+RESULTS:

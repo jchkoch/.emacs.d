@@ -30,6 +30,9 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+;; `use-package` configuration
+(setq use-package-always-ensure t)
+
 ;; Basic Customizations
 ;; ------------------------------------------------
 (when window-system

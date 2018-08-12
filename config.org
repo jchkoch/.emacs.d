@@ -90,16 +90,6 @@ Set the Buffer List buffer as to default with "ibuffer".
 #+RESULTS:
 | lambda | nil | (ibuffer-auto-mode 1) | (ibuffer-switch-to-saved-filter-groups default) |
 
-** Use-Package Configuration
-Basic 'use-package' configuratioin.
-
-#+BEGIN_SRC emacs-lisp
-(setq use-package-always-ensure t)
-#+END_SRC
-
-#+RESULTS:
-: t
-
 ** Ivy-Mode
 
 #+BEGIN_SRC emacs-lisp
@@ -292,7 +282,8 @@ Enable pyenv-mode to manage python environments.
 
 ** ob-ipython (with scimax improvments)
 ob-ipython is used for interactive python source blocks in Org-Mode.
-Manual installation of ob-ipython from Github is required plus dependencies (i.e. dash).
+Manual installation of ob-ipython and scimax from Github (using "git clone") is required plus dependencies (i.e. dash).
+Please refer to the instructions in the repositories [[https://github.com/gregsexton/ob-ipython][ob-ipython]] and [[https://github.com/jkitchin/scimax][scimax]] on how to manually install these two packages.
 
 #+BEGIN_SRC emacs-lisp
   ;; Enable dependencies of ob-ipython
@@ -307,14 +298,14 @@ Manual installation of ob-ipython from Github is required plus dependencies (i.e
   ;; load scimax ob-ipython improvements
   (add-to-list 'load-path "~/Documents/scimax")
   (require 'scimax-org-babel-ipython-upstream)
-  (global-set-key (kbd "<f7>") 'scimax-obi/body)
+  (global-set-key (kbd "C-7") 'scimax-obi/body)
 #+END_SRC
 
 #+RESULTS:
-: t
+: scimax-obi/body
 
 * Org-Mode
-** FIXED General Setup
+** General Setup
 *** *TODO* Keywords
 This defines a basic workflow of TODO keywords.
 
@@ -400,9 +391,8 @@ TODO state tag triggers.
 #+RESULTS:
 : -77
 
-** FIXED Agenda Setup
-*** FIXED Set Agenda Files
-Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
+** Agenda Setup
+*** FIXME Workaround to try and get org-agenda-files to follow symlink to actual file
 
 #+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
@@ -411,6 +401,9 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 #+RESULTS:
 : t
 
+*** FIXME Set Agenda Files
+Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
+
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files (quote ("/winc/jk/myLife/"
 		                       "/winc/jk/myLife/gcal-sync/")))
@@ -418,6 +411,8 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 
 #+RESULTS:
 | /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ |
+
+*** FIXME Workaround to truncate lines when org-agenda is refreshed
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-q" 'toggle-truncate-lines)
@@ -430,7 +425,7 @@ Set directory where all my files for the Org-Mode Agenda exist. Change or commen
 #+RESULTS:
 : -150
 
-*** FIXED Enable Org-Habits
+*** Enable Org-Habits
 Enable org-habits from within org-modules to start tracking some habits.
 
 #+BEGIN_SRC emacs-lisp
@@ -448,7 +443,7 @@ Enable org-habits from within org-modules to start tracking some habits.
 #+RESULTS:
 : org-habit-toggle-habits
 
-*** FIXED Org-gcal Setup
+*** Org-gcal Setup
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-gcal
@@ -464,7 +459,7 @@ Enable org-habits from within org-modules to start tracking some habits.
 #+RESULTS:
 : org-gcal-sync
 
-*** FIXED Custom Agenda View
+*** Custom Agenda View
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
 
 #+BEGIN_SRC emacs-lisp
@@ -829,7 +824,7 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+RESULTS:
 : bh/skip-non-subprojects
 
-*** FIXED Org Clock Convienence Functionality
+*** Org Clock Convienence Functionality
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-clock-convenience
@@ -843,7 +838,8 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 
 #+RESULTS:
 : org-clock-convenience-fill-gap-both
-** FIXED Org-Capture
+
+** Org-Capture
 Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+BEGIN_SRC emacs-lisp
@@ -894,7 +890,7 @@ I categorize it into a few new groups that I use as templates:
 | m | Meeting      | entry | (file /winc/jk/myLife/refile.org)         | * MEETING with %? :MEETING:\n%U                                                                                                              | :clock-in         | t | :clock-resume | t |
 | p | Phone call   | entry | (file /winc/jk/myLife/refile.org)         | * PHONE %? :PHONE:\n%U                                                                                                                       | :clock-in         | t | :clock-resume | t |
 | h | Habit        | entry | (file /winc/jk/myLife/refile.org)         | * NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string "%<<%Y-%m-%d %a .+1d/3d>>")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n |                   |   |               |   |
-** FIXED Org-Refile
+** Org-Refile
 Set up org-refile to easily refile notes elsewhere. This elisp code is based on the article from the following blog: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html.
 
 #+BEGIN_SRC emacs-lisp
@@ -942,8 +938,8 @@ See https://mollermara.com/blog/Fast-refiling-in-org-mode-with-hydras/.
 #+RESULTS:
 : bh/org-refile-hydra/body
 
-** FIXED Time Clocking
-*** FIXED Clock Settings
+** Time Clocking
+*** Clock Settings
 General settings to make time clocking easier and simpler.
 
 #+BEGIN_SRC emacs-lisp
@@ -994,7 +990,7 @@ And remove empty LOGBOOK drawers.
 #+RESULTS:
 | org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out |
 
-*** FIXED Clock Setting Function Definitions
+*** Clock Setting Function Definitions
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/clock-in-to-next (kw)
@@ -1059,7 +1055,7 @@ And remove empty LOGBOOK drawers.
 #+RESULTS:
 | org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out | bh/clock-out-maybe |
 
-*** FIXED Punch In/Out
+*** Punch In/Out
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f9> I") 'bh/punch-in)
@@ -1101,7 +1097,7 @@ And remove empty LOGBOOK drawers.
 #+RESULTS:
 : bh/punch-out
 
-*** FIXED Clock In/Out Easier Key Bindings
+*** Clock In/Out Easier Key Bindings
 Define clock in/out key bindings
 
 #+BEGIN_SRC emacs-lisp
@@ -1112,23 +1108,7 @@ Define clock in/out key bindings
 #+RESULTS:
 : t
 
-*** FIXED Clock In/Out in Org-Agendas
-Very convenient package that let's you update clock times while in a org-mode agenda. 
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-clock-convenience
-  :ensure t
-  :bind (:map org-agenda-mode-map
-   	   ("<S-up>" . org-clock-convenience-timestamp-up)
-   	   ("<S-down>" . org-clock-convenience-timestamp-down)
-   	   ("o" . org-clock-convenience-fill-gap)
-   	   ("e" . org-clock-convenience-fill-gap-both)))
-#+END_SRC
-
-#+RESULTS:
-: org-clock-convenience-fill-gap-both
-
-*** FIXED Clock Report Customization
+*** Clock Report Customization
 This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
 
 #+BEGIN_SRC emacs-lisp
@@ -1140,8 +1120,8 @@ This changes the default behaviour of clock reports greater than 24 hours to rep
 
 #+RESULTS:
 | :hours | %d | :require-hours | t | :minutes | :%02d | :require-minutes | t |
-** FIXED Exporting Customization
-*** FIXED Org Export Backend
+** Exporting Customization
+*** Org Export Backend
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
 
 #+BEGIN_SRC emacs-lisp
@@ -1151,7 +1131,7 @@ OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. 
 #+RESULTS:
 | ascii | beamer | html | icalendar | latex | odt |
 
-*** FIXED LaTeX to PDF Process
+*** LaTeX to PDF Process
 The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX. Some tweaks may be necessary for this to work on Windows (a TeX distribution is necessary).
 
 #+begin_src emacs-lisp
@@ -1167,7 +1147,7 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 #+RESULTS:
 | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f |
 
-*** FIXED LaTeX Export Settings
+*** LaTeX Export Settings
 
 #+BEGIN_SRC emacs-lisp
   ;; (setq org-latex-listings 'minted
@@ -1177,7 +1157,7 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 
 #+RESULTS:
 
-*** FIXED LaTeX Beamer
+*** LaTeX Beamer
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 
 #+begin_src emacs-lisp
@@ -1196,7 +1176,7 @@ Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 #+end_src
 
 #+RESULTS:
-** FIXED Org-Ref Citation Manager
+** Org-Ref Citation Manager
 Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref to a default (general) BibTeX file as the default bibliography as well as a directory containing the article as a PDF file. The Org-Ref documentation also suggests setting a notes file (currently I am not using this feature).
 
 #+BEGIN_SRC emacs-lisp
@@ -1256,7 +1236,8 @@ The *ignore_heading* tag based on the manual and function docs in order to imple
 
 #+RESULTS:
 | ignored-headlines-removal |
-** FIXED Org Babel Languages
+
+** Org Babel Languages
 Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
 Note: Running IPython in Emacs requires the "ob-ipython" package which currently does not work.
 
@@ -1283,8 +1264,8 @@ Note: Running IPython in Emacs requires the "ob-ipython" package which currently
 #+RESULTS:
 : org-edit-src-exit
 
-** FIXED Previewing Equations and Symbols
-*** FIXED Preview Latex Fragments
+** Previewing Equations and Symbols
+*** Preview Latex Fragments
 Fix to have white latex equation text on a dark background.
 
 #+BEGIN_SRC emacs-lisp
@@ -1295,7 +1276,7 @@ Fix to have white latex equation text on a dark background.
 #+RESULTS:
 | :foreground | White | :background | default | :scale | 2.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
 
-*** FIXED CDLATEX Mode for Math Characters
+*** CDLATEX Mode for Math Characters
 Math character input mode can be turned on/off with the new key binding "C-c C-g".
 This allows for the "`" character to be used other than for inserting math characters.
 
@@ -1307,6 +1288,7 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 : t
+
 ** FIXME Org-Publishing
 
 #+BEGIN_SRC emacs-lisp
@@ -1323,7 +1305,7 @@ This allows for the "`" character to be used other than for inserting math chara
 #+RESULTS:
 | org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
 
-** FIXED Prepare Meeting Notes
+** Prepare Meeting Notes
 Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
 
 #+BEGIN_SRC emacs-lisp
@@ -1346,7 +1328,7 @@ Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/or
 #+RESULTS:
 : bh/prepare-meeting-notes
 
-** FIXED Native Org-Mode Presentations
+** Native Org-Mode Presentations
 To be able to present in org mode natively.
 
 #+BEGIN_SRC emacs-lisp
@@ -1358,7 +1340,7 @@ To be able to present in org mode natively.
 #+RESULTS:
 : org-tree-slide-mode
 
-** FIXED Org Beamer Only Overlay Environment
+** Org Beamer Only Overlay Environment
 
 Adds the "only" beamer environment in org mode (works only in Linux).
 
@@ -1384,6 +1366,7 @@ Plain-text double-entry accounting program.
 
 #+RESULTS:
 : t
+
 * Flyspell
 Enable Flyspell Mode. 
 If you keep your spell check personal dictionary in particular location, change this variable as desired. 
@@ -1413,31 +1396,6 @@ Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spel
 #+RESULTS:
 : flyspell-mode
 
-** Old Ispell
-
-#+begin_src emacs-lisp
-(use-package ispell
-  :defer t
-  :bind (("<f8>" . ispell-word)
-         ("M-<f8>" . flyspell-mode))
-  :config 
-  (setq-default ispell-program-name "aspell")
-  (setq ispell-personal-dictionary "~/.emacs.d/.ispell")
-  (dolist (hook '(text-mode-hook))
-     (add-hook hook (lambda () (flyspell-mode 1))))
-  (dolist (mode '(emacs-lisp-mode-hook
-                  python-mode-hook
-		  R-mode-hook))
-     (add-hook mode (lambda () (flyspell-prog-mode)))) 
-  (defun flyspell-check-next-highlighted-word ()
-    "Custom function to spell check next highlighted word"
-    (interactive)
-    (flyspell-goto-next-error)
-    (ispell-word)))
-#+end_src
-
-#+RESULTS:  
-: flyspell-mode
 * Magit
 Set up Git version control from within Emacs using the package Magit.
 
@@ -1448,6 +1406,7 @@ Set up Git version control from within Emacs using the package Magit.
 
 #+RESULTS:
 : magit-status
+
 * LaTeX
 ** AUCTeX
 Configure AUCTeX to edit TeX files.
@@ -1490,6 +1449,7 @@ For when working on TeX files.
 
 #+RESULTS:
 : ssh
+
 * Pamparam
 Spaced repetition memorization.
 
@@ -1505,7 +1465,9 @@ Spaced repetition memorization.
 
 #+RESULTS:
 : hydra-pamparam/body
-* pdf-tools
+
+* New Tools
+** FIXME pdf-tools
 
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools

@@ -304,6 +304,16 @@ Please refer to the instructions in the repositories [[https://github.com/gregse
 #+RESULTS:
 : scimax-obi/body
 
+** ox-ipynb
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ox-ipynb")
+  (require 'ox-ipynb)
+#+END_SRC
+
+#+RESULTS:
+: ox-ipynb
+
 * Org-Mode
 ** General Setup
 *** *TODO* Keywords
@@ -313,14 +323,14 @@ This defines a basic workflow of TODO keywords.
 (setq org-use-fast-todo-selection t)
 
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "IN-PROGRESS(i)")
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
-              ("IN-PROGRESS" :foreground "yellow" :weight bold)
+              ("REVIEW" :foreground "yellow" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
@@ -329,15 +339,15 @@ This defines a basic workflow of TODO keywords.
 #+END_SRC
 
 #+RESULTS:
-| TODO        | :foreground | red          | :weight | bold |
-| NEXT        | :foreground | blue         | :weight | bold |
-| DONE        | :foreground | forest green | :weight | bold |
-| IN-PROGRESS | :foreground | yellow       | :weight | bold |
-| WAITING     | :foreground | orange       | :weight | bold |
-| HOLD        | :foreground | magenta      | :weight | bold |
-| CANCELLED   | :foreground | forest green | :weight | bold |
-| MEETING     | :foreground | forest green | :weight | bold |
-| PHONE       | :foreground | forest green | :weight | bold |
+| TODO      | :foreground | red          | :weight | bold |
+| NEXT      | :foreground | blue         | :weight | bold |
+| DONE      | :foreground | forest green | :weight | bold |
+| REVIEW    | :foreground | yellow       | :weight | bold |
+| WAITING   | :foreground | orange       | :weight | bold |
+| HOLD      | :foreground | magenta      | :weight | bold |
+| CANCELLED | :foreground | forest green | :weight | bold |
+| MEETING   | :foreground | forest green | :weight | bold |
+| PHONE     | :foreground | forest green | :weight | bold |
 
 TODO state tag triggers.
 
@@ -392,7 +402,7 @@ TODO state tag triggers.
 : -77
 
 ** Agenda Setup
-*** FIXME Workaround to try and get org-agenda-files to follow symlink to actual file
+*** Follow symbolic file links
 
 #+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
@@ -401,16 +411,19 @@ TODO state tag triggers.
 #+RESULTS:
 : t
 
-*** FIXME Set Agenda Files
+*** Set Agenda Files
 Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("/winc/jk/myLife/"
-		                       "/winc/jk/myLife/gcal-sync/")))
+  (setq org-agenda-files (quote ("/winc/jk/myLife"
+                               "/winc/jk/myLife/gcal-sync")))
+  ; (custom-set-variables
+  ;  '(org-directory "/winc/jk/myLife")
+  ;  '(org-agenda-files (list org-directory)))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife/ | /winc/jk/myLife/gcal-sync/ |
+| /winc/jk/myLife | /winc/jk/myLife/gcal-sync |
 
 *** FIXME Workaround to truncate lines when org-agenda is refreshed
 
@@ -445,15 +458,28 @@ Enable org-habits from within org-modules to start tracking some habits.
 
 *** Org-gcal Setup
 
+("jckoch@ualberta.ca" . "/winc/jk/myLife/gcal-sync/ualberta-gcal.org")
+                                ("ualberta.ca_bf9hqpg6k7rgk3lpf7lh9qs6c8@group.calendar.google.com" . "/winc/jk/myLife/gcal-sync/private-gcal.org")
+
+jckoch
+client ID: 277923490904-avim4dqfj9rrnbelljoughrk06elurdl.apps.googleusercontent.com
+client secret: S5MNloOHpvejXGOqBnzHuQKq
+
+
+jchkoch
+client ID: 277923490904-faho03sg3mrrjia5qk88p56kl1dp1kr1.apps.googleusercontent.com
+client secret: 6E8qg9hbES13ZZN0Qa0TyMQn
+
+
 #+BEGIN_SRC emacs-lisp
-(use-package org-gcal
-  :ensure t
-  :config
-  (setq org-gcal-client-id "277923490904-avim4dqfj9rrnbelljoughrk06elurdl.apps.googleusercontent.com"
-        org-gcal-client-secret "S5MNloOHpvejXGOqBnzHuQKq"
-        org-gcal-file-alist '(("jckoch@ualberta.ca" . "/winc/jk/myLife/gcal-sync/ualberta-gcal.org")
-                              ("ualberta.ca_bf9hqpg6k7rgk3lpf7lh9qs6c8@group.calendar.google.com" . "/winc/jk/myLife/gcal-sync/private-gcal.org")))
-  :bind ("C-S-g" . org-gcal-sync))
+  (use-package org-gcal
+    :ensure t
+    :config
+    (setq org-gcal-client-id "1008486205630-j79skfk3jehlrhd5tltd01unk2dra9io.apps.googleusercontent.com"
+          org-gcal-client-secret "Ak7Uehu9Obyt-nj2QhAKMOgT"
+          org-gcal-file-alist '(("jchkoch@gmail.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")
+                                ("qjnlbrlmfnih4el3ti4b16rul2cvuc35@import.calendar.google.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")))
+    :bind ("C-S-g" . org-gcal-sync))
 #+END_SRC
 
 #+RESULTS:
@@ -1288,23 +1314,6 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 : t
-
-** FIXME Org-Publishing
-
-#+BEGIN_SRC emacs-lisp
-    (setq org-publish-project-alist
-          `(("org-main"
-             :base-directory "/winc/jk/jchkoch.github.io/org"
-             :recursive t
-             :publishing-directory "/winc/jk/jchkoch.github.io"
-             :publishing-function org-html-publish-to-html
-             :html-head-extra "<link rel=\"stylesheet\" href=\"./css/style.css\">")
-            ))
-#+END_SRC
-
-#+RESULTS:
-| org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
-
 ** Prepare Meeting Notes
 Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
 
@@ -1340,28 +1349,70 @@ To be able to present in org mode natively.
 #+RESULTS:
 : org-tree-slide-mode
 
-** Org Beamer Only Overlay Environment
+** FIXME Mu and Mu4e
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+  (require 'mu4e)
+  (setq mu4e-maildir "~/maildir/Gmail")
+  (setq mu4e-drafts-folder "/[Gmail].Drafts")
+  (setq mu4e-sent-folder   "/[Gmail].Sent Mail")
+  (setq mu4e-trash-folder  "/[Gmail].Trash")
+  (setq mu4e-refile-folder  "/[Gmail].All Mail")
+#+END_SRC
+
+** FIXME Org-notebook
+Easier time inserting drawings as images while taking notes in class.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-notebook
+    :ensure t
+    :bind ("C-x n" . org-notebook-insert-image)
+    :config (setq org-notebook-drawing-program "spectacle"))
+#+END_SRC
+
+#+RESULTS:
+: org-notebook-insert-image
+
+** FIXME Org-Publishing
+
+#+BEGIN_SRC emacs-lisp
+    (setq org-publish-project-alist
+          `(("org-main"
+             :base-directory "/winc/jk/jchkoch.github.io/org"
+             :recursive t
+             :publishing-directory "/winc/jk/jchkoch.github.io"
+             :publishing-function org-html-publish-to-html
+             :html-head-extra "<link rel=\"stylesheet\" href=\"./css/style.css\">")
+            ))
+#+END_SRC
+
+#+RESULTS:
+| org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
+
+** FIXME Org Beamer Only Overlay Environment
 
 Adds the "only" beamer environment in org mode (works only in Linux).
 
 #+BEGIN_SRC emacs-lisp
-  (cond
-  ((string-equal system-type "gnu/linux") ; linux
-    (progn
-      (when (>= emacs-major-version 24)
-        (add-to-list 'org-beamer-environments-extra
-                     '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
+  ;; (cond
+  ;; ((string-equal system-type "gnu/linux") ; linux
+  ;;   (progn
+  ;;     (when (>= emacs-major-version 24)
+  ;;       (add-to-list 'org-beamer-environments-extra
+  ;;                    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
 #+END_SRC
 
 #+RESULTS:
 | onlyenv | O | \begin{onlyenv}%a | \end{onlyenv} |
+
 * Ledger-Mode
 Plain-text double-entry accounting program.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ledger-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode)))
+  (use-package ledger-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode)))
 #+END_SRC
 
 #+RESULTS:
@@ -1454,17 +1505,25 @@ For when working on TeX files.
 Spaced repetition memorization.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pamparam
-    :config
-    (setq pamparam-alist
-          '(("/winc/jk/chalmers/learnSwedish/swedish.org"
-             . "/winc/jk/chalmers/learnSwedish/git/swedish.pam")))
-    (setq pamparam-path "/winc/jk/chalmers/learnSwedish/git/swedish.pam")
-    :bind (("C-c m" . hydra-pamparam/body)))
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/pamparam")
+  (require 'pamparam)
+
+  (setq pamparam-alist                                                 
+        '(("/winc/jk/chalmers/learnSwedish/swedish.org"                
+           . "/winc/jk/chalmers/learnSwedish/git/swedish.pam")))        
+  (setq pamparam-path "/winc/jk/chalmers/learnSwedish/git/swedish.pam") 
+
+  ;; (use-package pamparam
+  ;;   :config
+  ;;   (setq pamparam-alist
+  ;;         '(("/winc/jk/chalmers/learnSwedish/swedish.org"
+  ;;            . "/winc/jk/chalmers/learnSwedish/git/swedish.pam")))
+  ;;   (setq pamparam-path "/winc/jk/chalmers/learnSwedish/git/swedish.pam")
+  ;;   :bind (("C-c m" . hydra-pamparam/body)))
 #+END_SRC
 
 #+RESULTS:
-: hydra-pamparam/body
+: /winc/jk/chalmers/learnSwedish/git/swedish.pam
 
 * New Tools
 ** FIXME pdf-tools

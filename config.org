@@ -38,11 +38,26 @@ Change the default behaviour to answering questions to simple 'y' and 'n' charac
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+#+RESULTS:
+: yes-or-no-p
+
 Stop Emacs from beeping.
 
 #+BEGIN_SRC emacs-lisp
 (setq visible-bell t)
 #+end_src
+
+#+RESULTS:
+: t
+
+*** Set Input Method
+
+#+BEGIN_SRC emacs-lisp
+  (setq default-input-method "swedish-postfix")
+#+END_SRC
+
+#+RESULTS:
+: swedish-postfix
 
 *** Set default coding system
 Next set the default coding system to /UTF-8/ (i.e. unicode).

@@ -15,7 +15,7 @@ Set a user name and email address for Emacs to use if needed.
 : jckoch@ualberta.ca
 
 * Sane Defaults
-** General
+** General Changes to Default Emacs Behaviour
 Sane defaults to customize Emacs configuration for the 21st century. 
 First globally turn on visual line mode and line numbers for all buffer/file types.
 Introduce the diminish package to diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
@@ -28,17 +28,8 @@ Introduce the diminish package to diminish 'visual-line-mode' minor mode display
 #+RESULTS:
 : t
 
-Next set the default coding system to /UTF-8/ (i.e. unicode).
-
-#+BEGIN_SRC emacs-lisp
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-#+END_SRC
-
-Set the default tab width to 4 spaces. Change the default behaviour to answering questions to simple 'y' and 'n' characters.
+Set the default tab width to 4 spaces. 
+Change the default behaviour to answering questions to simple 'y' and 'n' characters.
 
 #+BEGIN_SRC emacs-lisp
 (setq tab-width 4)
@@ -53,6 +44,18 @@ Stop Emacs from beeping.
 (setq visible-bell t)
 #+end_src
 
+*** Set default coding system
+Next set the default coding system to /UTF-8/ (i.e. unicode).
+
+#+BEGIN_SRC emacs-lisp
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+#+END_SRC
+
+*** Set default Emacs directory
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
@@ -62,7 +65,16 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
-** Use ibuffer to list buffers open
+*** Follow symbolic file links
+
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+** IBuffer
 Set the Buffer List buffer as to default with "ibuffer".
 
 #+BEGIN_SRC emacs-lisp
@@ -90,7 +102,14 @@ Set the Buffer List buffer as to default with "ibuffer".
 #+RESULTS:
 | lambda | nil | (ibuffer-auto-mode 1) | (ibuffer-switch-to-saved-filter-groups default) |
 
-** Ivy-Mode
+** Ivy Mode
+Ivy is an interactive interface for completion in Emacs. 
+Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. 
+Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. 
+When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. 
+Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions.
+
+-taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
@@ -121,15 +140,15 @@ Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto
 #+RESULTS:
 : t
 
-** Undo-Tree
+** Undo Tree
 Package improves undo/redo commands within Emacs. Note that custom key binding for undo "C-z" replaces (removes) normal command to minimize the Emacs window.
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :diminish undo-tree-mode
   :config
-  (global-undo-tree-mode 1) ;;turn on everywhere
-  (global-set-key (kbd "C-z") 'undo)
+  (global-undo-tree-mode) ;;turn on everywhere
+  (global-set-key (kbd "C-z") 'undo-tree-undo)
   (defalias 'redo 'undo-tree-redo)
   (global-set-key (kbd "C-S-z") 'redo))
 #+END_SRC
@@ -231,7 +250,6 @@ For easier navigation with many windows open.
 
 #+RESULTS:
 : ace-window
-
 * Python
 ** Elpy Mode
 Elpy is used to customize python in emacs to a fullfledged IDE.
@@ -315,8 +333,8 @@ Please refer to the instructions in the repositories [[https://github.com/gregse
 : ox-ipynb
 
 * Org-Mode
-** General Setup
-*** *TODO* Keywords
+** General
+*** TODO Keywords
 This defines a basic workflow of TODO keywords.
 
 #+BEGIN_SRC emacs-lisp
@@ -349,7 +367,7 @@ This defines a basic workflow of TODO keywords.
 | MEETING   | :foreground | forest green | :weight | bold |
 | PHONE     | :foreground | forest green | :weight | bold |
 
-TODO state tag triggers.
+*** TODO state tag triggers
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-state-tags-triggers
@@ -383,7 +401,7 @@ TODO state tag triggers.
 #+RESULTS:
 : org-capture
 
-*** Org-Indent-Mode
+*** Org Indent Mode
 
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
@@ -395,81 +413,31 @@ TODO state tag triggers.
 *** Set Org Tag Column
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-tags-column -77)
+  (setq org-tags-column -110)
 #+END_SRC
 
 #+RESULTS:
-: -77
+: -110
 
-** Agenda Setup
-*** Follow symbolic file links
-
-#+BEGIN_SRC emacs-lisp
-  (setq vc-follow-symlinks t)
-#+END_SRC
-
-#+RESULTS:
-: t
-
+** FIXME Agenda
 *** Set Agenda Files
-Set directory where all my files for the Org-Mode Agenda exist. Change or comment this out as necessary.
+Set directory where all my files for the Org-Mode Agenda exist.
+This code will set a directory and will be recursive into sub-directories.
+Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (quote ("/winc/jk/myLife"
-                               "/winc/jk/myLife/gcal-sync")))
-  ; (custom-set-variables
-  ;  '(org-directory "/winc/jk/myLife")
-  ;  '(org-agenda-files (list org-directory)))
+  (setq org-agenda-files (apply 'append
+                                (mapcar
+                                 (lambda (directory)
+                                   (directory-files-recursively
+                                    directory org-agenda-file-regexp))
+                                 '("/winc/jk/myLife"))))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife | /winc/jk/myLife/gcal-sync |
+| /winc/jk/myLife/gcal-sync/gmail-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/birthdays.org | /winc/jk/myLife/bob.org | /winc/jk/myLife/bom065.org | /winc/jk/myLife/chalmers.org | /winc/jk/myLife/contacts.org | /winc/jk/myLife/refile.org | /winc/jk/myLife/todo.org | /winc/jk/myLife/vbb122.org |
 
-*** FIXME Workaround to truncate lines when org-agenda is refreshed
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "M-q" 'toggle-truncate-lines)
-(add-hook 'org-agenda-redo-all
-          (lambda ()
-            toggle-truncate-lines))
-(setq org-agenda-tags-column -150)
-#+END_SRC
-
-#+RESULTS:
-: -150
-
-*** Enable Org-Habits
-Enable org-habits from within org-modules to start tracking some habits.
-
-#+BEGIN_SRC emacs-lisp
-(require 'org-habit)
-; Enable habit tracking (and a bunch of other modules)
-(setq org-modules (quote (org-habit)))
-
-; position the habit graph on the agenda to the right of the default
-(setq org-habit-graph-column 45)
-
-(setq org-habit-show-habits-only-for-today t)
-(bind-key "<f7>" 'org-habit-toggle-habits)
-#+END_SRC
-
-#+RESULTS:
-: org-habit-toggle-habits
-
-*** Org-gcal Setup
-
-("jckoch@ualberta.ca" . "/winc/jk/myLife/gcal-sync/ualberta-gcal.org")
-                                ("ualberta.ca_bf9hqpg6k7rgk3lpf7lh9qs6c8@group.calendar.google.com" . "/winc/jk/myLife/gcal-sync/private-gcal.org")
-
-jckoch
-client ID: 277923490904-avim4dqfj9rrnbelljoughrk06elurdl.apps.googleusercontent.com
-client secret: S5MNloOHpvejXGOqBnzHuQKq
-
-
-jchkoch
-client ID: 277923490904-faho03sg3mrrjia5qk88p56kl1dp1kr1.apps.googleusercontent.com
-client secret: 6E8qg9hbES13ZZN0Qa0TyMQn
-
+*** Org-Gcal
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-gcal
@@ -477,15 +445,28 @@ client secret: 6E8qg9hbES13ZZN0Qa0TyMQn
     :config
     (setq org-gcal-client-id "1008486205630-j79skfk3jehlrhd5tltd01unk2dra9io.apps.googleusercontent.com"
           org-gcal-client-secret "Ak7Uehu9Obyt-nj2QhAKMOgT"
-          org-gcal-file-alist '(("jchkoch@gmail.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")
-                                ("qjnlbrlmfnih4el3ti4b16rul2cvuc35@import.calendar.google.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")))
+          org-gcal-file-alist '(("jchkoch@gmail.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")))
     :bind ("C-S-g" . org-gcal-sync))
 #+END_SRC
 
 #+RESULTS:
 : org-gcal-sync
 
-*** Custom Agenda View
+*** Toggle visual-line-mode off for org-agenda-mode-hook
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
+
+(setq org-agenda-tags-column -250)
+#+END_SRC
+
+#+RESULTS:
+: -250
+
+*** FIXME Custom Agenda View
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
 
 #+BEGIN_SRC emacs-lisp
@@ -507,6 +488,18 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
                          (org-tags-match-list-sublevels nil)))
                   (tags-todo "-CANCELLED/!NEXT"
                              ((org-agenda-overriding-header (concat "Project Next Tasks"
+                                                                    (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                        ""
+                                                                      " (including WAITING and SCHEDULED tasks)")))
+                              (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+                              (org-tags-match-list-sublevels t)
+                              (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                              (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+                              (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+                              (org-agenda-sorting-strategy
+                               '(todo-state-down effort-up category-keep))))
+                  (tags-todo "-CANCELLED/!REVIEW"
+                             ((org-agenda-overriding-header (concat "Project Review Tasks"
                                                                     (if bh/hide-scheduled-and-waiting-next-tasks
                                                                         ""
                                                                       " (including WAITING and SCHEDULED tasks)")))
@@ -575,9 +568,9 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+END_SRC
 
 #+RESULTS:
-| N | Notes  | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | ((org-agenda-overriding-header Notes) (org-tags-match-list-sublevels t))                                                |
-| h | Habits | tags-todo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | STYLE="habit"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ((org-agenda-overriding-header Habits) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep)))) |
-|   | Agenda | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-projects-and-habits-and-single-tasks)) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep))))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function (quote bh/skip-non-projects)) (org-tags-match-list-sublevels (quote indented)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Project Subtasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function (quote bh/skip-non-stuck-projects)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-tasks)) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function (quote bh/skip-non-archivable-tasks)) (org-tags-match-list-sublevels nil)))) | nil                                                                                                                     |
+| N | Notes  | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | NOTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | ((org-agenda-overriding-header Notes) (org-tags-match-list-sublevels t))                                                |
+| h | Habits | tags-todo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | STYLE="habit"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ((org-agenda-overriding-header Habits) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep)))) |
+|   | Agenda | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-projects-and-habits-and-single-tasks)) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep))))) (tags-todo -CANCELLED/!REVIEW ((org-agenda-overriding-header (concat Project Review Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-projects-and-habits-and-single-tasks)) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep))))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function (quote bh/skip-non-projects)) (org-tags-match-list-sublevels (quote indented)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Project Subtasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function (quote bh/skip-non-stuck-projects)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-tasks)) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function (quote bh/skip-non-archivable-tasks)) (org-tags-match-list-sublevels nil)))) | nil                                                                                                                     |
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/find-project-task ()
@@ -865,7 +858,40 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+RESULTS:
 : org-clock-convenience-fill-gap-both
 
-** Org-Capture
+** Habits
+*** Enable Org-Habits
+Enable org-habits from within org-modules to start tracking some habits.
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-habit)
+(setq org-modules (quote (org-habit)))
+#+END_SRC
+
+#+RESULTS:
+| org-habit |
+
+*** Habit Graph Position
+Position the habit graph on the agenda to the right of the task.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-habit-graph-column 45)
+#+END_SRC
+
+#+RESULTS:
+: 45
+
+*** Toggle Habits On/Off Key
+Show habits only for today and toggle habits on and off with the key binding <f7>.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-habit-show-habits-only-for-today t)
+(bind-key "<f7>" 'org-habit-toggle-habits)
+#+END_SRC
+
+#+RESULTS:
+: org-habit-toggle-habits
+** Org Refile
+*** Set Refile Org-File
 Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+BEGIN_SRC emacs-lisp
@@ -875,6 +901,58 @@ Sets a global ``refile`` org-mode file for temporary TODO items.
 #+RESULTS:
 : /winc/jk/myLife/refile.org
 
+*** Refile Settings
+Set up org-refile to easily refile notes elsewhere. This elisp code is based on the article from the following blog: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html.
+
+#+BEGIN_SRC emacs-lisp
+  ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+  (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                   (org-agenda-files :maxlevel . 9))))
+
+  ; Allow refile to create parent tasks with confirmation
+  (setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+  ; Exclude DONE state tasks from refile targets
+  (defun bh/verify-refile-target ()
+    "Exclude todo keywords with a done state from refile targets"
+    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+  (setq org-refile-target-verify-function 'bh/verify-refile-target)
+#+END_SRC
+
+#+RESULTS:
+: bh/verify-refile-target
+
+*** Using Hydra for Refiling
+Use Hydra to make refiling faster!!!
+See https://mollermara.com/blog/Fast-refiling-in-org-mode-with-hydras/.
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/refile (file headline &optional arg)
+    (let ((pos (save-excursion
+                 (find-file file)
+                 (org-find-exact-headline-in-buffer headline))))
+      (org-refile arg nil (list headline file nil pos)))
+    (switch-to-buffer (current-buffer)))
+
+  (defhydra bh/org-refile-hydra (:foreign-keys run)
+    "Refile"
+    ("t" (my/refile "todo.org" "Refiled Tasks") "Refile to main TODO file")
+    ("c" (my/refile "chalmers.org" "Administration") "Refile to NSERC USRA Administration")
+    ("m" (my/refile "bom065.org" "Schedule") "Refile to BOM065 Course")
+    ("s" (my/refile "vbb122.org" "Schedule") "Refile to VBB122 Course")
+    ("u" (my/refile "uofa.org" "Administration") "UAlberta Tasks")
+    ("j" org-refile-goto-last-stored "Jump to last refile")
+    ("q" nil "cancel"))
+
+  ;; Or whatever you want your keybinding to be
+  (global-set-key (kbd "<f9> r") 'bh/org-refile-hydra/body)
+#+END_SRC
+
+#+RESULTS:
+: bh/org-refile-hydra/body
+
+** Org Capture
 When a new task occurs and needs to be added, org-capture allows me to easily capture it.
 I categorize it into a few new groups that I use as templates:
   + A new task (t)
@@ -916,94 +994,44 @@ I categorize it into a few new groups that I use as templates:
 | m | Meeting      | entry | (file /winc/jk/myLife/refile.org)         | * MEETING with %? :MEETING:\n%U                                                                                                              | :clock-in         | t | :clock-resume | t |
 | p | Phone call   | entry | (file /winc/jk/myLife/refile.org)         | * PHONE %? :PHONE:\n%U                                                                                                                       | :clock-in         | t | :clock-resume | t |
 | h | Habit        | entry | (file /winc/jk/myLife/refile.org)         | * NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string "%<<%Y-%m-%d %a .+1d/3d>>")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n |                   |   |               |   |
-** Org-Refile
-Set up org-refile to easily refile notes elsewhere. This elisp code is based on the article from the following blog: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html.
-
-#+BEGIN_SRC emacs-lisp
-  ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-  (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                   (org-agenda-files :maxlevel . 9))))
-
-  ; Allow refile to create parent tasks with confirmation
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-  ; Exclude DONE state tasks from refile targets
-  (defun bh/verify-refile-target ()
-    "Exclude todo keywords with a done state from refile targets"
-    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-  (setq org-refile-target-verify-function 'bh/verify-refile-target)
-#+END_SRC
-
-#+RESULTS:
-: bh/verify-refile-target
-
-Use Hydra to make refiling faster!!!
-See https://mollermara.com/blog/Fast-refiling-in-org-mode-with-hydras/.
-
-#+BEGIN_SRC emacs-lisp
-  (defun my/refile (file headline &optional arg)
-    (let ((pos (save-excursion
-                 (find-file file)
-                 (org-find-exact-headline-in-buffer headline))))
-      (org-refile arg nil (list headline file nil pos)))
-    (switch-to-buffer (current-buffer)))
-
-  (defhydra bh/org-refile-hydra (:foreign-keys run)
-    "Refile"
-    ("t" (my/refile "todo.org" "Refiled Tasks") "Refile to main TODO file")
-    ("n" (my/refile "nserc_usra.org" "Administration") "Refile to NSERC USRA Administration")
-    ("u" (my/refile "uofa.org" "Administration") "UAlberta Tasks")
-    ("j" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "cancel"))
-
-  ;; Or whatever you want your keybinding to be
-  (global-set-key (kbd "<f9> r") 'bh/org-refile-hydra/body)
-#+END_SRC
-
-#+RESULTS:
-: bh/org-refile-hydra/body
 
 ** Time Clocking
-*** Clock Settings
+*** General Settings
 General settings to make time clocking easier and simpler.
+Always resume clocking task when emacs restarts, show lots of clock history to make choosing easier, and resume clocking task on clock-in if clock is already open.
 
 #+BEGIN_SRC emacs-lisp
   (org-clock-persistence-insinuate) ;; resume clocking task when emacs restarts
   (setq org-clock-history-length 23) ;; show lots of clock history to make choosing easier
   (setq org-clock-in-resume t) ;; resume clocking task on clock-in if clock is open
-
-  ;; Change tasks to NEXT when clocking in
-  (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
-
-  ;; Separate drawers for clocking and logs
-  (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
-  (setq org-clock-out-remove-zero-time-clocks t) ;; remove zero time clock lines
-  (setq org-clock-into-drawer t)
-
-  ;; Clock out when moving task to a done state
-  (setq org-clock-out-when-done t)
-
-  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-  (setq org-clock-persist t)
-
-  ;; Do not prompt to resume an active clock
-  (setq org-clock-persist-query-resume nil)
-
-  ;; Enable auto clock resolution for finding open clocks
-  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-
-
-  (setq bh/keep-clock-running nil)
-  (defvar bh/organization-task-id "default")
 #+END_SRC
 
 #+RESULTS:
-: bh/organization-task-id
+: t
 
-And remove empty LOGBOOK drawers.
+Change tasks to NEXT when clocking in.
 
 #+BEGIN_SRC emacs-lisp
+  (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
+#+END_SRC
+
+#+RESULTS:
+: bh/clock-in-to-next
+
+Always clock into a LOGBOOK drawer and use separate drawers for clocking and logs.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-into-drawer t)
+  (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
+#+END_SRC
+
+#+RESULTS:
+| PROPERTIES | LOGBOOK |
+
+Remove zero time clock lines and remove empty LOGBOOK drawers.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-out-remove-zero-time-clocks t)
   (defun bh/remove-empty-drawer-on-clock-out ()
     (interactive)
     (save-excursion
@@ -1014,9 +1042,47 @@ And remove empty LOGBOOK drawers.
 #+END_SRC
 
 #+RESULTS:
-| org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out |
+| org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out | bh/clock-out-maybe |
 
-*** Clock Setting Function Definitions
+Clock out when moving task to a done state.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-out-when-done t)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+Save the running clock and all clock history when exiting Emacs, load it on startup
+Do not prompt to resume an active clock.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-persist t)
+  (setq org-clock-persist-query-resume nil)
+#+END_SRC
+
+#+RESULTS:
+
+Enable auto clock resolution for finding open clocks.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+#+END_SRC
+
+#+RESULTS:
+: when-no-clock-is-running
+
+Miscellaneous clock settings including a default task to clock time to.
+
+#+BEGIN_SRC emacs-lisp
+  (setq bh/keep-clock-running nil)
+  (defvar bh/organization-task-id "default")
+#+END_SRC
+
+#+RESULTS:
+: bh/organization-task-id
+
+*** Define own Clocking Functions
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/clock-in-to-next (kw)
@@ -1081,7 +1147,9 @@ And remove empty LOGBOOK drawers.
 #+RESULTS:
 | org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out | bh/clock-out-maybe |
 
-*** Punch In/Out
+*** Punch In/Out Key Bindings
+Set key bindings to easily punch in/out.
+Additionally, the concept of punching in and out is the idea of clocking in at the beginning of the work day and clocking out at the end of the work day to not miss any relevant clock time.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f9> I") 'bh/punch-in)
@@ -1091,6 +1159,9 @@ And remove empty LOGBOOK drawers.
 
 #+RESULTS:
 : bh/clock-in-last-task
+
+*** Punch In/Out Functions
+Define own functions to add punch in/out functionality to time clocking in Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/punch-in (arg)
@@ -1123,7 +1194,7 @@ And remove empty LOGBOOK drawers.
 #+RESULTS:
 : bh/punch-out
 
-*** Clock In/Out Easier Key Bindings
+*** Clock In/Out Key Bindings
 Define clock in/out key bindings
 
 #+BEGIN_SRC emacs-lisp
@@ -1146,7 +1217,8 @@ This changes the default behaviour of clock reports greater than 24 hours to rep
 
 #+RESULTS:
 | :hours | %d | :require-hours | t | :minutes | :%02d | :require-minutes | t |
-** Exporting Customization
+
+** FIXME Export Settings
 *** Org Export Backend
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
 
@@ -1176,32 +1248,59 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 *** LaTeX Export Settings
 
 #+BEGIN_SRC emacs-lisp
-  ;; (setq org-latex-listings 'minted
-  ;;      org-latex-packages-alist '(("" "minted")))
-  ;; (add-to-list 'org-latex-minted-langs '(ipython "python"))
+  (setq org-latex-listings 'minted
+       org-latex-packages-alist '(("" "minted")))
+  (add-to-list 'org-latex-minted-langs '(ipython "python"))
+#+END_SRC
+
+#+RESULTS:
+| ipython      | python      |
+| emacs-lisp   | common-lisp |
+| cc           | c++         |
+| cperl        | perl        |
+| shell-script | bash        |
+| caml         | ocaml       |
+
+*** FIXME Default LaTeX Packages
+Set default package list for org-mode to use on latex export.
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq org-latex-default-packages-alist
+  ;;       '(("AUTO" "inputenc" t ("pdflatex")) 
+  ;;         ("T1" "fontenc" nil ("pdflatex"))
+  ;;               ("margin=0.7in" "geometry" t)
+  ;;               ("" "graphicx" t)
+  ;;               ("" "longtable" nil)
+  ;;               ("" "wrapfig" nil)
+  ;;               ("" "rotating" t)
+  ;;               ("normalem" "ulem" t)
+  ;;               ("" "amsmath" t)
+  ;;               ("" "textcomp" nil)))
 #+END_SRC
 
 #+RESULTS:
 
-*** LaTeX Beamer
+*** Additional LaTeX Class
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 
 #+begin_src emacs-lisp
-(eval-after-load "ox-latex"
-  ;; update the list of LaTeX classes and associated header (encoding, etc.) 
-  ;; and structure
-  '(add-to-list 'org-latex-classes
-                `("beamer"
-                  ,(concat "\\documentclass[presentation]{beamer}\n"
-                           "[DEFAULT-PACKAGES]"
-                           "[PACKAGES]"
-                           "[EXTRA]\n")
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+  (eval-after-load "ox-latex"
+    ;; update the list of LaTeX classes and associated header (encoding, etc.) 
+    ;; and structure
+    '(add-to-list 'org-latex-classes
+                  `("beamer"
+                    ,(concat "\\documentclass[presentation]{beamer}\n"
+                             "[DEFAULT-PACKAGES]"
+                             "[PACKAGES]"
+                             "[EXTRA]\n")
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
 #+RESULTS:
+| beamer | \documentclass[presentation]{beamer} |
+
 ** Org-Ref Citation Manager
 Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref to a default (general) BibTeX file as the default bibliography as well as a directory containing the article as a PDF file. The Org-Ref documentation also suggests setting a notes file (currently I am not using this feature).
 
@@ -1236,6 +1335,7 @@ Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref 
 #+RESULTS:
 : org-open-file
 
+*** Cross-Referencing
 Org-Ref is also great at Figure/Table/Equation references. The default key binding to insert a ref link for this type of cross-reference conflicts with the Org-Mode add file to Agenda list so is therefore changed to "C-c i". On some systems it may also be necessary on export to LaTeX/PDF to set the variable 'org-latex-prefer-user-labels' to nil (this is known bug in the Org-Ref GitHub repository).
 
 #+BEGIN_SRC emacs-lisp
@@ -1314,29 +1414,6 @@ This allows for the "`" character to be used other than for inserting math chara
 
 #+RESULTS:
 : t
-** Prepare Meeting Notes
-Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
-
-#+BEGIN_SRC emacs-lisp
-(defun bh/prepare-meeting-notes ()
-  "Prepare meeting notes for email
-   Take selected region and convert tabs to spaces, mark TODOs with leading >>>, and copy to kill ring for pasting"
-  (interactive)
-  (let (prefix)
-    (save-excursion
-      (save-restriction
-        (narrow-to-region (region-beginning) (region-end))
-        (untabify (point-min) (point-max))
-        (goto-char (point-min))
-        (while (re-search-forward "^\\( *-\\\) \\(TODO\\|DONE\\): " (point-max) t)
-          (replace-match (concat (make-string (length (match-string 1)) ?>) " " (match-string 2) ": ")))
-        (goto-char (point-min))
-        (kill-ring-save (point-min) (point-max))))))
-#+END_SRC
-
-#+RESULTS:
-: bh/prepare-meeting-notes
-
 ** Native Org-Mode Presentations
 To be able to present in org mode natively.
 
@@ -1390,22 +1467,21 @@ Easier time inserting drawings as images while taking notes in class.
 #+RESULTS:
 | org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
 
-** FIXME Org Beamer Only Overlay Environment
+** Org Beamer Only Overlay Environment
 
 Adds the "only" beamer environment in org mode (works only in Linux).
 
 #+BEGIN_SRC emacs-lisp
-  ;; (cond
-  ;; ((string-equal system-type "gnu/linux") ; linux
-  ;;   (progn
-  ;;     (when (>= emacs-major-version 24)
-  ;;       (add-to-list 'org-beamer-environments-extra
-  ;;                    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
+  (cond
+  ((string-equal system-type "gnu/linux") ; linux
+    (progn
+      (when (>= emacs-major-version 24)
+        (add-to-list 'org-beamer-environments-extra
+                     '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
 #+END_SRC
 
 #+RESULTS:
 | onlyenv | O | \begin{onlyenv}%a | \end{onlyenv} |
-
 * Ledger-Mode
 Plain-text double-entry accounting program.
 
@@ -1490,7 +1566,6 @@ For when working on TeX files.
 
 #+RESULTS:
 : t
-
 * Tramp
 
 #+BEGIN_SRC emacs-lisp
@@ -1500,8 +1575,43 @@ For when working on TeX files.
 
 #+RESULTS:
 : ssh
+* Miscellaneous
+** Prepare Meeting Notes
+Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
 
-* Pamparam
+#+BEGIN_SRC emacs-lisp
+(defun bh/prepare-meeting-notes ()
+  "Prepare meeting notes for email
+   Take selected region and convert tabs to spaces, mark TODOs with leading >>>, and copy to kill ring for pasting"
+  (interactive)
+  (let (prefix)
+    (save-excursion
+      (save-restriction
+        (narrow-to-region (region-beginning) (region-end))
+        (untabify (point-min) (point-max))
+        (goto-char (point-min))
+        (while (re-search-forward "^\\( *-\\\) \\(TODO\\|DONE\\): " (point-max) t)
+          (replace-match (concat (make-string (length (match-string 1)) ?>) " " (match-string 2) ": ")))
+        (goto-char (point-min))
+        (kill-ring-save (point-min) (point-max))))))
+#+END_SRC
+
+#+RESULTS:
+: bh/prepare-meeting-notes
+
+* New Tools
+** FIXME pdf-tools
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :disabled t
+    :ensure t
+    :init (pdf-tools-install))
+#+END_SRC
+
+#+RESULTS:
+
+** FIXME Pamparam
 Spaced repetition memorization.
 
 #+BEGIN_SRC emacs-lisp
@@ -1524,15 +1634,3 @@ Spaced repetition memorization.
 
 #+RESULTS:
 : /winc/jk/chalmers/learnSwedish/git/swedish.pam
-
-* New Tools
-** FIXME pdf-tools
-
-#+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :disabled t
-    :ensure t
-    :init (pdf-tools-install))
-#+END_SRC
-
-#+RESULTS:

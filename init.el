@@ -2,8 +2,28 @@
 ;; ------------------------------------------------
 
 ;; Ensure at least Emacs Version 25.0 or greater
+;; ------------------------------------------------
 (when (version< emacs-version "25.0")
   (warn "You probably need at least Emacs 25. You should upgrade. You may need to install leuven-theme manually."))
+
+;; Speed up init time by manipulating garbage collection
+;; ------------------------------------------------
+(setq gc-cons-threshold (* 64 1024 1024 1024)
+      gc-cons-percentage 0.9)
+
+(defun bh/reset-gc-cons-threshold ()
+  "Return the garbage collection to the normal values."
+  (setq gc-cons-threshold
+	(car (get 'gc-cons-threshold 'standard-value))
+	(car (get 'gc-cons-percentage 'standard-value))))
+
+(add-hook 'after-init-hook 'bh/reset-gc-cons-threshold)
+
+;; Turn on debugging and turn off after init
+;; ------------------------------------------------
+(setq debug-on-error t)
+(add-hook 'after-init-hook (lambda ()
+			     (setq debug-on-error nil)))
 
 ;; Install Packages
 ;; ------------------------------------------------
@@ -20,7 +40,7 @@
 
 (package-initialize)
 
-;; Bootstrap `diminish` and `dash`
+;; Bootstrap `diminish`
 (unless (package-installed-p 'diminish)
   (package-refresh-contents)
   (package-install 'diminish))

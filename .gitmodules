@@ -7,3 +7,6 @@
 [submodule "dev-pkgs/pamparam"]
 	path = dev-pkgs/pamparam
 	url = https://github.com/abo-abo/pamparam.git
+[submodule "dev-pkgs/ox-ipynb"]
+	path = dev-pkgs/ox-ipynb
+	url = https://github.com/jkitchin/ox-ipynb.git

@@ -15,8 +15,9 @@ Set a user name and email address for Emacs to use if needed.
 : jckoch@ualberta.ca
 
 * Sane Defaults
-** General Changes to Default Emacs Behaviour
-Sane defaults to customize Emacs configuration for the 21st century. 
+Sane defaults to customize Emacs configuration for the 21st century.
+
+** Visual line mode & line numbers
 First globally turn on visual line mode and line numbers for all buffer/file types.
 Introduce the diminish package to diminish 'visual-line-mode' minor mode display on the mode line (i.e. all buffers will be word wrapped so showing this on the mode line is redundant).
 
@@ -28,12 +29,15 @@ Introduce the diminish package to diminish 'visual-line-mode' minor mode display
 #+RESULTS:
 : t
 
-Set the default tab width to 4 spaces. 
-Change the default behaviour to answering questions to simple 'y' and 'n' characters.
+** Set the default tab width to 4 spaces. 
 
 #+BEGIN_SRC emacs-lisp
 (setq tab-width 4)
+#+END_SRC
 
+** Change the default behaviour to answering questions to simple 'y' and 'n' characters.
+
+#+BEGIN_SRC emacs-lisp
 ;; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
@@ -41,7 +45,7 @@ Change the default behaviour to answering questions to simple 'y' and 'n' charac
 #+RESULTS:
 : yes-or-no-p
 
-Stop Emacs from beeping.
+** Stop Emacs from beeping.
 
 #+BEGIN_SRC emacs-lisp
 (setq visible-bell t)
@@ -50,7 +54,7 @@ Stop Emacs from beeping.
 #+RESULTS:
 : t
 
-*** Set Input Method
+** Set Input Method
 
 #+BEGIN_SRC emacs-lisp
   (setq default-input-method "swedish-postfix")
@@ -59,7 +63,7 @@ Stop Emacs from beeping.
 #+RESULTS:
 : swedish-postfix
 
-*** Set default coding system
+** Set default coding system
 Next set the default coding system to /UTF-8/ (i.e. unicode).
 
 #+BEGIN_SRC emacs-lisp
@@ -70,7 +74,8 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
 (prefer-coding-system 'utf-8)
 #+END_SRC
 
-*** Set default Emacs directory
+#+RESULTS:
+** Set default Emacs directory
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
@@ -80,7 +85,7 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
-*** Follow symbolic file links
+** Follow symbolic file links
 
 #+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
@@ -89,33 +94,37 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : t
 
+* Base Packages
 ** IBuffer
 Set the Buffer List buffer as to default with "ibuffer".
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-x C-b") 'ibuffer)
-  (setq ibuffer-saved-filter-groups
-        (quote (("default"
-                 ("dired" (mode . dired-mode))
-                 ("org" (name . "^.*org$"))
-                 ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
-                 ("programming" (or
-                                 (mode . python-mode)
-                                 (mode . octave-mode)))
-                 ("emacs" (or
-                           (name . "^\\*scratch\\*$")
-                           (name . "^\\*Messages\\*$")))
-                 ("magit" (mode . Magit)) 
-                 ))))
-
-  (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-switch-to-saved-filter-groups "default")))
+  (use-package ibuffer
+    :defer t
+    :init
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                (ibuffer-auto-mode 1)
+                (ibuffer-switch-to-saved-filter-groups "default")))
+    :config
+    (setq ibuffer-saved-filter-groups
+          (quote (("default"
+                   ("dired" (mode . dired-mode))
+                   ("org" (name . "^.*org$"))
+                   ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
+                   ("programming" (or
+                                   (mode . python-mode)
+                                   (mode . octave-mode)))
+                   ("emacs" (or
+                             (name . "^\\*scratch\\*$")
+                             (name . "^\\*Messages\\*$")))
+                   ("magit" (mode . Magit)) 
+                   ))))
+    :bind ("C-x C-b" . 'ibuffer))
 #+END_SRC
 
 #+RESULTS:
-| lambda | nil | (ibuffer-auto-mode 1) | (ibuffer-switch-to-saved-filter-groups default) |
+: ibuffer
 
 ** Ivy Mode
 Ivy is an interactive interface for completion in Emacs. 
@@ -127,45 +136,34 @@ Selecting the final candidate is either through simple keyboard character inputs
 -taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc. 
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy
-  :diminish ivy-mode
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "%d/%d")
-  (bind-key "C-c C-r" 'ivy-resume)
-  (setq org-refile-use-outline-path 'file
-      org-outline-path-complete-in-steps nil))
+  (use-package ivy
+    :diminish ivy-mode
+    :init
+    (ivy-mode 1)
+    :config
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "%d/%d")
+    (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil)
+    :bind ("C-c C-r" . 'ivy-resume))
 #+END_SRC
 
 #+RESULTS:
-: t
+: ivy-resume
 
 ** Auto Complete
 Auto Complete is a mode for Emacs that provides auto completion in buffers. Auto Completion works for most code based modes in Emacs. It does not provide auto completion support in Org-Mode.
 
 #+begin_src emacs-lisp
-(use-package auto-complete
-  :diminish auto-complete-mode
-  :config
-  (global-auto-complete-mode t)
-  (ac-config-default))
+  (use-package auto-complete
+    :diminish auto-complete-mode
+    :config
+    (global-auto-complete-mode t)
+    (ac-config-default))
 #+end_src
 
 #+RESULTS:
 : t
-** The terminal
-Taken from https://www.youtube.com/watch?v=EsAkPl3On3E.
-
-#+BEGIN_SRC emacs-lisp
-  (defvar my-term-shell "/bin/bash")
-  (defadvice ansi-term (before force-bash)
-    (interactive (list my-term-shell)))
-  (ad-activate 'ansi-term)
-#+END_SRC
-
-#+RESULTS:
-: ansi-term
 
 ** Undo Tree
 Package improves undo/redo commands within Emacs. Note that custom key binding for undo "C-z" replaces (removes) normal command to minimize the Emacs window.
@@ -175,41 +173,68 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
   :diminish undo-tree-mode
   :config
   (global-undo-tree-mode) ;;turn on everywhere
-  (global-set-key (kbd "C-z") 'undo-tree-undo)
   (defalias 'redo 'undo-tree-redo)
-  (global-set-key (kbd "C-S-z") 'redo))
+  :bind
+  ("C-z" . 'undo-tree-undo)
+  ("C-S-z" . 'redo))
 #+END_SRC
 
 #+RESULTS:
-: t
+: redo
 
 ** Try Other Packages
 A package to try other Emacs Packages without having to install the package.
 
 #+BEGIN_SRC emacs-lisp
-(use-package try
-  :diminish try-mode)
+  (use-package try
+    :diminish try-mode
+    :defer t)
 #+END_SRC
 
 #+RESULTS:
 
 * Emacs Appearance
-** Load Themes
+** Dashboard
+Taken from https://www.reddit.com/r/emacs/comments/8jaflq/tip_how_to_use_your_dashboard_properly/.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :init
+    (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+    (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
+    :config
+    (setq dashboard-startup-banner 'logo)
+    (dashboard-setup-startup-hook)
+    (setq dashboard-items '((recents  . 5)
+                          (projects . 5)
+                          (agenda . 10)))
+    (defun my/dashboard-banner ()
+    """Set a dashboard banner including information on package initialization
+     time and garbage collections."""
+    (setq dashboard-banner-logo-title
+          (format "Emacs ready in %.2f seconds with %d garbage collections."
+                  (float-time (time-subtract after-init-time before-init-time)) gcs-done))))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+** Set default theme
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.
 
 #+begin_src emacs-lisp
-(load-theme 'tango-dark)
+  (load-theme 'tango-dark)
 
-(set-default 'cursor-type 'hbar)
-(blink-cursor-mode -1)
+  (set-default 'cursor-type 'hbar)
+  (blink-cursor-mode -1)
 
-;; Alternative Black and White Basic Theme
-;;(set-background-color "black")
-;;(set-foreground-color "white")
+  ;; Alternative Black and White Basic Theme
+  ;;(set-background-color "black")
+  ;;(set-foreground-color "white")
 
-(add-to-list 'default-frame-alist
-             '(font . "Monospace-14"))
+  (add-to-list 'default-frame-alist
+               '(font . "Monospace-14"))
 #+end_src 
 
 #+RESULTS:
@@ -243,69 +268,28 @@ The following emacs-lisp function allows for easy switching of themes and the ab
 
  #+RESULTS:
  : disable-active-themes
-
-** Window Splitting Commands
-These custom emacs-lisp functions redefine vertically and horizontal window splitting emacs functions in order to switch to the other window when the emacs window is split into two windows. 
-
-#+begin_src emacs-lisp
-(defun vsplit-other-window ()
-  "Splits the window vertically and switches to that window."
-  (interactive)
-  (split-window-vertically)
-  (other-window 1 nil))
-(defun hsplit-other-window ()
-  "Splits the window horizontally and switches to that window."
-  (interactive)
-  (split-window-horizontally)
-  (other-window 1 nil))
-
-(bind-key "C-x 2" 'vsplit-other-window)
-(bind-key "C-x 3" 'hsplit-other-window)
-#+end_src
-
-#+RESULTS:
-: hsplit-other-window
-
 ** Ace-Window
 For easier navigation with many windows open.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :ensure t
-  :bind ("M-p" . ace-window))
+  (use-package ace-window
+    :ensure t
+    :defer t
+    :bind ("M-p" . ace-window))
 #+END_SRC
 
 #+RESULTS:
 : ace-window
-** Dashboard
-Taken from https://www.reddit.com/r/emacs/comments/8jaflq/tip_how_to_use_your_dashboard_properly/.
-
-#+BEGIN_SRC emacs-lisp
-  (defun my/dashboard-banner ()
-    """Set a dashboard banner including information on package initialization
-     time and garbage collections."""
-    (setq dashboard-banner-logo-title
-          (format "Emacs ready in %.2f seconds with %d garbage collections."
-                  (float-time (time-subtract after-init-time before-init-time)) gcs-done)))
-
-  (use-package dashboard
-    :init
-    (add-hook 'after-init-hook 'dashboard-refresh-buffer)
-    (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
-    :config
-    (setq dashboard-startup-banner 'logo)
-    (dashboard-setup-startup-hook))
-#+END_SRC
-
-#+RESULTS:
-: t
-* Python
+* Python Setup
 ** Elpy Mode
 Elpy is used to customize python in emacs to a fullfledged IDE.
 
 #+BEGIN_SRC emacs-lisp
   (use-package elpy
      :ensure t
+     :init
+     (elpy-enable)
+     (pyvenv-mode)
      :config
      (exec-path-from-shell-copy-env "PATH")
      (add-to-list 'python-shell-completion-native-disabled-interpreters
@@ -313,56 +297,68 @@ Elpy is used to customize python in emacs to a fullfledged IDE.
      (setq python-shell-interpreter "ipython"
            python-shell-interpreter-args "-i --simple-prompt"
            python-shell-prompt-detect-failure-warning nil)
-     (setq elpy-set-test-runner "Nose")
-     (elpy-enable)
-     (pyvenv-mode))
+     (setq elpy-set-test-runner "Nose"))
 #+END_SRC
 
 #+RESULTS:
 : t
 
 ** Pyenv Virtualenvs
-Enable pyenv-mode to manage python environments.
+Enable pyenv-mode to manage python virtual environments.
 
 #+BEGIN_SRC emacs-lisp
-(use-package pyenv-mode
-  :init
-  (add-to-list 'exec-path "~/.pyenv/shims")
-  (setenv "WORKON_HOME" "~/.virtualenvs")
-  :config
-  (pyenv-mode)
-  :bind ("C-x p w" . pyvenv-workon))
-
-(defun ssbb-pyenv-hook ()
-"Automatically activates pyenv version if .python-version file exists."
-(f-traverse-upwards
-(lambda (path)
-  (let ((pyenv-version-path (f-expand ".python-version" path)))
-		(if (f-exists? pyenv-version-path)
-				(pyenv-mode-set (s-trim (f-read-text pyenv-version-path 'utf-8))))))))
-
-(add-hook 'find-file-hook 'ssbb-pyenv-hook)
+  (use-package pyenv-mode
+    :ensure t
+    :init
+    (add-to-list 'exec-path "~/.pyenv/shims")
+    (setenv "WORKON_HOME" "~/.virtualenvs")
+    (pyenv-mode)
+    :config
+    (defun ssbb-pyenv-hook ()
+      "Automatically activates pyenv version if .python-version file exists."
+      (f-traverse-upwards
+       (lambda (path)
+         (let ((pyenv-version-path (f-expand ".python-version" path)))
+           (if (f-exists? pyenv-version-path)
+               (pyenv-mode-set (s-trim (f-read-text pyenv-version-path 'utf-8))))))))
+    (add-hook 'find-file-hook 'ssbb-pyenv-hook))
 #+END_SRC
 
 #+RESULTS:
-| ssbb-pyenv-hook | recentf-track-opened-file | url-handlers-set-buffer-mode | global-undo-tree-mode-check-buffers | undo-tree-load-history-hook | global-auto-complete-mode-check-buffers | global-linum-mode-check-buffers | global-visual-line-mode-check-buffers | global-font-lock-mode-check-buffers | epa-file-find-file-hook | vc-refresh-state |
+: t
 
-** ob-ipython (with scimax improvments)
+** ob-ipython
 ob-ipython is used for interactive python source blocks in Org-Mode.
 Manual installation of ob-ipython and scimax from Github (using "git clone") is required plus dependencies (i.e. dash).
 Please refer to the instructions in the repositories [[https://github.com/gregsexton/ob-ipython][ob-ipython]] and [[https://github.com/jkitchin/scimax][scimax]] on how to manually install these two packages.
 
-#+BEGIN_SRC emacs-lisp
-  ;; Enable dependencies of ob-ipython
-  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/dash.el")
-  (require 'dash)
+*** Load ob-ipython.
 
-  ;; load ob-ipython
+#+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ob-ipython")
+  (exec-path-from-shell-initialize)
   (require 'ob-ipython)
   (setq ob-ipython-suppress-execution-count t)
+#+END_SRC
 
-  ;; load scimax ob-ipython improvements
+#+RESULTS:
+: t
+
+*** Enable dependencies of ob-ipython.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/dash.el")
+  (require 'dash)
+#+END_SRC
+
+#+RESULTS:
+: dash
+
+*** Scimax improvments
+
+Load scimax ob-ipython improvements.
+
+#+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/Documents/scimax")
   (require 'scimax-org-babel-ipython-upstream)
   (global-set-key (kbd "C-7") 'scimax-obi/body)
@@ -372,6 +368,7 @@ Please refer to the instructions in the repositories [[https://github.com/gregse
 : scimax-obi/body
 
 ** ox-ipynb
+Org-mode ipython notebook to ipython "ipynb" notebook format.
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ox-ipynb")
@@ -383,7 +380,7 @@ Please refer to the instructions in the repositories [[https://github.com/gregse
 
 * Org-Mode
 ** General
-*** TODO Keywords
+*** *TODO* Keywords
 This defines a basic workflow of TODO keywords.
 
 #+BEGIN_SRC emacs-lisp
@@ -416,7 +413,7 @@ This defines a basic workflow of TODO keywords.
 | MEETING   | :foreground | forest green | :weight | bold |
 | PHONE     | :foreground | forest green | :weight | bold |
 
-*** TODO state tag triggers
+*** *TODO* state tag triggers
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-state-tags-triggers
@@ -468,8 +465,8 @@ This defines a basic workflow of TODO keywords.
 #+RESULTS:
 : -110
 
-** FIXME Agenda
-*** FIXME Set Agenda Files
+** Agenda
+*** Set agenda files
 Set directory where all my files for the Org-Mode Agenda exist.
 This code will set a directory and will be recursive into sub-directories.
 Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
@@ -481,41 +478,13 @@ Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_
                                    (directory-files-recursively
                                     directory org-agenda-file-regexp))
                                  '("/winc/jk/myLife"))))
+
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife/gcal-sync/gmail-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/birthdays.org | /winc/jk/myLife/bob.org | /winc/jk/myLife/bom065.org | /winc/jk/myLife/chalmers.org | /winc/jk/myLife/contacts.org | /winc/jk/myLife/refile.org | /winc/jk/myLife/todo.org | /winc/jk/myLife/vbb122.org |
+| /winc/jk/myLife/gcal-sync/gmail-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/birthdays.org | /winc/jk/myLife/bob.org | /winc/jk/myLife/bom065.org | /winc/jk/myLife/chalmers.org | /winc/jk/myLife/contacts.org | /winc/jk/myLife/other.org | /winc/jk/myLife/refile.org | /winc/jk/myLife/todo.org | /winc/jk/myLife/vbb122.org |
 
-*** Org-Gcal
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-gcal
-    :ensure t
-    :config
-    (setq org-gcal-client-id "1008486205630-j79skfk3jehlrhd5tltd01unk2dra9io.apps.googleusercontent.com"
-          org-gcal-client-secret "Ak7Uehu9Obyt-nj2QhAKMOgT"
-          org-gcal-file-alist '(("jchkoch@gmail.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")))
-    :bind ("C-S-g" . org-gcal-sync))
-#+END_SRC
-
-#+RESULTS:
-: org-gcal-sync
-
-*** Toggle visual-line-mode off for org-agenda-mode-hook
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-agenda-mode-hook
-          (lambda ()
-            (visual-line-mode -1)
-            (toggle-truncate-lines 1)))
-
-(setq org-agenda-tags-column -250)
-#+END_SRC
-
-#+RESULTS:
-: -250
-
-*** FIXME Custom Agenda View
+*** Custom agenda view
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
 
 #+BEGIN_SRC emacs-lisp
@@ -880,23 +849,35 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+RESULTS:
 : bh/skip-non-subprojects
 
-*** Org Clock Convienence Functionality
+*** Setup org-gcal package
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-clock-convenience
+  (use-package org-gcal
     :ensure t
-    :bind (:map org-agenda-mode-map
-             ("<S-up>" . org-clock-convenience-timestamp-up)
-             ("<S-down>" . org-clock-convenience-timestamp-down)
-             ("o" . org-clock-convenience-fill-gap)
-             ("e" . org-clock-convenience-fill-gap-both)))
+    :config
+    (setq org-gcal-client-id "1008486205630-j79skfk3jehlrhd5tltd01unk2dra9io.apps.googleusercontent.com"
+          org-gcal-client-secret "Ak7Uehu9Obyt-nj2QhAKMOgT"
+          org-gcal-file-alist '(("jchkoch@gmail.com" . "/winc/jk/myLife/gcal-sync/gmail-gcal.org")))
+    :bind ("C-S-g" . org-gcal-sync))
 #+END_SRC
 
 #+RESULTS:
-: org-clock-convenience-fill-gap-both
+: org-gcal-sync
 
-** Habits
-*** Enable Org-Habits
+*** Toggle visual-line-mode off for org-agenda-mode-hook
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
+
+(setq org-agenda-tags-column -250)
+#+END_SRC
+
+#+RESULTS:
+: -250
+*** Enable org-habits
 Enable org-habits from within org-modules to start tracking some habits.
 
 #+BEGIN_SRC emacs-lisp
@@ -907,7 +888,7 @@ Enable org-habits from within org-modules to start tracking some habits.
 #+RESULTS:
 | org-habit |
 
-*** Habit Graph Position
+*** Habit graph position
 Position the habit graph on the agenda to the right of the task.
 
 #+BEGIN_SRC emacs-lisp
@@ -917,7 +898,7 @@ Position the habit graph on the agenda to the right of the task.
 #+RESULTS:
 : 45
 
-*** Toggle Habits On/Off Key
+*** Toggle habits on/off key
 Show habits only for today and toggle habits on and off with the key binding <f7>.
 
 #+BEGIN_SRC emacs-lisp
@@ -927,8 +908,9 @@ Show habits only for today and toggle habits on and off with the key binding <f7
 
 #+RESULTS:
 : org-habit-toggle-habits
-** Org Refile
-*** Set Refile Org-File
+
+** Refiling
+*** Set global refile file
 Sets a global ``refile`` org-mode file for temporary TODO items.
 
 #+BEGIN_SRC emacs-lisp
@@ -938,7 +920,7 @@ Sets a global ``refile`` org-mode file for temporary TODO items.
 #+RESULTS:
 : /winc/jk/myLife/refile.org
 
-*** Refile Settings
+*** Refile settings
 Set up org-refile to easily refile notes elsewhere. This elisp code is based on the article from the following blog: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html.
 
 #+BEGIN_SRC emacs-lisp
@@ -960,7 +942,7 @@ Set up org-refile to easily refile notes elsewhere. This elisp code is based on 
 #+RESULTS:
 : bh/verify-refile-target
 
-*** Using Hydra for Refiling
+*** Refiling hydra
 Use Hydra to make refiling faster!!!
 See https://mollermara.com/blog/Fast-refiling-in-org-mode-with-hydras/.
 
@@ -988,8 +970,7 @@ See https://mollermara.com/blog/Fast-refiling-in-org-mode-with-hydras/.
 
 #+RESULTS:
 : bh/org-refile-hydra/body
-
-** Org Capture
+** Capturing
 When a new task occurs and needs to be added, org-capture allows me to easily capture it.
 I categorize it into a few new groups that I use as templates:
   + A new task (t)
@@ -1032,8 +1013,8 @@ I categorize it into a few new groups that I use as templates:
 | p | Phone call   | entry | (file /winc/jk/myLife/refile.org)         | * PHONE %? :PHONE:\n%U                                                                                                                       | :clock-in         | t | :clock-resume | t |
 | h | Habit        | entry | (file /winc/jk/myLife/refile.org)         | * NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string "%<<%Y-%m-%d %a .+1d/3d>>")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n |                   |   |               |   |
 
-** Time Clocking
-*** General Settings
+** Clocking
+*** General settings
 General settings to make time clocking easier and simpler.
 Always resume clocking task when emacs restarts, show lots of clock history to make choosing easier, and resume clocking task on clock-in if clock is already open.
 
@@ -1046,7 +1027,7 @@ Always resume clocking task when emacs restarts, show lots of clock history to m
 #+RESULTS:
 : t
 
-Change tasks to NEXT when clocking in.
+**** Change tasks to NEXT when clocking in
 
 #+BEGIN_SRC emacs-lisp
   (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
@@ -1055,7 +1036,7 @@ Change tasks to NEXT when clocking in.
 #+RESULTS:
 : bh/clock-in-to-next
 
-Always clock into a LOGBOOK drawer and use separate drawers for clocking and logs.
+**** Always clock into a LOGBOOK drawer and use separate drawers for clocking and logs
 
 #+BEGIN_SRC emacs-lisp
   (setq org-clock-into-drawer t)
@@ -1065,7 +1046,7 @@ Always clock into a LOGBOOK drawer and use separate drawers for clocking and log
 #+RESULTS:
 | PROPERTIES | LOGBOOK |
 
-Remove zero time clock lines and remove empty LOGBOOK drawers.
+**** Remove zero time clock lines and remove empty LOGBOOK drawers
 
 #+BEGIN_SRC emacs-lisp
   (setq org-clock-out-remove-zero-time-clocks t)
@@ -1119,7 +1100,94 @@ Miscellaneous clock settings including a default task to clock time to.
 #+RESULTS:
 : bh/organization-task-id
 
-*** Define own Clocking Functions
+*** Key bindings
+**** Punch In/Out Key Bindings
+Set key bindings to easily punch in/out.
+Additionally, the concept of punching in and out is the idea of clocking in at the beginning of the work day and clocking out at the end of the work day to not miss any relevant clock time.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f9> I") 'bh/punch-in)
+  (global-set-key (kbd "<f9> O") 'bh/punch-out)
+  (global-set-key (kbd "<f9> SPC") 'bh/clock-in-last-task)
+#+END_SRC
+
+#+RESULTS:
+: bh/clock-in-last-task
+
+**** Punch In/Out Functions
+Define own functions to add punch in/out functionality to time clocking in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (defun bh/punch-in (arg)
+    "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
+    (interactive "p")
+    (setq bh/keep-clock-running t)
+    (if (equal major-mode 'org-agenda-mode)
+        ;; We're in the agenda
+        (let* ((marker (org-get-at-bol 'org-hd-marker))
+               (tags (org-with-point-at marker (org-get-tags-at))))
+          (if (and (eq arg 4) tags)
+              (org-agenda-clock-in '(16))
+            (bh/clock-in-organization-task-as-default)))
+      ;; We are not in the agenda
+      (save-restriction
+        (widen)
+        ; Find the tags on the current task
+        (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
+            (org-clock-in '(16))
+          (bh/clock-in-organization-task-as-default)))))
+
+  (defun bh/punch-out ()
+    (interactive)
+    (setq bh/keep-clock-running nil)
+    (when (org-clock-is-active)
+      (org-clock-out))
+    (org-agenda-remove-restriction-lock))
+#+END_SRC
+
+#+RESULTS:
+: bh/punch-out
+
+**** Clock In/Out Key Bindings
+Define clock in/out key bindings
+
+#+BEGIN_SRC emacs-lisp
+  (bind-key "<f5>" 'org-clock-in)
+  (bind-key "<f6>" 'org-clock-out) 
+#+END_SRC
+
+#+RESULTS:
+: t
+
+*** Clock Report Customization
+This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
+
+#+BEGIN_SRC emacs-lisp
+;; Include current clocking task in clock reports
+(setq org-clock-report-include-clocking-task t)
+;; Clockreport time format
+(setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
+#+END_SRC
+
+#+RESULTS:
+| :hours | %d | :require-hours | t | :minutes | :%02d | :require-minutes | t |
+*** Org clock convienence functionality
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-clock-convenience
+    :ensure t
+    :defer t
+    :bind (:map org-agenda-mode-map
+             ("<S-up>" . org-clock-convenience-timestamp-up)
+             ("<S-down>" . org-clock-convenience-timestamp-down)
+             ("o" . org-clock-convenience-fill-gap)
+             ("e" . org-clock-convenience-fill-gap-both)))
+#+END_SRC
+
+#+RESULTS:
+: org-clock-convenience-fill-gap-both
+
+*** Elisp clocking functions
 
 #+BEGIN_SRC emacs-lisp
   (defun bh/clock-in-to-next (kw)
@@ -1184,79 +1252,8 @@ Miscellaneous clock settings including a default task to clock time to.
 #+RESULTS:
 | org-clock-remove-empty-clock-drawer | bh/remove-empty-drawer-on-clock-out | bh/clock-out-maybe |
 
-*** Punch In/Out Key Bindings
-Set key bindings to easily punch in/out.
-Additionally, the concept of punching in and out is the idea of clocking in at the beginning of the work day and clocking out at the end of the work day to not miss any relevant clock time.
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f9> I") 'bh/punch-in)
-  (global-set-key (kbd "<f9> O") 'bh/punch-out)
-  (global-set-key (kbd "<f9> SPC") 'bh/clock-in-last-task)
-#+END_SRC
-
-#+RESULTS:
-: bh/clock-in-last-task
-
-*** Punch In/Out Functions
-Define own functions to add punch in/out functionality to time clocking in Emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (defun bh/punch-in (arg)
-    "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
-    (interactive "p")
-    (setq bh/keep-clock-running t)
-    (if (equal major-mode 'org-agenda-mode)
-        ;; We're in the agenda
-        (let* ((marker (org-get-at-bol 'org-hd-marker))
-               (tags (org-with-point-at marker (org-get-tags-at))))
-          (if (and (eq arg 4) tags)
-              (org-agenda-clock-in '(16))
-            (bh/clock-in-organization-task-as-default)))
-      ;; We are not in the agenda
-      (save-restriction
-        (widen)
-        ; Find the tags on the current task
-        (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
-            (org-clock-in '(16))
-          (bh/clock-in-organization-task-as-default)))))
-
-  (defun bh/punch-out ()
-    (interactive)
-    (setq bh/keep-clock-running nil)
-    (when (org-clock-is-active)
-      (org-clock-out))
-    (org-agenda-remove-restriction-lock))
-#+END_SRC
-
-#+RESULTS:
-: bh/punch-out
-
-*** Clock In/Out Key Bindings
-Define clock in/out key bindings
-
-#+BEGIN_SRC emacs-lisp
-  (bind-key "<f5>" 'org-clock-in)
-  (bind-key "<f6>" 'org-clock-out) 
-#+END_SRC
-
-#+RESULTS:
-: t
-
-*** Clock Report Customization
-This changes the default behaviour of clock reports greater than 24 hours to report as "X day + X hours" to be reported as "X hours:Y minutes".
-
-#+BEGIN_SRC emacs-lisp
-;; Include current clocking task in clock reports
-(setq org-clock-report-include-clocking-task t)
-;; Clockreport time format
-(setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
-#+END_SRC
-
-#+RESULTS:
-| :hours | %d | :require-hours | t | :minutes | :%02d | :require-minutes | t |
-
-** FIXME Export Settings
-*** Org Export Backend
+** Exporter configuration
+*** Org export backends
 OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. This may or may not function as intended on Windows systems.
 
 #+BEGIN_SRC emacs-lisp
@@ -1266,7 +1263,7 @@ OpenOffice (odt) export backend added to org-export-dispatcher as key bindings. 
 #+RESULTS:
 | ascii | beamer | html | icalendar | latex | odt |
 
-*** LaTeX to PDF Process
+*** LaTeX to PDF process
 The LaTeX to PDF process is set for org-mode in order to properly export citations using BibTeX. Some tweaks may be necessary for this to work on Windows (a TeX distribution is necessary).
 
 #+begin_src emacs-lisp
@@ -1282,7 +1279,7 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 #+RESULTS:
 | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | bibtex %b | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f | pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f |
 
-*** LaTeX Export Settings
+*** LaTeX export settings
 
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-listings 'minted
@@ -1298,26 +1295,7 @@ The LaTeX to PDF process is set for org-mode in order to properly export citatio
 | shell-script | bash        |
 | caml         | ocaml       |
 
-*** FIXME Default LaTeX Packages
-Set default package list for org-mode to use on latex export.
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq org-latex-default-packages-alist
-  ;;       '(("AUTO" "inputenc" t ("pdflatex")) 
-  ;;         ("T1" "fontenc" nil ("pdflatex"))
-  ;;               ("margin=0.7in" "geometry" t)
-  ;;               ("" "graphicx" t)
-  ;;               ("" "longtable" nil)
-  ;;               ("" "wrapfig" nil)
-  ;;               ("" "rotating" t)
-  ;;               ("normalem" "ulem" t)
-  ;;               ("" "amsmath" t)
-  ;;               ("" "textcomp" nil)))
-#+END_SRC
-
-#+RESULTS:
-
-*** Additional LaTeX Class
+*** LaTeX classes
 Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 
 #+begin_src emacs-lisp
@@ -1338,35 +1316,36 @@ Add Beamer LaTeX class to list of Org-Mode LaTeX classes available.
 #+RESULTS:
 | beamer | \documentclass[presentation]{beamer} |
 
-** Org-Ref Citation Manager
+** Org-ref citation manager
 Org-Ref is a citation manager for Org-Mode. The setup includes pointing Org-Ref to a default (general) BibTeX file as the default bibliography as well as a directory containing the article as a PDF file. The Org-Ref documentation also suggests setting a notes file (currently I am not using this feature).
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-ref 
-  :init
-  (require 'org-ref)
-  (require 'doi-utils)
-  (require 'org-ref-pdf)
-  (setq org-ref-bibliography-notes "/winc/jk/work/NSERC_USRA/references/notes.org"
-        org-ref-default-bibliography '("/winc/jk/work/NSERC_USRA/references/nserc_usra.bib")
-        org-ref-pdf-directory "/winc/jk/work/NSERC_USRA/references/pdfs/")
-  (setq bibtex-completion-pdf-open-function
-    (lambda (fpath)
-      (start-process "open" "*open*" "open" fpath)))
-  :bind (("H-j" . org-ref-bibtex-hydra/body))
-  :config
-  (setq bibtex-autokey-year-length 4
-        bibtex-autokey-name-year-separator "_"
-        bibtex-autokey-year-title-separator "_"
-        bibtex-autokey-titleword-separator ""
-        bibtex-autokey-titlewords 3
-        bibtex-autokey-titlewords-stretch 1
-        bibtex-autokey-titleword-length 5))
-
-;; Helm-bibtex options
-(setq helm-bibtex-pdf-field "File")
-; open pdf with system pdf viewer
-(setq helm-bibtex-pdf-open-function 'org-open-file)
+  (use-package org-ref
+    :ensure t
+    :defer t
+    :init
+    (require 'org-ref)
+    (require 'doi-utils)
+    (require 'org-ref-pdf)
+    (setq org-ref-bibliography-notes "/winc/jk/work/NSERC_USRA/references/notes.org"
+          org-ref-default-bibliography '("/winc/jk/work/NSERC_USRA/references/nserc_usra.bib")
+          org-ref-pdf-directory "/winc/jk/work/NSERC_USRA/references/pdfs/")
+    (setq bibtex-completion-pdf-open-function
+      (lambda (fpath)
+        (start-process "open" "*open*" "open" fpath)))
+    :bind (("H-j" . org-ref-bibtex-hydra/body))
+    :config
+    (setq bibtex-autokey-year-length 4
+          bibtex-autokey-name-year-separator "_"
+          bibtex-autokey-year-title-separator "_"
+          bibtex-autokey-titleword-separator ""
+          bibtex-autokey-titlewords 3
+          bibtex-autokey-titlewords-stretch 1
+          bibtex-autokey-titleword-length 5)
+    ;; Helm-bibtex options
+    (setq helm-bibtex-pdf-field "File")
+    ; open pdf with system pdf viewer
+    (setq helm-bibtex-pdf-open-function 'org-open-file))
 #+END_SRC
 
 #+RESULTS:
@@ -1400,7 +1379,7 @@ The *ignore_heading* tag based on the manual and function docs in order to imple
 #+RESULTS:
 | ignored-headlines-removal |
 
-** Org Babel Languages
+** Org babel Llanguages
 Default of emacs-lisp, ipython, python, and shell languages supported for org-babel. Code blocks run without need for confirmation by default. 
 Note: Running IPython in Emacs requires the "ob-ipython" package which currently does not work.
 
@@ -1427,7 +1406,7 @@ Note: Running IPython in Emacs requires the "ob-ipython" package which currently
 #+RESULTS:
 : org-edit-src-exit
 
-** Previewing Equations and Symbols
+** Previewing equations and symbols
 *** Preview Latex Fragments
 Fix to have white latex equation text on a dark background.
 
@@ -1439,43 +1418,35 @@ Fix to have white latex equation text on a dark background.
 #+RESULTS:
 | :foreground | White | :background | default | :scale | 2.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
 
-*** CDLATEX Mode for Math Characters
+** Inputting math characters
 Math character input mode can be turned on/off with the new key binding "C-c C-g".
 This allows for the "`" character to be used other than for inserting math characters.
 
 #+BEGIN_SRC emacs-lisp
-(use-package cdlatex
-  :config (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
-  :diminish org-cdlatex-mode)
+  (use-package cdlatex
+    :ensure t
+    :defer t
+    :config (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+    :diminish org-cdlatex-mode)
 #+END_SRC
 
 #+RESULTS:
 : t
-** Native Org-Mode Presentations
+
+** Native org-mode presentations
 To be able to present in org mode natively.
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-tree-slide
-  :ensure t
-  :bind (("<f11>" . org-tree-slide-mode)))
+  (use-package org-tree-slide
+    :ensure t
+    :defer t
+    :bind (("<f11>" . org-tree-slide-mode)))
 #+END_SRC
 
 #+RESULTS:
 : org-tree-slide-mode
 
-** FIXME Mu and Mu4e
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-  (require 'mu4e)
-  (setq mu4e-maildir "~/maildir/Gmail")
-  (setq mu4e-drafts-folder "/[Gmail].Drafts")
-  (setq mu4e-sent-folder   "/[Gmail].Sent Mail")
-  (setq mu4e-trash-folder  "/[Gmail].Trash")
-  (setq mu4e-refile-folder  "/[Gmail].All Mail")
-#+END_SRC
-
-** FIXME Org-notebook
+** Org-notebook
 Easier time inserting drawings as images while taking notes in class.
 
 #+BEGIN_SRC emacs-lisp
@@ -1487,43 +1458,47 @@ Easier time inserting drawings as images while taking notes in class.
 
 #+RESULTS:
 : org-notebook-insert-image
+* LaTeX
+** AUCTeX
+Configure AUCTeX to edit TeX files.
 
-** FIXME Org-Publishing
-
-#+BEGIN_SRC emacs-lisp
-    (setq org-publish-project-alist
-          `(("org-main"
-             :base-directory "/winc/jk/jchkoch.github.io/org"
-             :recursive t
-             :publishing-directory "/winc/jk/jchkoch.github.io"
-             :publishing-function org-html-publish-to-html
-             :html-head-extra "<link rel=\"stylesheet\" href=\"./css/style.css\">")
-            ))
-#+END_SRC
-
-#+RESULTS:
-| org-main | :base-directory | /winc/jk/jchkoch.github.io/org | :recursive | t | :publishing-directory | /winc/jk/jchkoch.github.io | :publishing-function | org-html-publish-to-html | :html-head-extra | <link rel="stylesheet" href="./css/style.css"> |
-
-** FIXME Org Beamer Only Overlay Environment
-
-Adds the "only" beamer environment in org mode (works only in Linux).
-
-#+BEGIN_SRC emacs-lisp
-  ;; (cond
-  ;; ((string-equal system-type "gnu/linux") ; linux
-  ;;   (progn
-  ;;     (when (>= emacs-major-version 24)
-  ;;       (add-to-list 'org-beamer-environments-extra
-  ;;                    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package auctex
+  :ensure t
+  :defer t
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-save-query nil)
+  (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
+  (setq TeX-view-program-selection '((output-dvi "Okular")
+                                     (output-pdf "Okular"))))
+#+end_src
 
 #+RESULTS:
-| onlyenv | O | \begin{onlyenv}%a | \end{onlyenv} |
-* Ledger-Mode
+
+** RefTeX
+Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
+For when working on TeX files.
+
+#+begin_src emacs-lisp
+(use-package reftex
+  :ensure t
+  :defer t
+  :config
+  (setq reftex-plug-into-AUCTeX t)
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
+#+end_src
+
+#+RESULTS:
+: t
+* Ledger mode
 Plain-text double-entry accounting program.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
+    :ensure t
+    :defer t
     :config
     (add-to-list 'auto-mode-alist '("\\.ledger\\'" . ledger-mode)))
 #+END_SRC
@@ -1538,6 +1513,7 @@ Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spel
 
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
+    :ensure t
     :defer t
     :bind (("<f8>" . ispell-word)
            ("M-<f8>" . flyspell-mode))
@@ -1565,53 +1541,27 @@ Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp
 (use-package magit
+  :ensure t
+  :defer t
   :bind (("C-x g" . magit-status)))
 #+end_src
 
 #+RESULTS:
 : magit-status
 
-* LaTeX
-** AUCTeX
-Configure AUCTeX to edit TeX files.
-
-#+begin_src emacs-lisp
-(use-package auctex
-  :defer t
-  :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq TeX-save-query nil)
-  (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
-  (setq TeX-view-program-selection '((output-dvi "Okular")
-                                     (output-pdf "Okular"))))
-#+end_src
-
-#+RESULTS:
-
-** RefTeX
-Configure RefTeX (citation engine for LaTeX) to plug into AUCTeX.
-For when working on TeX files.
-
-#+begin_src emacs-lisp
-(use-package reftex
-  :defer t
-  :config
-  (setq reftex-plug-into-AUCTeX t)
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
-#+end_src
-
-#+RESULTS:
-: t
 * Tramp
 
 #+BEGIN_SRC emacs-lisp
-(require 'tramp)
-(setq tramp-default-method "ssh")
+  (use-package 'tramp
+    :disabled t
+    :ensure t
+    :defer t
+    :config
+    (setq tramp-default-method "ssh"))
 #+END_SRC
 
 #+RESULTS:
-: ssh
+
 * Miscellaneous
 ** Prepare Meeting Notes
 Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/org-mode.html#MeetingNotes.
@@ -1635,7 +1585,6 @@ Quick elisp function to prepare meeting notes taken from http://doc.norang.ca/or
 
 #+RESULTS:
 : bh/prepare-meeting-notes
-
 * New Tools
 ** FIXME pdf-tools
 
@@ -1671,3 +1620,62 @@ Spaced repetition memorization.
 
 #+RESULTS:
 : /winc/jk/chalmers/learnSwedish/git/swedish.pam
+** FIXME Org-Publishing
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq org-publish-project-alist
+  ;;       `(("index"
+  ;;          :base-directory "/src"
+  ;;          :base-extension "org"
+  ;;          :publishing-directory "/public"
+  ;;          :recursive t
+  ;;          :publishing-function org-html-publish-to-html)
+  ;; 
+  ;;         ("blog"
+  ;;          :base-directory "/src/blog"
+  ;;          :base-extension "org"
+  ;;          :publishing-directory "/public/blog"
+  ;;          :recursive t
+  ;;          :publishing-function org-html-publish-to-html)
+  ;; 
+  ;;         ("blog-posts"
+  ;;          :base-directory "/src/blog"
+  ;;          :base-extension "org"
+  ;;          :exclude "blog.org"
+  ;;          :publishing-directory "/public/blog"
+  ;;          :recursive t
+  ;;          :publishing-function org-html-publish-to-html)
+  ;; 
+  ;;         ("website"
+  ;;          :components ("index" "blog" "blog-posts"))))
+#+END_SRC
+
+#+RESULTS:
+
+** FIXME Mu and Mu4e
+
+#+BEGIN_SRC emacs-lisp
+  ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+  ;; (require 'mu4e)
+  ;; (setq mu4e-maildir "~/maildir/Gmail")
+  ;; (setq mu4e-drafts-folder "/[Gmail].Drafts")
+  ;; (setq mu4e-sent-folder   "/[Gmail].Sent Mail")
+  ;; (setq mu4e-trash-folder  "/[Gmail].Trash")
+  ;; (setq mu4e-refile-folder  "/[Gmail].All Mail")
+#+END_SRC
+
+** FIXME Org Beamer Only Overlay Environment
+
+Adds the "only" beamer environment in org mode (works only in Linux).
+
+#+BEGIN_SRC emacs-lisp
+  ;; (cond
+  ;; ((string-equal system-type "gnu/linux") ; linux
+  ;;   (progn
+  ;;     (when (>= emacs-major-version 24)
+  ;;       (add-to-list 'org-beamer-environments-extra
+  ;;                    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))))))
+#+END_SRC
+
+#+RESULTS:
+| onlyenv | O | \begin{onlyenv}%a | \end{onlyenv} |

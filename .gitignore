@@ -28,3 +28,6 @@ org-mode.org
 /dev-pkgs/*.org
 /magithub/*  
 /themes/*    
+/network-security.data
+/test/test.org
+/dev-pkgs/pamparam/

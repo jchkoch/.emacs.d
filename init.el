@@ -14,7 +14,8 @@
 (defun bh/reset-gc-cons-threshold ()
   "Return the garbage collection to the normal values."
   (setq gc-cons-threshold
-	(car (get 'gc-cons-threshold 'standard-value))
+	(car (get 'gc-cons-threshold 'standard-value)))
+  (setq gc-cons-percentage
 	(car (get 'gc-cons-percentage 'standard-value))))
 
 (add-hook 'after-init-hook 'bh/reset-gc-cons-threshold)

@@ -1,0 +1,34 @@
+#+TITLE: Emacs Configuration
+#+SUBTITLE: Part I (Personal Information)
+#+AUTHOR: J. C. Koch
+#+EMAIL: jchkoch@gmail.ca
+#+SEQ_TODO: FIXME |FIXED
+
+* Personal information
+Set a user name and email address for Emacs to use if needed.
+
+#+begin_src emacs-lisp
+  (setq user-full-name "James Koch"
+        user-mail-address "jckoch@ualberta.ca")
+#+end_src
+
+#+RESULTS:
+: jckoch@ualberta.ca
+
+* Set default Emacs directory
+Change the default directory that emacs opens in to fit your needs.
+
+#+begin_src emacs-lisp
+(setq default-directory "/winc/jk/myLife")
+#+end_src
+
+#+RESULTS:
+: /winc/jk/myLife
+
+* User specfied theme
+
+#+BEGIN_SRC emacs-lisp
+  ;(set-background-color "black")
+  ;(set-foreground-color "white")
+  ;(set-default 'cursor-type 'box)
+#+END_SRC

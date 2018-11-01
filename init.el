@@ -65,6 +65,9 @@
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
 
+(setq visible-bell t)
+(blink-cursor-mode -1)
+
 ;; Start the server
 ;; ------------------------------------------------
 (server-start)
@@ -72,6 +75,10 @@
 ;; Load the config
 ;; ------------------------------------------------
 (org-babel-load-file (concat user-emacs-directory "config.org"))
+
+;; Load personal config
+;; -----------------------------------------------
+(org-babel-load-file (concat user-emacs-directory "personal.org"))
 
 ;; Set customized variables to seperate file
 ;; ------------------------------------------------

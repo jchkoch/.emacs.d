@@ -46,6 +46,11 @@
   (package-refresh-contents)
   (package-install 'diminish))
 
+;; Bootstrap `bind-key`
+(unless (package-installed-p 'bind-key)
+  (package-refresh-contents)
+  (package-install 'bind-key))
+
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)

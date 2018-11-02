@@ -94,7 +94,7 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : t
 
-* Base Packages
+* Baxose Packages
 ** IBuffer
 Set the Buffer List buffer as to default with "ibuffer".
 

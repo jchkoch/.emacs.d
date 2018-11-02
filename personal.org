@@ -28,7 +28,7 @@ Change the default directory that emacs opens in to fit your needs.
 * User specfied theme
 
 #+BEGIN_SRC emacs-lisp
-  ;(set-background-color "black")
-  ;(set-foreground-color "white")
-  ;(set-default 'cursor-type 'box)
+  ;; (set-background-color "black")
+  ;; (set-foreground-color "white")
+  ;; (set-default 'cursor-type 'box)
 #+END_SRC

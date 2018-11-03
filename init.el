@@ -8,7 +8,7 @@
 
 ;; Speed up init time by manipulating garbage collection
 ;; ------------------------------------------------
-(setq gc-cons-threshold (* 64 1024 1024 1024)
+(setq gc-cons-threshold (* 64 1024 1024)
       gc-cons-percentage 0.9)
 
 (defun bh/reset-gc-cons-threshold ()
@@ -33,23 +33,11 @@
 (setq package-archives
       '(("GNU ELPA"     . "http://elpa.gnu.org/packages/")
         ("MELPA Stable" . "https://stable.melpa.org/packages/")
-        ("MELPA"        . "https://melpa.org/packages/"))
-      package-archive-priorities
-      '(("MELPA Stable" . 10)
-        ("MELPA"        . 5)	
-        ("GNU ELPA"     . 0)))
+        ("MELPA"        . "https://melpa.org/packages/")
+	("ORG"         . "http://orgmode.org/elpa/")
+	("GNU"         . "http://elpa.gnu.org/packages/")))
 
 (package-initialize)
-
-;; Bootstrap `diminish`
-(unless (package-installed-p 'diminish)
-  (package-refresh-contents)
-  (package-install 'diminish))
-
-;; Bootstrap `bind-key`
-(unless (package-installed-p 'bind-key)
-  (package-refresh-contents)
-  (package-install 'bind-key))
 
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
@@ -57,6 +45,8 @@
   (package-install 'use-package))
 
 ;; `use-package` configuration
+(use-package delight :ensure t)
+(use-package use-package-ensure-system-package :ensure t)
 (setq use-package-always-ensure t)
 
 ;; Basic Customizations
@@ -72,6 +62,10 @@
 
 (setq visible-bell t)
 (blink-cursor-mode -1)
+
+(column-number-mode 1)
+(display-time-mode 1)
+(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Start the server
 ;; ------------------------------------------------

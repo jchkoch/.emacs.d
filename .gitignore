@@ -2,6 +2,7 @@
 .directory
 auto-save-list/
 config.el
+personal.el
 elpa/
 smex-items
 ac-comphist.dat

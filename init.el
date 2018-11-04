@@ -45,6 +45,7 @@
   (package-install 'use-package))
 
 ;; `use-package` configuration
+(use-package diminish :ensure t)
 (use-package delight :ensure t)
 (use-package use-package-ensure-system-package :ensure t)
 (setq use-package-always-ensure t)
@@ -71,13 +72,13 @@
 ;; ------------------------------------------------
 (server-start)
 
-;; Load the config
-;; ------------------------------------------------
-(org-babel-load-file (concat user-emacs-directory "config.org"))
-
 ;; Load personal config
 ;; -----------------------------------------------
 (org-babel-load-file (concat user-emacs-directory "personal.org"))
+
+;; Load the config
+;; ------------------------------------------------
+(org-babel-load-file (concat user-emacs-directory "config.org"))
 
 ;; Set customized variables to seperate file
 ;; ------------------------------------------------

@@ -378,6 +378,11 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-span 'day)
   (setq org-agenda-use-time-grid t)
+  (setq org-agenda-tags-column -250)
+  (add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
 
   (setq org-agenda-custom-commands
         (quote (("N" "Notes" tags "NOTE"

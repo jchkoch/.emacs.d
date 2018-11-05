@@ -233,6 +233,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
     :defer 1
+    :delight undo-tree-mode "U"
     :config 
     (global-undo-tree-mode) ;;turn on everywhere
     (defalias 'redo 'undo-tree-redo)

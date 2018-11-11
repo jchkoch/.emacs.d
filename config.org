@@ -7,15 +7,15 @@
 * About
 After using plain vanilla GNU Emacs for a while, I decided to create my own config to simplify my daily life by adding customizations such as LaTeX, org-mode, ob-ipython, etc.
 
-For more information about myself, you can visit my [[][LinkedIN profile]]. In the near future I will also be developing a website (stay tuned ...).
+For more information about myself, you can visit my [[www.linkedin.com/in/kochjc][LinkedIN profile]]. In the near future I will also be developing a website (stay tuned ...).
 
-To manage package configurations, I use [[][use-package]] package from John Wiegley, that I recommend.
+To manage package configurations, I primarily use [[https://jwiegley.github.io/use-package][use-package]] package from John Wiegley except for my org-mode configuration.
 
 This configuratiion is mainly based on the following user configurations:
-- [[https://github.com/rememberYou/.emacs.d][Terencio Agozzino]] (=rememberYou=);
-- [[https://github.com/jwiegley/dot-emacs/][John Wiegley]] (=jwiegley=);
-- [[https://github.com/sachac][Sacha Chua]] (=sachac=);
-- [[https://github.com/angrybacon/dotemacs][Mathieu Marques]] (=angrybacon=).
+- [[http://doc.norang.ca/org-mode.html][Bernt Hansen]]: for =org-mode=;
+- [[http://kitchingroup.cheme.cmu.edu/][John Kitchin]] ([[https://github.com/jkitchin][=jkitchin=]]): for =org-ref=;
+- Greg Sexton ([[https://github.com/gregsexton][=gregsexton=]]): for =ob-ipython=;
+- [[http://www.newartisans.com][John Wiegley]] ([[https://github.com/jwiegley/dot-emacs/][=jwiegley=]]) for =use-package=;
 
 Thanks to them for their incredible work!
 
@@ -159,7 +159,6 @@ Set the cursor to stop blinking.
            python-shell-prompt-detect-failure-warning nil)
      (setq elpy-set-test-runner "Nose"))  
 #+END_SRC
-
 * Advanced Configuration
 ** =ivy-mode=
 
@@ -289,6 +288,7 @@ Set up Git version control from within Emacs using the package Magit.
 #+end_src
 
 #+RESULTS:
+: magit-status
 
 ** =ledger-mode=
 Plain-text double-entry accounting program.
@@ -300,6 +300,34 @@ Plain-text double-entry accounting program.
 #+END_SRC
 
 #+RESULTS:
+
+** =pdf-tools=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :defer 1)
+  
+  (pdf-tools-install)
+
+  (add-hook 'after-change-major-mode-hook
+            '(lambda ()
+               (linum-mode (if (equal major-mode 'pdf-view-mode) 0 1))))
+#+END_SRC
+
+#+RESULTS:
+| (lambda nil (linum-mode (if (equal major-mode (quote pdf-view-mode)) 0 1))) | global-undo-tree-mode-enable-in-buffers | delight-major-mode | global-linum-mode-enable-in-buffers | global-visual-line-mode-enable-in-buffers | global-font-lock-mode-enable-in-buffers |
+** =org-crypt=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-crypt
+    :config
+    (org-crypt-use-before-save-magic)
+    (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+    (setq org-crypt-key nil))
+#+END_SRC
+
+#+RESULTS:
+: t
 
 * =org-mode=
 
@@ -314,7 +342,7 @@ authoring documents with a fast and effective plain-text system.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :delight org-mode "ΘΓζ"
+    :delight "Org"
     :ensure org-plus-contrib
     :config
     ;; TODO keywords
@@ -345,8 +373,8 @@ authoring documents with a fast and effective plain-text system.
     (setq org-tags-column -110)
     :bind (("<f12>" . org-agenda)
            ("C-c l" . org-insert-link)
-	   ("C-o" . org-open-at-point)
-	   ("C-c c" . org-capture)
+           ("C-o" . org-open-at-point)
+           ("C-c c" . org-capture)
            ("<f2>" . org-edit-src-code)
            ("<f3>" . org-edit-src-exit)
            ("<f5>" . org-clock-in)
@@ -358,7 +386,7 @@ authoring documents with a fast and effective plain-text system.
 #+END_SRC
 
 #+RESULTS:
-: org-clock-out
+: bh/clock-in-last-task
 
 ** Agenda
 *** Set agenda files
@@ -367,11 +395,16 @@ This code will set a directory and will be recursive into sub-directories.
 Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (directory-files-recursively default-directory "\.org$"))
+  (setq org-agenda-files (apply 'append
+                                (mapcar
+                                 (lambda (directory)
+                                   (directory-files-recursively
+                                    directory org-agenda-file-regexp))
+                                 '("/winc/jk/myLife/"))))
 #+END_SRC
 
 #+RESULTS:
-: /home/jkoch/.emacs.d/
+| /winc/jk/myLife/gcal-sync/gmail-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/birthdays.org | /winc/jk/myLife/bob.org | /winc/jk/myLife/bom285.org | /winc/jk/myLife/chalmers.org | /winc/jk/myLife/contacts.org | /winc/jk/myLife/monika.org | /winc/jk/myLife/other.org | /winc/jk/myLife/refile.org | /winc/jk/myLife/todo.org | /winc/jk/myLife/vsm167.org |
 
 *** Custom agenda view
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
@@ -747,7 +780,6 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+RESULTS:
 : 45
 
-*** FIXME =org-gcal=
 ** Refiling
 Set a global ``refile`` org file as a staging area for new TODO items and basic settings to make refiling tasks easier. The code is based on the configuration in this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][article]].
 

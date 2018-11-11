@@ -72,13 +72,13 @@
 ;; ------------------------------------------------
 (server-start)
 
-;; Load personal config
-;; -----------------------------------------------
-(org-babel-load-file (concat user-emacs-directory "personal.org"))
-
 ;; Load the config
 ;; ------------------------------------------------
 (org-babel-load-file (concat user-emacs-directory "config.org"))
+
+;; Load personal config
+;; -----------------------------------------------
+(org-babel-load-file (concat user-emacs-directory "personal.org"))
 
 ;; Set customized variables to seperate file
 ;; ------------------------------------------------

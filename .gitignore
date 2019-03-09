@@ -31,3 +31,8 @@ org-mode.org
 /network-security.data
 /test/test.org
 /dev-pkgs/pamparam/
+abbrev_defs
+*.elc
+profile-dotemacs.el
+session.*
+srecode-map.el

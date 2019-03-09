@@ -10,7 +10,7 @@ Set a user name and email address for Emacs to use if needed.
 
 #+begin_src emacs-lisp
   (setq user-full-name "James Koch"
-        user-mail-address "jckoch@ualberta.ca")
+        user-mail-address "jchkoch@gmail.com")
 #+end_src
 
 #+RESULTS:

@@ -8,17 +8,17 @@
 
 ;; Speed up init time by manipulating garbage collection
 ;; ------------------------------------------------
-(setq gc-cons-threshold (* 64 1024 1024)
+(setq gc-cons-threshold 100000000
       gc-cons-percentage 0.9)
 
-(defun bh/reset-gc-cons-threshold ()
-  "Return the garbage collection to the normal values."
-  (setq gc-cons-threshold
-	(car (get 'gc-cons-threshold 'standard-value)))
-  (setq gc-cons-percentage
-	(car (get 'gc-cons-percentage 'standard-value))))
-
-(add-hook 'after-init-hook 'bh/reset-gc-cons-threshold)
+;; (defun bh/reset-gc-cons-threshold ()
+;;   "Return the garbage collection to the normal values."
+;;   (setq gc-cons-threshold
+;; 	(car (get 'gc-cons-threshold 'standard-value)))
+;;   (setq gc-cons-percentage
+;; 	(car (get 'gc-cons-percentage 'standard-value))))
+;; 
+;; (add-hook 'after-init-hook 'bh/reset-gc-cons-threshold)
 
 ;; Turn on debugging and turn off after init
 ;; ------------------------------------------------

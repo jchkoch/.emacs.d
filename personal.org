@@ -33,22 +33,3 @@ Change the default directory that emacs opens in to fit your needs.
   ;; (set-foreground-color "white")
   ;; (set-default 'cursor-type 'box)
 #+END_SRC
-* =org-gcal=                                                                                           :crypt:
------BEGIN PGP MESSAGE-----
-
-jA0EBwMC2JNpRkujlJHm0ukB0O8xbknLrVhiA8VfZifdKeek/aQRPEEnvGpDjcut
-j5KFrc4vtehed5bYjn6HmTqm5BTN1lKfj5kBo30xLxrUXFbOkEbnI5wp6CvNcJwl
-Lr5t6+mxXQPBvn00Szfny1eWchxIi1UqbhMg/A5OcnEEn6YtBbYlVeNiNgam2XQW
-Fvs/EEITMjhSW+IqlIl/grA7x1esrB+Yi5cjsoGQ/Dmw6m/6TP+alWKET1NHXwig
-Uf/SvXvcp4Ktj6DjwOqTYR6lec6rm+Da2gD11hKkP7kJVYu+38RyRkBKRCdonw8i
-PFG7UAIuJynMqmZ6nbEZEQzf4cIwVscB88cjQBUK+VitNDpz5tIYUrNZpGcVs2Zz
-QIJ78jpzegZ7awIyHneqWhHJJFsjOtklCHHm/clxlXh8gO5UbA/cxv/WsvOscfoc
-bMtolnClnDUk6CurHpoiJTSAN8ilE6AuVr2kPNLYRdGWI6un6qC9DfRsYINa6Pg2
-2XfcqKd6X5hWCifosdoAsZRtX26bvssKZeMjOF2PVtAml/pVA4XbG3Kuq+56s1lB
-h/XOdG1qtHzIiKK7xwCTAJY+36npd12u3xas7PbhN3O92YUo1+V1k9GR8FFrAxyV
-VOXTy46UDi0YWe+AWBGpCmcc90LrwSzyxuqSrwErzCSa54NaHJPcmSoZrDGA+hbC
-uoqCDdN7q/Pyd3JsjQkzHsaSHviFIVBxxJdqtI3D5XombzHk0ivkanipJIcn4XGU
-GQweGAawbk71dHMhnDM1QkyuQWqxcpockAZ7A5AFxVd3r3AMAOOq95ha1PeCHwON
-oQ/7f8g2Fz149MEz7Fcfs5ZDXwY+5zJUyuys5UldsVKOGHKM3tSFu4aC1WU=
-=4b2Q
------END PGP MESSAGE-----

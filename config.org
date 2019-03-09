@@ -62,6 +62,21 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
 
 #+RESULTS:
 : t
+
+*** Tangling my config.org file on save
+
+#+BEGIN_SRC emacs-lisp
+  ;; (defun my/tangle-dotfiles ()
+  ;;   "If the current file is this file, the code blocks are tangled"
+  ;;   (when (equal (buffer-file-name) (expand-file-name "~/.emacs.d/config.org"))
+  ;;     (org-babel-tangle nil "~/.emacs.d/config.el")))
+  ;; 
+  ;; (add-hook 'after-save-hook #'my/tangle-dotfiles)
+#+END_SRC
+
+#+RESULTS:
+| my/tangle-dotfiles | my-tangle-config-org-hook-func |
+
 ** Emacs Appearance
 *** Set default theme
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
@@ -78,18 +93,6 @@ Set the cursor to stop blinking.
 : ((font . Monospace-14) (vertical-scroll-bars))
 
 * Languages
-** =emacs-lisp=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package elisp-mode 
-    :ensure nil
-    :defer 0.1
-    :delight emacs-lisp-mode "ξ")
-
-  (add-hook 'emacs-lisp-mode-hook (lambda()
-    (setq mode-name "ξ"))) 
-#+END_SRC
-
 ** =latex=
 
 #+BEGIN_SRC emacs-lisp
@@ -114,8 +117,7 @@ Set the cursor to stop blinking.
 
 #+BEGIN_SRC emacs-lisp
   (use-package python-mode
-    :delight python-mode "π"
-    :defer 0.1
+    :delight python-mode "π "
     :mode "\\.py\\'")
 #+END_SRC
 
@@ -136,8 +138,7 @@ Set the cursor to stop blinking.
     (setq ob-ipython-suppress-execution-count t))
 
   (use-package dash
-    :load-path "dev-pkgs/dash.el"
-    :defer 0.1)
+    :load-path "dev-pkgs/dash.el")
 #+END_SRC
 
 #+RESULTS:
@@ -146,7 +147,6 @@ Set the cursor to stop blinking.
 
 #+BEGIN_SRC emacs-lisp
   (use-package elpy
-     :ensure t
      :init
      (elpy-enable)
      (pyvenv-mode)
@@ -159,53 +159,90 @@ Set the cursor to stop blinking.
            python-shell-prompt-detect-failure-warning nil)
      (setq elpy-set-test-runner "Nose"))  
 #+END_SRC
+
+** =octave-mode= and =matlab-mode=
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package octave
+  ;;   :mode (("\\.m\\'" . octave-mode))
+  ;;   :config
+  ;;   (setq! inferior-octave-startup-args '("-i" "--line-editing")
+  ;;          inferior-octave-prompt-read-only t
+  ;;          inferior-octave-prompt "^octave\\(octave\\|[ >]\\)*"))
+
+  (use-package matlab
+    :ensure matlab-mode
+    :mode (("\\.m\\'" . matlab-mode))
+    :config
+    (setq matlab-shell-command "~/bin/MATLAB/R2018b/bin/matlab")
+    (setq matlab-shell-command-switches '("-nodesktop" "-nosplash"))
+    (setq matlab-return-add-semicolon t))
+#+END_SRC
+
+#+RESULTS:
+: ((\.m\' . matlab-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.[pP][dD][fF]\' . pdf-view-mode) (\.m\' . octave-mode) (\.py\' . python-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.pyw?\' . python-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.[ch]\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . html-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.\(?:desktop\|la\)\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
+
 * Advanced Configuration
 ** =ivy-mode=
 
 #+BEGIN_QUOTE
-Ivy is an interactive interface for completion in Emacs. 
-Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. 
-Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. 
-When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. 
-Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions.
+Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions. 
 
 -taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc. 
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
-    :defer 0.1
-    :delight ivy-mode "ν"
+    :delight ivy-mode "ν "
+    :init (ivy-mode 1)
     :bind (("C-c C-r" . ivy-resume)
            ("C-x B" . ivy-switch-buffer-other-window))
     :config
     (setq ivy-count-format "%d/%d")
     (setq ivy-use-virtual-buffers t)
     (setq org-refile-use-outline-path 'file
-          org-outline-path-complete-in-steps nil)
-    :init (ivy-mode 1))
+          org-outline-path-complete-in-steps nil))
+#+END_SRC
 
+#+RESULTS:
+: ivy-switch-buffer-other-window
+
+Ivy-pass is an interactive interface for password completion in Emacs for the Standard Unix Password Store. Ivy-pass uses the completion mechanism from Ivy for password completion.
+
+#+BEGIN_SRC emacs-lisp
   (use-package ivy-pass
     :after ivy
+    :bind (("C-c p" . ivy-pass))
     :commands ivy-pass)
+#+END_SRC
 
+#+BEGIN_QUOTE
+Swiper is an alternative to isearch that uses ivy to show an overview of all matches.
+
+-taken from Swiper README file.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
   (use-package swiper
     :after ivy
     :bind (("C-s" . swiper)
            ("C-r" . swiper)))
 #+END_SRC
 
+#+RESULTS:
+: swiper
+
 ** =ibuffer=
 Set the Buffer List buffer as to default with "ibuffer".
 
 #+BEGIN_SRC emacs-lisp
   (use-package ibuffer
-    :defer 1
     :init
     (add-hook 'ibuffer-mode-hook
               (lambda ()
                 (ibuffer-auto-mode 1)
                 (ibuffer-switch-to-saved-filter-groups "default")))
+    :bind ("C-x C-b" . ibuffer)
     :config
     (setq ibuffer-saved-filter-groups
           (quote (("default"
@@ -219,8 +256,7 @@ Set the Buffer List buffer as to default with "ibuffer".
                              (name . "^\\*scratch\\*$")
                              (name . "^\\*Messages\\*$")))
                    ("magit" (mode . Magit)) 
-                   ))))
-    :bind ("C-x C-b" . ibuffer))
+                   )))))
 #+END_SRC
 
 #+RESULTS:
@@ -231,13 +267,12 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :defer 1
     :delight undo-tree-mode "U"
+    :bind (("C-z" . undo-tree-undo)
+           ("C-S-z" . redo))
     :config 
     (global-undo-tree-mode) ;;turn on everywhere
-    (defalias 'redo 'undo-tree-redo)
-    :bind (("C-z" . undo-tree-undo)
-           ("C-S-z" . redo)))
+    (defalias 'redo 'undo-tree-redo))
 #+END_SRC
 
 #+RESULTS:
@@ -247,8 +282,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 A package to try out other interesting GNU Emacs packages without having to install the packages.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package try
-    :defer 5)
+  (use-package try)
 #+END_SRC
 
 ** =flyspell=
@@ -295,7 +329,6 @@ Plain-text double-entry accounting program.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
-    :defer 1
     :mode "\\.ledger\\'")
 #+END_SRC
 
@@ -304,30 +337,42 @@ Plain-text double-entry accounting program.
 ** =pdf-tools=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :defer 1)
-  
+  (use-package pdf-tools)
   (pdf-tools-install)
-
-  (add-hook 'after-change-major-mode-hook
-            '(lambda ()
-               (linum-mode (if (equal major-mode 'pdf-view-mode) 0 1))))
+  (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
 #+END_SRC
 
 #+RESULTS:
-| (lambda nil (linum-mode (if (equal major-mode (quote pdf-view-mode)) 0 1))) | global-undo-tree-mode-enable-in-buffers | delight-major-mode | global-linum-mode-enable-in-buffers | global-visual-line-mode-enable-in-buffers | global-font-lock-mode-enable-in-buffers |
-** =org-crypt=
+| (lambda nil (linum-mode -1)) | pdf-tools-enable-minor-modes |
+|                              |                              |
+
+** =elfeed=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-crypt
+  (use-package elfeed
+    :after elfeed-org
     :config
-    (org-crypt-use-before-save-magic)
-    (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-    (setq org-crypt-key nil))
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "/winc/jk/myLife/todo.org")))
+
+  (use-package elfeed-org)
 #+END_SRC
 
 #+RESULTS:
-: t
+
+** =gud=
+General debugging commands.
+
+#+BEGIN_SRC emacs-lisp
+  ;; for GDB/debugging in general
+  (global-set-key (kbd "<f10>") 'gud-cont)
+  (global-set-key (kbd "<f9>") 'gud-step)   ;; equiv matlab step in
+  (global-set-key (kbd "<f8>") 'gud-next)   ;; equiv matlab step 1 
+  (global-set-key (kbd "<f7>") 'gud-finish) ;; equiv matlab step out
+#+END_SRC
+
+#+RESULTS:
+: gud-finish
 
 * =org-mode=
 
@@ -338,39 +383,9 @@ authoring documents with a fast and effective plain-text system.
 [[http://orgmode.org/][Carsten Dominik]]
 #+END_QUOTE
 
-** General
-
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :delight "Org"
     :ensure org-plus-contrib
-    :config
-    ;; TODO keywords
-    (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-    (setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("REVIEW" :foreground "yellow" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ("PHONE" :foreground "forest green" :weight bold))))
-    (setq org-use-fast-todo-selection t)
-    ;; TODO state tag triggers
-    (setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-    ;; Tag placement
-    (setq org-tags-column -110)
     :bind (("<f12>" . org-agenda)
            ("C-c l" . org-insert-link)
            ("C-o" . org-open-at-point)
@@ -382,11 +397,58 @@ authoring documents with a fast and effective plain-text system.
            ("<f7>" . org-habit-toggle-habits)
            ("<f9> I" . bh/punch-in)
            ("<f9> O" . bh/punch-out)
-           ("<f9> SPC" . bh/clock-in-last-task)))
+           ("<f9> SPC" . bh/clock-in-last-task)
+           ("C-c d" . org-decrypt-entry)))
 #+END_SRC
 
 #+RESULTS:
-: bh/clock-in-last-task
+: org-decrypt-entry
+
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
+#+END_SRC
+
+** TODO States
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+    (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
+            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+  (setq org-todo-keyword-faces
+    (quote (("TODO" :foreground "red" :weight bold)
+            ("NEXT" :foreground "blue" :weight bold)
+            ("DONE" :foreground "forest green" :weight bold)
+            ("REVIEW" :foreground "yellow" :weight bold)
+            ("WAITING" :foreground "orange" :weight bold)
+            ("HOLD" :foreground "magenta" :weight bold)
+            ("CANCELLED" :foreground "forest green" :weight bold)
+            ("MEETING" :foreground "forest green" :weight bold)
+            ("PHONE" :foreground "forest green" :weight bold))))
+
+  (setq org-use-fast-todo-selection t)
+#+END_SRC
+
+** Tag Configuration
+
+#+BEGIN_SRC emacs-lisp
+  ;; TODO state tag triggers
+  (setq org-todo-state-tags-triggers
+        (quote (("CANCELLED" ("CANCELLED" . t))
+                ("WAITING" ("WAITING" . t))
+                ("HOLD" ("WAITING") ("HOLD" . t))
+                (done ("WAITING") ("HOLD"))
+                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+  ;; Tag placement
+  (setq org-tags-column -70)
+#+END_SRC
+
+#+RESULTS:
+: -70
 
 ** Agenda
 *** Set agenda files
@@ -395,16 +457,18 @@ This code will set a directory and will be recursive into sub-directories.
 Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (apply 'append
-                                (mapcar
-                                 (lambda (directory)
-                                   (directory-files-recursively
-                                    directory org-agenda-file-regexp))
-                                 '("/winc/jk/myLife/"))))
+  (setq org-agenda-files (list "/winc/jk/myLife/"))
+
+  ;; (setq org-agenda-files (apply 'append
+  ;;                               (mapcar
+  ;;                                (lambda (directory)
+  ;;                                  (directory-files-recursively
+  ;;                                   directory org-agenda-file-regexp))
+  ;;                                '("/winc/jk/myLife/"))))
 #+END_SRC
 
 #+RESULTS:
-| /winc/jk/myLife/gcal-sync/gmail-gcal.org | /winc/jk/myLife/gcal-sync/private-gcal.org | /winc/jk/myLife/gcal-sync/ualberta-gcal.org | /winc/jk/myLife/birthdays.org | /winc/jk/myLife/bob.org | /winc/jk/myLife/bom285.org | /winc/jk/myLife/chalmers.org | /winc/jk/myLife/contacts.org | /winc/jk/myLife/monika.org | /winc/jk/myLife/other.org | /winc/jk/myLife/refile.org | /winc/jk/myLife/todo.org | /winc/jk/myLife/vsm167.org |
+| /winc/jk/myLife/ |
 
 *** Custom agenda view
 Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
@@ -412,7 +476,7 @@ Custom agenda view to see today's calendar and a list of NEXT tasks that I can w
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-span 'day)
   (setq org-agenda-use-time-grid t)
-  (setq org-agenda-tags-column -250)
+  (setq org-agenda-tags-column -162)
   (add-hook 'org-agenda-mode-hook
           (lambda ()
             (visual-line-mode -1)
@@ -973,7 +1037,11 @@ I categorize it into a few new groups that I use as templates:
   (setq bh/keep-clock-running nil)
   (defvar bh/organization-task-id "default")
   (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
+  (setq org-duration-format (quote h:mm))
 #+END_SRC
+
+#+RESULTS:
+: h:mm
 
 *** Org clock convienence functionality
 
@@ -1049,6 +1117,9 @@ I categorize it into a few new groups that I use as templates:
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 #+END_SRC
 
+#+RESULTS:
+| org-display-inline-images |
+
 ** Preview =latex= in =org-mode=
 
 #+BEGIN_SRC emacs-lisp
@@ -1094,7 +1165,7 @@ I categorize it into a few new groups that I use as templates:
     (setq helm-bibtex-pdf-field "File")
     ; open pdf with system pdf viewer
     (setq helm-bibtex-pdf-open-function 'org-open-file)
-    :bind (("H-j" . org-ref-bibtex-hydra/body)))
+    :bind (("C-j" . org-ref-bibtex-hydra/body)))
 #+END_SRC
 
 ** =cdlatex-mode=
@@ -1115,3 +1186,95 @@ I categorize it into a few new groups that I use as templates:
     :diminish org-tree-slide-mode
     :bind (("<f11>" . org-tree-slide-mode)))
 #+END_SRC
+** =org-crypt=
+
+ #+BEGIN_SRC emacs-lisp
+   (require 'org-crypt)
+   (org-crypt-use-before-save-magic)
+   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+   (setq org-crypt-key nil)
+ #+END_SRC
+
+ #+RESULTS:
+ : t
+** Publishing
+*** HTML settings
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-use-timestamps-flag nil)
+  (setq org-html-divs '((preamble "header" "top")
+                              (content "main" "content")
+                        (postamble "footer" "postamble"))
+                        org-html-container-element "section"
+                        org-html-head-include-scripts nil
+                        org-html-scripts nil
+                        org-html-head-include-default-style nil)
+
+  (setq org-html-preamble-format '(("en" "")))
+#+END_SRC
+
+#+RESULTS:
+| en |   |
+
+*** Publish project: website
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-project-alist
+        '(
+          ("org-index"
+           :base-directory "/winc/jk/website/jckoch.gitlab.io/src"
+           :base-extension "org"
+           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
+           :recursive nil
+           :publishing-function org-html-publish-to-html
+	         :html-preamble nil
+           :html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/jckoch.com.min.css\" />"
+           )
+          ("org-blog"
+           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
+           :base-extension "org"
+           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+	         :html-preamble t
+           :html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/jckoch.com.min.css\" />"
+           )
+          ("org-publications"
+           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
+           :base-extension "org"
+           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
+           :recursive nil
+           :publishing-function org-html-publish-to-html
+	         :html-preamble t
+          )
+          ("org-static"
+           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("org" :components ("org-index" "org-blog" "org-publications" "org-static"))))
+#+END_SRC
+
+#+RESULTS:
+| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src              | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil  | :publishing-function | org-html-publish-to-html | :html-preamble | nil  | :html-style | <link rel="stylesheet" type="text/css" href="css/jckoch.com.min.css" />    |                                                |            |   |                      |                        |
+| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog         | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t    | :publishing-function | org-html-publish-to-html | :html-preamble | t    | :html-style | <link rel="stylesheet" type="text/css" href="../css/jckoch.com.min.css" /> |                                                |            |   |                      |                        |
+| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil  | :publishing-function | org-html-publish-to-html | :html-preamble | t    |             |                                                                            |                                                |            |   |                      |                        |
+| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/             | :base-extension | css\ | js\                   | png\                                                       | jpg\       | gif\ | pdf\                 | mp3\                     | ogg\           | swf\ | html        | :publishing-directory                                                      | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive | t | :publishing-function | org-publish-attachment |
+| org              | :components     | (org-index org-blog org-publications org-static)   |                 |      |                       |                                                            |            |      |                      |                          |                |      |             |                                                                            |                                                |            |   |                      |                        |
+** =org-gcal-sync=
+-----BEGIN PGP MESSAGE-----
+
+jA0EBwMC/puAXzoEMyXk0sDxASoqkPar/Xt1YNkIH0tN4Wjguxsg4F9oV6Btaa2T
+CCjlfn5V1fkS2UAmgyjGsCrfn/RljuBQtc13CPnr2KdLNxevnhhnJ3DVPzTY0ddE
+EoHl+mrVwJrpLRLMvi21xIlkUbZLQlNiwjcdSwRKyb2vvMbs0clPiG6ECrkzDvxr
+8M6sSN28n9cg5FpPxLMD+jHWw/DBr4xsHF5kcxTzuaW8JE+s+jlTMZR8IJK8qMmV
+1nQlyfhAAiEZrGEQr8eG4L7xw32xMcfY1LOxqy8dXK6qhTQ+OtUloNR1otRt9fao
+gnoqbVg9lQfS2wvqZ5sviZnTYqcG954hA3kTsNI9bUoRmCpSp60WtSygYnHXSKkB
+M5InEQ9RZP0Z1iVRz6llXE7eNinki6GLHEJSv/4MiZxKobfjNLXfVf32wEHUp8cB
+n9X3OVdkTp/5GzW1j758ydn/esmG7Ym7GQPsOTjO06W9m4JaKZysn1D+RCoq6846
+GrQsOs+K0x8v8qUYFFqnTbnaqxvfp/7dkIu4kVk/TqqLanA/Z9ROj86dV4JLzaoK
+01rFBemkatQAuWChJZ0qxMPbUw==
+=h5Sf
+-----END PGP MESSAGE-----

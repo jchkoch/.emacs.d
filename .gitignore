@@ -36,3 +36,4 @@ abbrev_defs
 profile-dotemacs.el
 session.*
 srecode-map.el
+/transient/*.el

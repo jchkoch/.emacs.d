@@ -117,7 +117,7 @@ Set the cursor to stop blinking.
 
 #+BEGIN_SRC emacs-lisp
   (use-package python-mode
-    :delight python-mode "π "
+    :delight python-mode "PI"
     :mode "\\.py\\'")
 #+END_SRC
 
@@ -193,7 +193,7 @@ Ivy is an interactive interface for completion in Emacs. Emacs uses completion m
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
-    :delight ivy-mode "ν "
+    :delight ivy-mode "ivy"
     :init (ivy-mode 1)
     :bind (("C-c C-r" . ivy-resume)
            ("C-x B" . ivy-switch-buffer-other-window))
@@ -267,7 +267,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :delight undo-tree-mode "U"
+    :delight undo-tree-mode "Z"
     :bind (("C-z" . undo-tree-undo)
            ("C-S-z" . redo))
     :config 
@@ -385,10 +385,89 @@ General debugging commands.
 : avy-resume
 
 ** FIXME =mu4e=
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-(setq mu4e-drafts-folder "/[Gmail].Drafts")
-(setq mu4e-sent-folder   "/[Gmail].Sent Mail")
-(setq mu4e-trash-folder  "/[Gmail].Trash")
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :ensure nil
+    :ensure-system-package mu
+    :custom
+    (mu4e-maildir "~/Maildir")
+    (mu4e-drafts-folder "/[Gmail].Drafts")
+    (mu4e-sent-folder   "/[Gmail].Sent Mail")
+    (mu4e-trash-folder  "/[Gmail].Trash")
+    (mu4e-sent-messages-behavior 'delete) ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+    (mu4e-maildir-shortcuts
+     '(("/INBOX" . ?i)
+       ("/[Gmail].Sent Mail" . ?s)
+       ("/[Gmail].Trash"       . ?t)
+       ("/[Gmail].All Mail"    . ?a)))
+    (mu4e-update-interval 600)
+    (mu4e-use-fancy-chars t)
+    (mu4e-view-show-addresses t)
+    (mu4e-view-show-images t))
+
+  ;; allow for updating mail using 'U' in the main view:
+  (setq mu4e-get-mail-command "offlineimap")
+
+  ;; something about ourselves
+  (setq
+     user-mail-address "jchkoch@gmail.com"
+     user-full-name  "James Koch"
+     mu4e-compose-signature
+      (concat
+        "James Koch\n"
+        "http://jckoch.gitlab.io\n"))
+
+  ;; sending mail -- replace USERNAME with your gmail username
+  ;; also, make sure the gnutls command line utils are installed
+  ;; package 'gnutls-bin' in Debian/Ubuntu
+  (require 'smtpmail)
+  (setq message-send-mail-function 'smtpmail-send-it
+     starttls-use-gnutls t
+     smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+     smtpmail-auth-credentials
+       '(("smtp.gmail.com" 587 "jchkoch@gmail.com" nil))
+     smtpmail-default-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-service 587)
+
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
+#+end_src
+
+#+RESULTS:
+: t
+
+** FIXME =mu4e-alert=
+
+#+begin_src emacs-lisp
+  (use-package mu4e-alert
+    :after mu4e
+    :hook ((after-init . mu4e-alert-enable-mode-line-display)
+           (after-init . mu4e-alert-enable-notifications))
+    :config (mu4e-alert-set-default-style 'libnotify))
+#+end_src
+
+#+RESULTS:
+| mu4e-alert-enable-notifications | mu4e-alert-enable-mode-line-display | #[0 \303\211\235\203 \304"\301\305!\210\210	\205 \306 \210\307\211\207 [command-line-args desktop-save-mode inhibit-startup-screen --no-desktop delete 0 desktop-read t] 4] | (lambda nil (setq debug-on-error nil)) | x-wm-set-size-hint | table--make-cell-map |
+
+** =ox-word=
+From John Kitchin. Downloaded (static) elisp file.
+
+#+begin_src elisp
+  (require 'ox-word)
+#+end_src
+
+** =pamparam=
+From [[https://github.com/abo-abo/pamparam][source repository]] by abo-abo on GitHub.
+
+#+begin_src elisp
+  (use-package pamparam
+    :bind (("C-c m" . hydra-pamparam/body)))
+#+end_src
+
+#+RESULTS:
+: hydra-pamparam/body
 
 * =org-mode=
 
@@ -920,6 +999,7 @@ I categorize it into a few new groups that I use as templates:
   + A org protocol (w)
 
 #+BEGIN_SRC emacs-lisp
+  (setq org-agenda-diary-file "/winc/jk/myLife/diary.org")
   (setq org-capture-templates
         (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
                  "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
@@ -938,6 +1018,9 @@ I categorize it into a few new groups that I use as templates:
                 ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
                 "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 #+END_SRC
+
+#+RESULTS:
+| t | todo | entry | (file /winc/jk/myLife/refile.org) | * TODO %? |
 
 ** Time clocking
 *** Custom functions
@@ -1054,10 +1137,11 @@ I categorize it into a few new groups that I use as templates:
   (defvar bh/organization-task-id "default")
   (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
   (setq org-duration-format (quote h:mm))
+  (setq org-clock-idle-time 15)
 #+END_SRC
 
 #+RESULTS:
-: h:mm
+: 15
 
 *** Org clock convienence functionality
 
@@ -1171,7 +1255,7 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref
-    :delight org-ref "ΩR"
+    :delight org-ref "cite"
     :init
     (require 'org-ref)
     (require 'doi-utils)
@@ -1310,6 +1394,7 @@ tI6+tKkpXAaIx6gahQeg9/4QT0uNP7H3mmq7Hc9z/D2Tog8pxXIrLr8//0CgjlgH
 geqXXj19tTrJQGX7y8w4ZIq2Og==
 =nA1Z
 -----END PGP MESSAGE-----
+
 ** =org-pomodoro=
 
 #+BEGIN_SRC emacs-lisp

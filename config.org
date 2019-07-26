@@ -463,6 +463,8 @@ From [[https://github.com/abo-abo/pamparam][source repository]] by abo-abo on Gi
 
 #+begin_src elisp
   (use-package pamparam
+    :config
+    (setq pamparam-path "/home/jkoch/Documents/languages/swedish/swedish.pam")
     :bind (("C-c m" . hydra-pamparam/body)))
 #+end_src
 

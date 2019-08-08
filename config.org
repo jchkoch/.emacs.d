@@ -462,10 +462,12 @@ From John Kitchin. Downloaded (static) elisp file.
 From [[https://github.com/abo-abo/pamparam][source repository]] by abo-abo on GitHub.
 
 #+begin_src elisp
-  (use-package pamparam
-    :config
-    (setq pamparam-path "/home/jkoch/Documents/languages/swedish/swedish.pam")
-    :bind (("C-c m" . hydra-pamparam/body)))
+  (require 'pamparam)
+  (setq pamparam-alist
+        '(("/winc/jk/languagelearning/swedish/pamparamRepo/swedish.org"
+           . "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")))
+  (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
+  (global-set-key (kbd "C-c m") 'hydra-pamparam/body)
 #+end_src
 
 #+RESULTS:
@@ -1384,17 +1386,17 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 ** =org-gcal-sync=
 -----BEGIN PGP MESSAGE-----
 
-jA0EBwMCUuy6yVQUgO7m0sDxAYyuiBqdpS9wxfsJB/q+TWPF0rHDv758boklZOmn
-Ul1Uh/TqB9R0ui1xFo463dIY1mU0X1xcU8xder6aFtKZPpEJYpF12sVR8X+35CmB
-qRvmusHRe6oY3iM+7YNT8hmopvIW1/RsaEywR64HtfzJwh7hhwR++tMsX0Lt8ret
-/ZunUwRLwzxTvnjVyfwXnHcd1HsmVP58q5cC7AvM96dTVSUT3WHYYhqgUll+hEdi
-arxvFp0vkzdZA71LjJXDjKdmIq6wNTf9G5xRRA+k3iT+CPFIpedqMcI56xv7RFtB
-c+4vYkGsY6SiF1/nZR9NmmG6ZcnAY7OcpI1sgFLiEy+Gfro7V3OjEr4J/B9x+Gd0
-jZpabnHRGu6uqe+FhUdZy4ZiI8DGYpbEWdT5dztRdbPntudvwU+6nKyPCifjzLdt
-PRceazdeUL7eu9eAkMQW/M3Nw6BpezytYeADcxmpOhL+6fTitAsq5GvjJNTF6RDR
-tI6+tKkpXAaIx6gahQeg9/4QT0uNP7H3mmq7Hc9z/D2Tog8pxXIrLr8//0CgjlgH
-geqXXj19tTrJQGX7y8w4ZIq2Og==
-=nA1Z
+jA0EBwMCYf+TCIK7rf7y0sEOATeL59HBDU3Sz7yNC0jp79R1xY6+4d92By8BG7JA
+Mpsq2hnYADY9fc9LnGnjdIK4Nh9EgrSunS1MHryZzGtHc041jC8sh7LNF4sgn3EP
+Di9+4bA1kdryUdPjTLUdTtVjFyPo0YM8Flf4HrSeAbvnuglMX4jhlq+EO7MWwY10
+5Lmmv6/Zogps33ziBSajwjU6fCHtE+JxAbnLCYalbJjq8kLq/+XLsQUAjIV/dQ5q
+/94JZTyMNFh5pstsU5ZqH/ZhRNMx8M4o9I1TQ00b5pQISFPCiKChWebRNXGEQOWB
+Fq2X2g2K7HLskHlzuqCq5ihpAKDMOfWbQRaJfM1aD4HbDYhPG5ytx05kRvCUYqwv
+PIW2xjsXTSLGmyjGRTpztPH/QQh7edmdxZ22SezFUGYSbEUYmXuCmOBdV1o7M6gM
+pKUE+lcae5TVygAlLjGadnkanTFWJXmhCQR05OBNJbwFjtLSUK4flj6c6+9tQSUl
+uQiMyrFlSC1E8gXyoORKaTTGtufnnALtkhuiQVw0ypCTrUYF2egz8of1x67tu9hG
+ccEnlGn8mM9sAtkfhGboELZHVIpaZwPuZYHgBeqaPAWMvTalXtLAwf+4PF5EJtsg
+=mDzF
 -----END PGP MESSAGE-----
 
 ** =org-pomodoro=

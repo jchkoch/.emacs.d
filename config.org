@@ -384,73 +384,6 @@ General debugging commands.
 #+RESULTS:
 : avy-resume
 
-** FIXME =mu4e=
-
-#+begin_src emacs-lisp
-  (use-package mu4e
-    :ensure nil
-    :ensure-system-package mu
-    :custom
-    (mu4e-maildir "~/Maildir")
-    (mu4e-drafts-folder "/[Gmail].Drafts")
-    (mu4e-sent-folder   "/[Gmail].Sent Mail")
-    (mu4e-trash-folder  "/[Gmail].Trash")
-    (mu4e-sent-messages-behavior 'delete) ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-    (mu4e-maildir-shortcuts
-     '(("/INBOX" . ?i)
-       ("/[Gmail].Sent Mail" . ?s)
-       ("/[Gmail].Trash"       . ?t)
-       ("/[Gmail].All Mail"    . ?a)))
-    (mu4e-update-interval 600)
-    (mu4e-use-fancy-chars t)
-    (mu4e-view-show-addresses t)
-    (mu4e-view-show-images t))
-
-  ;; allow for updating mail using 'U' in the main view:
-  (setq mu4e-get-mail-command "offlineimap")
-
-  ;; something about ourselves
-  (setq
-     user-mail-address "jchkoch@gmail.com"
-     user-full-name  "James Koch"
-     mu4e-compose-signature
-      (concat
-        "James Koch\n"
-        "http://jckoch.gitlab.io\n"))
-
-  ;; sending mail -- replace USERNAME with your gmail username
-  ;; also, make sure the gnutls command line utils are installed
-  ;; package 'gnutls-bin' in Debian/Ubuntu
-  (require 'smtpmail)
-  (setq message-send-mail-function 'smtpmail-send-it
-     starttls-use-gnutls t
-     smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-     smtpmail-auth-credentials
-       '(("smtp.gmail.com" 587 "jchkoch@gmail.com" nil))
-     smtpmail-default-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-service 587)
-
-  ;; don't keep message buffers around
-  (setq message-kill-buffer-on-exit t)
-#+end_src
-
-#+RESULTS:
-: t
-
-** FIXME =mu4e-alert=
-
-#+begin_src emacs-lisp
-  (use-package mu4e-alert
-    :after mu4e
-    :hook ((after-init . mu4e-alert-enable-mode-line-display)
-           (after-init . mu4e-alert-enable-notifications))
-    :config (mu4e-alert-set-default-style 'libnotify))
-#+end_src
-
-#+RESULTS:
-| mu4e-alert-enable-notifications | mu4e-alert-enable-mode-line-display | #[0 \303\211\235\203 \304"\301\305!\210\210	\205 \306 \210\307\211\207 [command-line-args desktop-save-mode inhibit-startup-screen --no-desktop delete 0 desktop-read t] 4] | (lambda nil (setq debug-on-error nil)) | x-wm-set-size-hint | table--make-cell-map |
-
 ** =ox-word=
 From John Kitchin. Downloaded (static) elisp file.
 
@@ -459,14 +392,14 @@ From John Kitchin. Downloaded (static) elisp file.
 #+end_src
 
 ** =pamparam=
-From [[https://github.com/abo-abo/pamparam][source repository]] by abo-abo on GitHub.
+From [[https://melpa.org/#/pamparam][Melpa]] uploaded by abo-abo.
 
-#+begin_src elisp
+#+begin_src emacs-lisp
   (require 'pamparam)
+  (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
   (setq pamparam-alist
         '(("/winc/jk/languagelearning/swedish/pamparamRepo/swedish.org"
            . "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")))
-  (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
   (global-set-key (kbd "C-c m") 'hydra-pamparam/body)
 #+end_src
 
@@ -507,6 +440,8 @@ authoring documents with a fast and effective plain-text system.
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
 #+END_SRC
+
+#+RESULTS:
 
 ** TODO States
 
@@ -1321,20 +1256,26 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 *** HTML settings
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-publish-use-timestamps-flag t)
-  (setq org-html-divs '((preamble "header" "top")
-                              (content "main" "content")
-                        (postamble "footer" "postamble"))
-                        org-html-container-element "section"
-                        org-html-head-include-scripts nil
-                        org-html-scripts nil
-                        org-html-head-include-default-style nil)
+  (setq org-publish-use-timestamps-flag nil
+        org-html-head-include-default-style nil)
 
   (setq org-html-preamble-format '(("en" "")))
+
+  (setq my-blog-header-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-header.html")
+  (defun my-html-preamble (arg)
+    (with-temp-buffer
+      (insert-file-contents my-blog-header-file)
+      (buffer-string)))
+
+  (setq  my-blog-footer-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-footer.html")
+  (defun my-html-postamble (arg)
+      (with-temp-buffer
+        (insert-file-contents my-blog-footer-file)
+        (buffer-string)))
 #+END_SRC
 
 #+RESULTS:
-| en |   |
+: my-html-postamble
 
 *** Publish project: website
 
@@ -1347,8 +1288,9 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
            :recursive nil
            :publishing-function org-html-publish-to-html
-	         :html-preamble nil
-           :html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/jckoch.com.min.css\" />"
+           :htmlized-source t
+	         :html-preamble my-html-preamble
+           :html-postamble my-html-postamble
            )
           ("org-blog"
            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
@@ -1356,8 +1298,9 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
            :recursive t
            :publishing-function org-html-publish-to-html
-	         :html-preamble t
-           :html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/jckoch.com.min.css\" />"
+           :htmlized-source t
+	         :html-preamble my-html-preamble
+           :html-postamble my-html-postamble
            )
           ("org-publications"
            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
@@ -1365,7 +1308,9 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
            :recursive nil
            :publishing-function org-html-publish-to-html
-	         :html-preamble t
+           :htmlized-source t
+	         :html-preamble my-html-preamble
+           :html-postamble my-html-postamble
           )
           ("org-static"
            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
@@ -1373,16 +1318,20 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
            :recursive t
            :publishing-function org-publish-attachment
+           :htmlized-source t
+	         :html-preamble my-html-preamble
+           :html-postamble my-html-postamble
            )
           ("org" :components ("org-index" "org-blog" "org-publications" "org-static"))))
 #+END_SRC
 
 #+RESULTS:
-| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src              | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil  | :publishing-function | org-html-publish-to-html | :html-preamble | nil  | :html-style | <link rel="stylesheet" type="text/css" href="css/jckoch.com.min.css" />    |                                                |            |   |                      |                        |
-| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog         | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t    | :publishing-function | org-html-publish-to-html | :html-preamble | t    | :html-style | <link rel="stylesheet" type="text/css" href="../css/jckoch.com.min.css" /> |                                                |            |   |                      |                        |
-| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil  | :publishing-function | org-html-publish-to-html | :html-preamble | t    |             |                                                                            |                                                |            |   |                      |                        |
-| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/             | :base-extension | css\ | js\                   | png\                                                       | jpg\       | gif\ | pdf\                 | mp3\                     | ogg\           | swf\ | html        | :publishing-directory                                                      | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive | t | :publishing-function | org-publish-attachment |
-| org              | :components     | (org-index org-blog org-publications org-static)   |                 |      |                       |                                                            |            |      |                      |                          |                |      |             |                                                                            |                                                |            |   |                      |                        |
+| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src              | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil  | :publishing-function | org-html-publish-to-html | :htmlized-source | t    | :html-preamble | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog         | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t    | :publishing-function | org-html-publish-to-html | :htmlized-source | t    | :html-preamble | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications | :base-extension | org  | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil  | :publishing-function | org-html-publish-to-html | :htmlized-source | t    | :html-preamble | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/             | :base-extension | css\ | js\                   | png\                                                       | jpg\       | gif\ | pdf\                 | mp3\                     | ogg\             | swf\ | html           | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
+| org              | :components     | (org-index org-blog org-publications org-static)   |                 |      |                       |                                                            |            |      |                      |                          |                  |      |                |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+
 ** =org-gcal-sync=
 -----BEGIN PGP MESSAGE-----
 

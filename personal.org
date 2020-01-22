@@ -3,7 +3,7 @@
 #+SUBTITLE: Part I (Personal Information)
 #+AUTHOR: J. C. Koch
 #+EMAIL: jchkoch@gmail.ca
-#+SEQ_TODO: FIXME |FIXED
+#+SEQ_TODO: NEW(n) REQ_FIXING(r) | WORKING(w)
 
 * Personal information
 Set a user name and email address for Emacs to use if needed.
@@ -26,10 +26,20 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife
 
-* User specfied theme
+* Emacs Appearance & Themes
+Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
+Set the cursor to stop blinking.
 
-#+BEGIN_SRC emacs-lisp
-  ;; (set-background-color "black")
-  ;; (set-foreground-color "white")
-  ;; (set-default 'cursor-type 'box)
-#+END_SRC
+#+begin_src emacs-lisp
+  ;(add-to-list 'load-path "~/.emacs.d/dev-pkgs/")
+  ;(require 'matrix-theme)
+
+  (load-theme 'tango-dark t)
+  (set-default 'cursor-type 'bar)
+  (set-cursor-color "Green")
+  (add-to-list 'default-frame-alist
+               '(font . "Monospace-14"))
+#+end_src
+
+#+RESULTS:
+: matrix-theme

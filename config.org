@@ -1335,9 +1335,9 @@ Introduced due to changes from org-v9.1 to org-v9.2.
     (require 'org-ref)
     (require 'doi-utils)
     (require 'org-ref-pdf)
-    (setq org-ref-bibliography-notes "/winc/jk/chalmers/courses/THESIS/references/notes.org"
-          org-ref-default-bibliography '("/winc/jk/chalmers/courses/THESIS/references/references.bib")
-          org-ref-pdf-directory "/winc/jk/chalmers/courses/THESIS/references/pdfs/")
+    (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
+          org-ref-default-bibliography '("/winc/jk/references/references.bib")
+          org-ref-pdf-directory "/winc/jk/references/pdfs/")
     (setq bibtex-completion-pdf-open-function
       (lambda (fpath)
         (start-process "open" "*open*" "open" fpath)))

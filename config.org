@@ -332,16 +332,17 @@ From [[https://melpa.org/#/pamparam][Melpa]] uploaded by abo-abo.
 #+RESULTS:
 : hydra-pamparam/body
 
-** REQ_FIXING =pdf-tools=
+** WORKING =pdf-tools=
 
 #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/pdf-tools")
   (use-package pdf-tools)
-  ;(pdf-tools-install)
+  (pdf-tools-install)
   (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
 #+END_SRC
 
 #+RESULTS:
-| lambda | nil | (linum-mode -1) |
+| pdf-tools-enable-minor-modes | (lambda nil (linum-mode -1)) |
 
 ** WORKING =try=
 A package to try out other interesting GNU Emacs packages without having to install the packages.
@@ -1334,9 +1335,9 @@ Introduced due to changes from org-v9.1 to org-v9.2.
     (require 'org-ref)
     (require 'doi-utils)
     (require 'org-ref-pdf)
-    (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
-          org-ref-default-bibliography '("/winc/jk/references/references.bib")
-          org-ref-pdf-directory "/winc/jk/references/pdfs/")
+    (setq org-ref-bibliography-notes "/winc/jk/chalmers/courses/THESIS/references/notes.org"
+          org-ref-default-bibliography '("/winc/jk/chalmers/courses/THESIS/references/references.bib")
+          org-ref-pdf-directory "/winc/jk/chalmers/courses/THESIS/references/pdfs/")
     (setq bibtex-completion-pdf-open-function
       (lambda (fpath)
         (start-process "open" "*open*" "open" fpath)))

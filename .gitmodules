@@ -10,3 +10,6 @@
 [submodule "dev-pkgs/ox-ipynb"]
 	path = dev-pkgs/ox-ipynb
 	url = https://github.com/jkitchin/ox-ipynb.git
+[submodule "dev-pkgs/pdf-tools"]
+	path = dev-pkgs/pdf-tools
+	url = git@github.com:politza/pdf-tools.git

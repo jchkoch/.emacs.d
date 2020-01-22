@@ -37,3 +37,4 @@ profile-dotemacs.el
 session.*
 srecode-map.el
 /transient/*.el
+.cask/*   

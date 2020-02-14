@@ -57,63 +57,41 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
 
 #+RESULTS:
 : t
-
 * Languages
-** REQ_FIXING =elpy=                                        :DISLIKE:
+** WORKING =latex=
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package elpy
-  ;;    :init
-  ;;    (elpy-enable)
-  ;;    (pyvenv-mode)
-  ;;    :config
-  ;;    (exec-path-from-shell-copy-env "PATH")
-  ;;    (add-to-list 'python-shell-completion-native-disabled-interpreters
-  ;;                 "ipython")
-  ;;    (setq python-shell-interpreter "ipython"
-  ;;          python-shell-interpreter-args "-i --simple-prompt"
-  ;;          python-shell-prompt-detect-failure-warning nil)
-  ;;    (setq elpy-set-test-runner "Nose"))  
+    (use-package tex
+      :ensure auctex
+      :config
+      (setq TeX-auto-save t)
+      (setq TeX-parse-self t)
+      (setq TeX-save-query nil))
+
+    ;; (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
+    ;; (setq TeX-view-program-selection '((output-dvi "Okular")
+    ;;                                    (output-pdf "Okular")))
+
+    (use-package reftex
+      :after auctex
+      :config
+      (setq reftex-plug-into-AUCTeX t)
+      (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
+#+END_SRC
+
+** REQ_FIXING =python-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package python-mode
+    :delight python-mode "PI"
+    :mode "\\.py\\'"
+    :interpreter ("python3" . python-mode))
 #+END_SRC
 
 #+RESULTS:
+: ((python3 . python-mode) (python . python-mode) (ipython . python-mode) (ruby1.8 . ruby-mode) (ruby1.9 . ruby-mode) (jruby . ruby-mode) (rbx . ruby-mode) (ruby . ruby-mode) (python[0-9.]* . python-mode) (rhino . js-mode) (gjs . js-mode) (nodejs . js-mode) (node . js-mode) (gawk . awk-mode) (nawk . awk-mode) (mawk . awk-mode) (awk . awk-mode) (pike . pike-mode) (\(mini\)?perl5? . perl-mode) (wishx? . tcl-mode) (tcl\(sh\)? . tcl-mode) (expect . tcl-mode) (octave . octave-mode) (scm . scheme-mode) ([acjkwz]sh . sh-mode) (r?bash2? . sh-mode) (dash . sh-mode) (mksh . sh-mode) (\(dt\|pd\|w\)ksh . sh-mode) (es . sh-mode) (i?tcsh . sh-mode) (oash . sh-mode) (rc . sh-mode) (rpm . sh-mode) (sh5? . sh-mode) (tail . text-mode) (more . text-mode) (less . text-mode) (pg . text-mode) (make . makefile-gmake-mode) (guile . scheme-mode) (clisp . lisp-mode) (emacs . emacs-lisp-mode))
 
-** WORKING =latex=                                          :NOTSURE:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package tex
-    :ensure auctex
-    :config
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq TeX-save-query nil)
-    (setq TeX-view-program-list '("Okular" "okular --unique %o#src:%n%b"))
-    (setq TeX-view-program-selection '((output-dvi "Okular")
-                                       (output-pdf "Okular"))))
-
-  (use-package reftex
-    :after auctex
-    :config
-    (setq reftex-plug-into-AUCTeX t)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex))
-#+END_SRC
-
-** WORKING =matlab-mode=                                    :DISLIKE:
-
-#+BEGIN_SRC emacs-lisp
-  (use-package matlab
-    :ensure matlab-mode
-    :mode (("\\.m\\'" . matlab-mode))
-    :config
-    (setq matlab-shell-command "~/bin/MATLAB/R2018b/bin/matlab")
-    (setq matlab-shell-command-switches '("-nodesktop" "-nosplash"))
-    (setq matlab-return-add-semicolon t))
-#+END_SRC
-
-#+RESULTS:
-: ((\.m\' . matlab-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.[pP][dD][fF]\' . pdf-view-mode) (\.m\' . octave-mode) (\.py\' . python-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.pyw?\' . python-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.[ch]\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . html-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.\(?:desktop\|la\)\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
-
-** REQ_FIXING =ob-ipython=                                     :LIKE:
+** REQ_FIXING =ob-ipython=
 
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
@@ -133,39 +111,47 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
 
 #+RESULTS:
 
-** WORKING =python-mode=                                    :NOTSURE:
+** WORKING =matlab-mode=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package python-mode
-    :delight python-mode "PI"
-    :mode "\\.py\\'")
+  (use-package matlab
+    :ensure matlab-mode
+    :mode (("\\.m\\'" . matlab-mode))
+    :config
+    (setq matlab-return-add-semicolon t))
+
+  ;; (setq matlab-shell-command "~/bin/MATLAB/R2018b/bin/matlab")
+  ;; (setq matlab-shell-command-switches '("-nodesktop" "-nosplash"))
 #+END_SRC
 
 #+RESULTS:
-
-** NEW =elpy=
-
-#+begin_src emacs-lisp
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable)
-    :config
-    (setq elpy-rpc-virtualenv-path '("~/.pyenv/versions/tools3")))
-#+end_src
+: ((\.m\' . matlab-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.[pP][dD][fF]\' . pdf-view-mode) (\.m\' . octave-mode) (\.py\' . python-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.pyw?\' . python-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.[ch]\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . html-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.\(?:desktop\|la\)\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
 
 * Advanced Configuration
-** WORKING =flyspell=                                          :LIKE:
+** WORKING =flyspell=
 Enable Flyspell Mode. 
 If you keep your spell check personal dictionary in particular location, change this variable as desired. 
 Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spellcheck_emacs).
+
 Using =aspell= as the dictionary will not work on Windows anymore as there is no windows binary which works with Emacs 26.1 and greater, therefore best practice is to switch to using =hunspell=.
-See link on how to do this for Wiendows [[https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html][here]] and for Linux simply go to your distribution and install it there.
+See link on how to do this for Windows [[https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html][here]] and for Linux simply go to your distribution and install it there.
+On Linux needed to download German dictionaries from [[https://github.com/wooorm/dictionaries][this link]] (something wrong with utf-8 and iconv???).
+
+And a user-defined function to easily switch using different dictionaries for different languages.
+
+#+begin_src emacs-lisp
+  (setenv "DICPATH"
+          "/usr/share/hunspell")
+#+end_src
+
+#+RESULTS:
+: /usr/share/hunspell
 
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
     :bind (("<f8>" . ispell-word)
-           ("M-<f8>" . flyspell-mode))
+           ("M-<f8>" . flyspell-mode)
+           ("C-c d" . ispell-change-dictionary))
     :config
     (when (executable-find "hunspell")
       (setq-default ispell-program-name "hunspell")
@@ -185,9 +171,9 @@ See link on how to do this for Wiendows [[https://lists.gnu.org/archive/html/hel
 #+END_SRC
 
 #+RESULTS:
-: flyspell-mode
+: ispell-change-dictionary
 
-** WORKING =gud=                                               :LIKE:
+** WORKING =gud=
 General debugging commands.
 
 #+BEGIN_SRC emacs-lisp
@@ -199,7 +185,7 @@ General debugging commands.
 #+RESULTS:
 : gud-finish
 
-** WORKING =ivy-mode=                                          :LIKE:
+** WORKING =ivy-mode=
 
 #+BEGIN_QUOTE
 Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions. 
@@ -248,7 +234,7 @@ Swiper is an alternative to isearch that uses ivy to show an overview of all mat
 #+RESULTS:
 : swiper
 
-** WORKING =ibuffer=                                           :LIKE:
+** WORKING =ibuffer=
 Set the Buffer List buffer as to default with "ibuffer".
 
 #+BEGIN_SRC emacs-lisp
@@ -278,23 +264,24 @@ Set the Buffer List buffer as to default with "ibuffer".
 #+RESULTS:
 : ibuffer
 
-** WORKING =ledger-mode=                                       :LIKE:
+** WORKING =ledger-mode=
 Plain-text double-entry accounting program.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
-    :mode "\\.ledger\\'"
-    :config
-    (setq-local tab-always-indent 'complete)
-    (setq-local completion-cycle-threshold t)
-    (setq-local ledger-complete-in-steps t)
-    (setq ledger-accounts-file "/winc/jk/financials/ledger/accounts.txt"))
+    :mode "\\.ledger\\'")
+
+  ;;   :config
+  ;;   (setq-local tab-always-indent 'complete)
+  ;;   (setq-local completion-cycle-threshold t)
+  ;;   (setq-local ledger-complete-in-steps t)
+  ;;   (setq ledger-accounts-file "/winc/jk/financials/ledger/accounts.txt"))
 #+END_SRC
 
 #+RESULTS:
-: ((\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.py\' . python-mode) (\.m\' . matlab-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:rw\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.jsx\' . js-jsx-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
+: ((\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.[pP][dD][fF]\' . pdf-view-mode) (\.m\' . matlab-mode) (\.py\' . python-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:rw\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.jsx\' . js-jsx-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
 
-** WORKING =magit=                                             :LIKE:
+** WORKING =magit=
 Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp
@@ -305,7 +292,7 @@ Set up Git version control from within Emacs using the package Magit.
 #+RESULTS:
 : magit-status
 
-** WORKING =ox-word=                                        :NOTSURE:
+** WORKING =ox-word=
 From John Kitchin. Downloaded (static) elisp file.
 
 #+begin_src elisp
@@ -316,21 +303,21 @@ From John Kitchin. Downloaded (static) elisp file.
 #+RESULTS:
 : ox-word
 
-** WORKING =pamparam=                                          :LIKE:
+** WORKING =pamparam=
 
 From [[https://melpa.org/#/pamparam][Melpa]] uploaded by abo-abo.
 
 #+begin_src emacs-lisp
-  (require 'pamparam)
-  (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
-  (setq pamparam-alist
-        '(("/winc/jk/languagelearning/swedish/pamparamRepo/swedish.org"
-           . "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")))
-  (global-set-key (kbd "C-c m") 'hydra-pamparam/body)
+  (use-package pamparam
+    :config
+    (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
+    (setq pamparam-alist '(("/winc/jk/languagelearning/swedish/pamparamRepo/swedish.org"
+                          . "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")))
+    (global-set-key (kbd "C-c m") 'hydra-pamparam/body))
 #+end_src
 
 #+RESULTS:
-: hydra-pamparam/body
+: t
 
 ** WORKING =pdf-tools=
 
@@ -899,6 +886,9 @@ Set a global ``refile`` org file as a staging area for new TODO items and basic 
   (setq org-refile-target-verify-function 'bh/verify-refile-target)
 #+END_SRC
 
+#+RESULTS:
+: bh/verify-refile-target
+
 *** Refiling hydra
 
 #+BEGIN_SRC emacs-lisp
@@ -953,11 +943,11 @@ Set a global ``refile`` org file as a staging area for new TODO items and basic 
   (defvar bh/organization-task-id "default")
   (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
   (setq org-duration-format (quote h:mm))
-  (setq org-clock-idle-time 15)
+  (setq org-clock-idle-time 60)
 #+END_SRC
 
 #+RESULTS:
-: 15
+: 60
 
 *** WORKING Custom functions
 
@@ -1103,7 +1093,21 @@ Define beamer =LaTeX= class for presentations.
                     ("\\section{%s}" . "\\section*{%s}")
                     ("\\subsection{%s}" . "\\subsection*{%s}")
                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+  (eval-after-load "ox-latex"
+    '(add-to-list 'org-latex-classes
+                  '("report-noparts"
+                    "\\documentclass{report}"
+                    ("\\chapter{%s}" . "\\chapter*{%s}")
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+END_SRC
+
+#+RESULTS:
+| report-noparts | \documentclass{report}               | (\chapter{%s} . \chapter*{%s}) | (\section{%s} . \section*{%s}) | (\subsection{%s} . \subsection*{%s}) | (\subsubsection{%s} . \subsubsection*{%s}) | (\paragraph{%s} . \paragraph*{%s}) | (\subparagraph{%s} . \subparagraph*{%s}) |
+| beamer         | \documentclass[presentation]{beamer} |                                |                                |                                      |                                            |                                    |                                          |
 
 ** WORKING Org-babel languages
 
@@ -1126,7 +1130,7 @@ Define beamer =LaTeX= class for presentations.
 #+RESULTS:
 | org-display-inline-images |
 
-** REQ_FIXING Org template selector
+** WORKING Org template selector
 Introduced due to changes from org-v9.1 to org-v9.2.
 
 #+begin_src emacs-lisp
@@ -1153,7 +1157,7 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 *** HTML settings
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-publish-use-timestamps-flag nil
+  (setq org-publish-use-timestamps-flag t
         org-html-head-include-default-style nil)
 
   (setq org-html-preamble-format '(("en" "")))
@@ -1228,7 +1232,16 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            )
           ("thesis-include"
            :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
+           :base-extension "tex"
            :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
+           :recursive t
+           :publishing-function org-publish-attachment
+           :body-only t
+           :make-index nil
+           )
+          ("thesis-chapters"
+           :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
+           :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
            :publishing-function org-latex-publish-to-latex
            :body-only t
            :make-index nil
@@ -1241,19 +1254,20 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :publishing-function org-publish-attachment
            )
           ("org" :components ("org-index" "org-blog" "org-publications" "org-static"))
-          ("thesis" :components ("thesis-main" "thesis-include" "thesis-figure"))))
+          ("thesis" :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure"))))
 #+end_src
 
 #+RESULTS:
-| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src              | :base-extension       | org                                                     | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog         | :base-extension       | org                                                     | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications | :base-extension       | org                                                     | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/             | :base-extension       | css\                                                    | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
-| thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis            | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish         | :publishing-function  | org-latex-publish-to-pdf                                   | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include    | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure     | :base-extension       | png\                                                    | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| org              | :components     | (org-index org-blog org-publications org-static)   |                       |                                                         |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis           | :components     | (thesis-main thesis-include thesis-figure)         |                       |                                                         |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src                      | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog                 | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications         | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/                     | :base-extension       | css\                                                     | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
+| thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis                    | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish          | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include            | :base-extension       | tex                                                      | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include    | :recursive | t                     | :publishing-function                                   | org-publish-attachment   | :body-only       | t                    | :make-index            | nil                   |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-chapters  | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/chapters           | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/chapters | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure             | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| org              | :components     | (org-index org-blog org-publications org-static)           |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
  
 ** WORKING =cdlatex-mode=
 
@@ -1276,24 +1290,22 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 
  #+RESULTS:
  : t
+
 ** WORKING =org-gcal-sync=
+-----BEGIN PGP MESSAGE-----
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org-gcal
-   :ensure t)
+jA0EBwMCs6vI6ec9fGXw0sCqAdPIvgwC38u6u61A3MRPGdn1rSF0MBTR+I3ETgoK
+apx3f0P8dJkbl2OjJl1f5KoTEXU21tiFvzAPisvqUpxzZ7wvxKKPqLEMHHkPaMSb
+4pweorWdAsDyGdFsKTtwqlHL8Et0thTGmBHlnC9U4W1OAJFmSR0N9VyW+KVyQTxV
+e9Ko495SOhfUjKuSWhGQGp/IQigxkzfkGJNkkz4uxjeYzaf5Y8TnuNRQ3C0Fov8H
+2jz3+Lv9I6mxcVfHoU8Xpkg8tFQlFYacLn8DR04xiFDv54VhJeckJxPX9/W6xzwq
+uAS12QaN2JOirCcHE26mtEevAN2qpPEFF1q3q68VsN9lIb6/ejT+BwH3eO5xohYT
+3AEVSt0H0bjvpbmcDAMmXJ4F4cSAM/oBYrbBaJMRwghQpIfjJ62u6HbxBWqykVph
+30LEQ8/Qe1mru3MANVpST+CMHINkKueC343FPxnyMpmYlxbviDOP02wvn70=
+=IIzR
+-----END PGP MESSAGE-----
 
-  (setq org-gcal-client-id "1008486205630-qqgcjb6rta6mqq927ie79eirotctnb4i.apps.googleusercontent.com"
-      org-gcal-client-secret "_zQ6vzgi9VT_i0sEtoWxKErr"
-      org-gcal-file-alist '(("jchkoch@gmail.com" .  "/winc/jk/myLife/gmail-gcal.org")
-                            ("v22a08dfprtop40h0jal4fjub8@group.calendar.google.com" .  "/winc/jk/myLife/semester1-gcal.org")
-                            ("cvof1nqr3od0k3mgs80lvvaeeg@group.calendar.google.com" . "/winc/jk/myLife/semester2-gcal.org")
-                            ("cl0eq6809bdqqffib0fqe80bvc@group.calendar.google.com" . "/winc/jk/myLife/semester3-gcal.org")))
-#+END_SRC
-
-#+RESULTS:
-: ((jchkoch@gmail.com . /winc/jk/myLife/gmail-gcal.org) (v22a08dfprtop40h0jal4fjub8@group.calendar.google.com . /winc/jk/myLife/semester1-gcal.org) (cvof1nqr3od0k3mgs80lvvaeeg@group.calendar.google.com . /winc/jk/myLife/semester2-gcal.org) (cl0eq6809bdqqffib0fqe80bvc@group.calendar.google.com . /winc/jk/myLife/semester3-gcal.org))
-
-** REQ_FIXING =org-indent=
+** WORKING =org-indent=
    
 #+BEGIN_SRC emacs-lisp
   (use-package org-indent
@@ -1335,6 +1347,8 @@ Introduced due to changes from org-v9.1 to org-v9.2.
     (require 'org-ref)
     (require 'doi-utils)
     (require 'org-ref-pdf)
+    (require 'org-ref-isbn)
+    (require 'org-ref-url-utils)
     (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
           org-ref-default-bibliography '("/winc/jk/references/references.bib")
           org-ref-pdf-directory "/winc/jk/references/pdfs/")
@@ -1352,10 +1366,39 @@ Introduced due to changes from org-v9.1 to org-v9.2.
     ;; Helm-bibtex options
     (setq helm-bibtex-pdf-field "File")
     ; open pdf with system pdf viewer
-    (setq helm-bibtex-pdf-open-function 'org-open-file)
+    (defun my/org-ref-open-pdf-at-point ()
+      "Open the pdf for bibtex key under point if it exists."
+      (interactive)
+      (let* ((results (org-ref-get-bibtex-key-and-file))
+             (key (car results))
+             (pdf-file (funcall org-ref-get-pdf-filename-function key)))
+        (if (file-exists-p pdf-file)
+            (find-file pdf-file)
+          (message "No PDF found for %s" key))))
+    (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
+    ;;(setq helm-bibtex-pdf-open-function 'org-open-file)
     :bind (("C-j" . org-ref-bibtex-hydra/body)))
 #+END_SRC
 
 #+RESULTS:
 : org-ref-bibtex-hydra/body
+
+Some miscellaneous extra tidbit to make citations appear as [#, Author Year].
+
+#+begin_src emacs-lisp
+  (defun harvard-cite (key page)
+    (interactive (list (completing-read "Cite: " (orhc-bibtex-candidates))
+                       (read-string "Page: ")))
+    (insert
+     (org-make-link-string (format "cite:%s"
+                                   (cdr (assoc
+                                         "=key="
+                                         (cdr (assoc key (orhc-bibtex-candidates))))))
+                           page)))
+
+  (setq org-ref-bibtex-files '("/winc/jk/references/references.bib"))
+#+end_src
+
+#+RESULTS:
+| /winc/jk/references/references.bib |
 

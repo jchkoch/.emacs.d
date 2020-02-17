@@ -402,9 +402,11 @@ authoring documents with a fast and effective plain-text system.
 #+BEGIN_SRC emacs-lisp
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
+  (setq org-list-allow-alphabetical t)
 #+END_SRC
 
 #+RESULTS:
+: t
 
 ** WORKING TODO States
 

@@ -38,3 +38,4 @@ session.*
 srecode-map.el
 /transient/*.el
 .cask/*   
+*.sqlite

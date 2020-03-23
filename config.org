@@ -88,23 +88,24 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
 
   ;(setq pyvenv-activate "home/jkoch/anaconda3/envs/thesis")
 
-  ;(setq python-shell-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")
-  (setq elpy-rpc-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")
+  (setq python-shell-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")
 #+END_SRC
 
 #+RESULTS:
 : /home/jkoch/anaconda3/envs/thesis
 
-** WORKING =elpy=
+** REQ_FIXING =elpy=                                       :DISABLED:
 
 #+begin_src emacs-lisp
   (use-package elpy
     :ensure t
-    :init (elpy-enable))
+    :init
+    (elpy-enable)
+    (setq elpy-rpc-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")) 
 
-  ;(setq python-shell-interpreter "ipython"
-  ;      python-shell-interpreter-args "--simple-prompt"
-  ;      python-shell-prompt-detect-failure-warning nil)
+  (setq python-shell-interpreter "/home/jkoch/anaconda3/envs/thesis/bin/ipython"
+        python-shell-interpreter-args "--simple-prompt"
+        python-shell-prompt-detect-failure-warning nil)
   ;(add-to-list 'python-shell-completion-native-disabled-interpreters
   ;             "jupyter")
 #+end_src
@@ -121,8 +122,9 @@ Next set the default coding system to /UTF-8/ (i.e. unicode).
     :after exec-path-from-shell
     :load-path "dev-pkgs/ob-ipython"
     :config
-    (exec-path-from-shell-initialize)
-    (setq ob-ipython-suppress-execution-count t))
+    ;(exec-path-from-shell-initialize)
+    (setq ob-ipython-suppress-execution-count t)
+    (setq ob-ipython-command "/home/jkoch/anaconda3/envs/thesis/bin/jupyter"))
 
   (use-package dash
     :load-path "dev-pkgs/dash.el")
@@ -332,9 +334,9 @@ From [[https://melpa.org/#/pamparam][Melpa]] uploaded by abo-abo.
 #+begin_src emacs-lisp
   (use-package pamparam
     :config
-    (setq pamparam-path "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")
-    (setq pamparam-alist '(("/winc/jk/languagelearning/swedish/pamparamRepo/swedish.org"
-                          . "/winc/jk/languagelearning/swedish/pamparamRepo/swedish.pam")))
+    (setq pamparam-path "/winc/jk/languagelearning/sverige/pamparamRepo/sverige.pam")
+    (setq pamparam-alist '(("/winc/jk/languagelearning/sverige/pamparamRepo/sverige.org"
+                          . "/winc/jk/languagelearning/sverige/pamparamRepo/sverige.pam")))
     (global-set-key (kbd "C-c m") 'hydra-pamparam/body))
 #+end_src
 
@@ -1223,7 +1225,7 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :recursive nil
            :publishing-function org-html-publish-to-html
            :htmlized-source t
-                 :html-preamble my-html-preamble
+           :html-preamble my-html-preamble
            :html-postamble my-html-postamble
            )
           ("org-blog"
@@ -1233,7 +1235,17 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :recursive t
            :publishing-function org-html-publish-to-html
            :htmlized-source t
-                 :html-preamble my-html-preamble
+           :html-preamble my-html-preamble
+           :html-postamble my-html-postamble
+           )
+          ("org-portfolio"
+           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/portfolio"
+           :base-extension "org"
+           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/portfolio"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :htmlized-source t
+           :html-preamble my-html-preamble
            :html-postamble my-html-postamble
            )
           ("org-publications"
@@ -1243,7 +1255,7 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :recursive nil
            :publishing-function org-html-publish-to-html
            :htmlized-source t
-                 :html-preamble my-html-preamble
+           :html-preamble my-html-preamble
            :html-postamble my-html-postamble
            )
           ("org-static"
@@ -1253,7 +1265,7 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :recursive t
            :publishing-function org-publish-attachment
            :htmlized-source t
-                 :html-preamble my-html-preamble
+           :html-preamble my-html-preamble
            :html-postamble my-html-postamble
            )
           ("thesis-main"
@@ -1286,21 +1298,22 @@ Introduced due to changes from org-v9.1 to org-v9.2.
            :recursive t
            :publishing-function org-publish-attachment
            )
-          ("org" :components ("org-index" "org-blog" "org-publications" "org-static"))
+          ("org" :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static"))
           ("thesis" :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure"))))
 #+end_src
 
 #+RESULTS:
-| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src                      | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog                 | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications         | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/                     | :base-extension       | css\                                                     | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
-| thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis                    | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish          | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include            | :base-extension       | tex                                                      | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include    | :recursive | t                     | :publishing-function                                   | org-publish-attachment   | :body-only       | t                    | :make-index            | nil                   |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-chapters  | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/chapters           | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/chapters | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure             | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| org              | :components     | (org-index org-blog org-publications org-static)           |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src                          | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog                     | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-portfolio    | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/portfolio                | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/portfolio    | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications             | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/                         | :base-extension       | css\                                                     | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
+| thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis                        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish          | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include                | :base-extension       | tex                                                      | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include    | :recursive | t                     | :publishing-function                                   | org-publish-attachment   | :body-only       | t                    | :make-index            | nil                   |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-chapters  | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/chapters               | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/chapters | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure                 | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| org              | :components     | (org-index org-blog org-publications org-portfolio org-static) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+| thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure)     |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
  
 ** WORKING =cdlatex-mode=
 

@@ -42,4 +42,4 @@ Set the cursor to stop blinking.
 #+end_src
 
 #+RESULTS:
-: matrix-theme
+: ((font . Monospace-14) (vertical-scroll-bars))

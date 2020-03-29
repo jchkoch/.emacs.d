@@ -102,7 +102,6 @@ To maintain a clean and organized configuration, I prefer to have these automati
 
 * TODO General interface and interactions
 This section contains configurations for aspects of the Emacs user interface.
-
 ** DONE Disable GUI components
 Since I normally use the GUI variant of Emacs, I prefer not to have any of the GUI elements that come with it out-of-the-box.
 The only element which remains is the modeline which, of course, is not part of the GUI anyway...
@@ -125,7 +124,7 @@ A last note is that I disable the "hello file" function because it seems to be v
     (global-unset-key (kbd "C-h h")))
 #+end_src
 
-** DONE Visual line mode
+** DONE Visual line mode is a must
 By default, Emacs displays text one line at a time.
 If you are writing prose and the text scrolls off your screen as may happen if you use literate programming, then it pays off to use a visual (human readable) line mode where sentences wrap to the "next" line if your sentence is too long.
 In my workflow, there are very few cases when I need to disable this type of visual line mode and so I have chosen to make this the default.
@@ -138,7 +137,7 @@ In my workflow, there are very few cases when I need to disable this type of vis
 
 #+RESULTS:
 : t
-** NEXT Themes
+** DONE Themes that I use
 I tend to switch themes occasionally and so I make it as easy as possible for myself to do so.
 At the moment, I have switched to using the ~modus-vivendi~ theme developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
 
@@ -148,14 +147,271 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
     (setq custom-safe-themes t)
     (set-default 'cursor-type 'bar)
 
-    (load-theme 'tango-dark t))
+    (load-theme 'modus-vivendi t))
+
+  (use-package modus-vivendi-theme
+    :ensure t
+    :defer t)
+#+end_src
+
+#+RESULTS:
+
+*** DONE Mode line
+The mode line is a fundamentally integral part of the Emacs interface.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (setq mode-line-percent-position '(-3 "%p"))
+    (setq mode-line-defining-kbd-macro
+          (propertize " Macro" 'face 'mode-line-emphasis))
+    (setq-default mode-line-format
+                  '("%e"
+                    mode-line-front-space
+                    mode-line-mule-info
+                    mode-line-client
+                    mode-line-modified
+                    mode-line-remote
+                    mode-line-frame-identification
+                    mode-line-buffer-indentification
+                    "  "
+                    mode-line-position
+                    " "
+                    mode-line-modes
+                    " "
+                    mode-line-misc-info
+                    mode-line-end-spaces)))
 #+end_src
 
 #+RESULTS:
 : t
 
+**** DONE Battery status
+As my primary computer where I use Emacs is a laptop, it is convenient to include the battery status in the mode line. The following code is attributed to [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] who writes:
+
+#+begin_quote
+   Emacs offers a built-in library for presenting information about the status of the laptop's battery. Using it allows me to eliminate my dependence on the system panel and thus keep Emacs in full screen view without any interruptions.
+
+   The default update interval is set to a single minute (in seconds), which is generally fine though I find that a slightly higher value works just as well. As for the format, it is designed to show a context-dependent, single character indicator about the current status, as well as the battery's overall percentage.
+
+   Variable battery-mode-line-limit will hide the indicator if the value is above the declared threshold. 99 basically means "full". I use that instead of a 100 because sometimes the battery only ever fills up to 99.99, meaning that the indicator remains present at all times.
+#+end_quote
+
+
+#+begin_src emacs-lisp
+  (use-package battery
+    :config
+    (setq battery-mode-line-format " [%b%p%%]")
+    (setq battery-mode-line-limit 99)
+    (setq battery-update-interval 180)
+    (setq battery-load-low 20)
+    (setq battery-load-critical 10)
+    :init ((after-init . display-battery-mode)))
+#+end_src
+
+#+RESULTS:
+: t
+
+**** DONE Display the current time
+Adjust the format of how the current time of day is displayed on the mode line.
+I use the 24h clock and like to also know the date.
+For the date I use the typical European format of "%Y-%M-%D".
+
+#+begin_src emacs-lisp
+  (use-package time
+    :config
+    (setq display-time-format "%Y-%M-%D  %H:%M")
+    ;;;; Covered by `display-time-format'
+    ;; (setq display-time-24hr-format t)
+    ;; (setq display-time-day-and-date t)
+    (setq display-time-interval 60)
+    (setq display-time-mail-directory nil)
+    (setq display-time-default-load-average nil)
+    :hook ((after-init . display-time-mode)))
+#+end_src
+
+#+RESULTS:
+
+**** DONE Keycast mode
+To quote [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
+
+#+begin_quote
+  Once enabled, this package uses the mode line to show the keys being pressed and the command they call. It is quite useful for screen casting.
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :ensure t)
+
+  (use-package keycast
+    :ensure t
+    :after moody
+    :commands keycast-mode
+    :config
+    (setq keycast-window-predicate 'moody-window-active-p)
+    (setq keycast-separator-width 1)
+    (setq keycast-insert-after 'mode-line-end-spaces)
+    (setq keycast-remove-tail-elements nil))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** DONE Fringe mode
+The fringe areas are to the right and left side of the Emacs frame. As [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] explains:
+
+#+begin_quote
+  They can be used to show status-related or contextual feedback such as line truncation indicators, continuation lines, code linting markers, etc.
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package fringe
+    :config
+    (fringe-mode '(8 . 8))                          ; pixels
+    (setq-default fringes-outside-margins nil)
+    (setq-default indicate-buffer-boundaries nil)
+    (setq-default indicate-empty-lines nil)
+    (setq-default overflow-newline-into-fringe t))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** DONE Diff highlights in the left fringe
+The ~diff-hl~ package uses either fringe area to display changes in the current buffer if the file in the buffer is under version control.
+This is a new package to me so I am still experimenting with it.
+
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :config
+    (setq diff-hl-draw-borders nil)
+    (setq diff-hl-side 'left)
+   :hook ((after-init . global-diff-hl-mode)))
+#+end_src
+
+#+RESULTS:
+
+*** DONE Toggle for line numbers and whitespace indicators
+1. Display line numbers
+   For the most part, I do not use these manual toggle very often; however, there are occasions where I want line numbers in a mode which I do not by default add line numbers.
+   For these cases, I have these function to toggle line numbers on for a local buffer.
+2. Display invisible characters (whitespace)
+   Viewing whitespace is sometimes helpful to debug prose which is exported via \LaTeX to PDF documents or web pages.
+   Mostly, this is kept inactive.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (defun jk/toggle-invisibles ()
+      "Toggles the display of indentation and space characters."
+      (interactive)
+      (if (bound-and-true-p whitespace-mode)
+          (whitespace-mode -1)
+        (whitespace-mode)))
+
+    (defun jk/toggle-line-numbers ()
+      "Toggles the display of line numbers.  Applies to all buffers."
+      (interactive)
+      (if (bound-and-true-p display-line-numbers-mode)
+          (display-line-numbers-mode -1)
+        (display-line-numbers-mode)))
+
+    :bind (("<f6>" . jk/toggle-invisibles)
+           ("<f7>" . jk/toggle-line-numbers)))
+#+end_src
+
+#+RESULTS:
+: jk/toggle-line-numbers
 
 ** TODO Language settings for prose and code
+*** DONE Recognize sub-words
+
+#+begin_src emacs-lisp
+  (use-package subword
+    :delight
+    :commands subword-mode
+    :init ((prog-mode-hook . subword-mode)))
+#+end_src
+
+#+RESULTS:
+*** DONE Flyspell (spell check)
+I need spell checking for both English and German. Enable Flyspell Mode.
+If you keep your spell check personal dictionary in particular location, change this variable as desired.
+Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spellcheck_emacs) and some more from [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] including a user-defined function to easily switch using different dictionaries for different languages.
+
+Note: Using =aspell= as the dictionary will not work on Windows anymore as there is no windows binary which works with Emacs 26.1 and greater, therefore best practice is to switch to using =hunspell=.
+See link on how to do this for Windows [[https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html][here]] and for Linux simply go to your distribution and install it there.
+On GNU/Linux most likely you need to download extra dictionaries from [[https://github.com/wooorm/dictionaries][this link]] like for the German language.
+
+#+begin_src emacs-lisp
+  (setenv "DICPATH"
+          "/usr/share/hunspell")
+#+end_src
+
+#+RESULTS:
+: /usr/share/hunspell
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell
+    :commands (ispell-change-dictionary
+               ispell-word
+               flyspell-buffer
+               flyspell-mode
+               flyspell-region)
+    :config
+    (setq flyspell-issue-message-flag nil)
+    (setq flyspell-issue-welcome-flag nil)
+
+    (when (executable-find "hunspell")
+      (setq-default ispell-program-name "hunspell")
+      (setq ispell-really-hunspell t))
+    (setq ispell-dictionary "en_GB")
+    (setq ispell-personal-dictionary (concat user-emacs-directory ".ispell"))
+
+    (dolist (hook '(text-mode-hook))
+       (add-hook hook (lambda () (flyspell-mode 1))))
+    (dolist (mode '(emacs-lisp-mode-hook
+                    python-mode-hook
+                    R-mode-hook))
+      (add-hook mode (lambda () (flyspell-prog-mode))))
+
+    (defun flyspell-check-next-highlighted-word ()
+      "Custom function to spell check next highlighted word"
+      (interactive)
+      (flyspell-goto-next-error)
+      (ispell-word))
+
+    (defun jk/ispell-toggle-dictionaries ()
+      "Toggle between English and German dictionaries."
+      (interactive)
+      (if (string= ispell-current-dictionary "en_US")
+          (ispell-change-dictionary "de_DE-other")
+        (ispell-change-dictionary "en_US")))
+
+    :bind (("<f8>" . ispell-word)
+           ("M-<f8>" . jk/ispell-toggle-dictionaries)))
+#+END_SRC
+
+#+RESULTS:
+: jk/ispell-toggle-dictionaries
+*** NEXT Flycheck (code linting)
+*** NEXT Markdown support
+*** DONE Parantheses
+Enable parantheses matching.
+Extremely useful for writing ~elisp~ code and \LaTeX equations.
+
+#+begin_src emacs-lisp
+  (use-package parens
+    :config
+    (setq show-paren-style 'paranthesis)
+    (setq show-paren-when-point-in-periphery t)
+    (setq show-paren-when-point-inside-paren nil)
+    :init ((after-init . show-paren-mode)))
+#+end_src
+
+#+RESULTS:
+: t
 *** DONE Tabs, indentation, and the TAB key
 As I fan of the Python programming language as well as Emacs, I believe strongly in tabs (i.e. in the sense of the tab character) when dealing with text files and indenting code.
 However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] notes:
@@ -163,7 +419,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
 #+begin_quote
   ..., I understand that elisp uses its own approach, which I do not want to interfere with. Also, Emacs tends to perform alignments by mixing tabs with spaces, which can actually lead to misalignments depending on certain variables such as the size of the tab. As such, I am disabling tabs by default.
 
-  If there ever is a need to use different settings in other modes, we can customise them via hooks. This is not an issue I have encountered yet and am therefore refraining from solving a problem that does not affect me. 
+  If there ever is a need to use different settings in other modes, we can customise them via hooks. This is not an issue I have encountered yet and am therefore refraining from solving a problem that does not affect me.
 #+end_quote
 
 
@@ -174,14 +430,52 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     (setq-default tab-width 4)
     (setq-default indent-tabs-mode nil))
 #+end_src
+** NEXT Registers
+** DONE Scrolling behaviour
+#+begin_quote
+   Page scrolling should keep the point at the same visual position, rather than force it to the top or bottom of the viewport. This eliminates the friction of guessing where the point has warped to.
+
+   As for per-line scrolling, I dislike the default behaviour of visually re-centring the point. With the following, it will stay at the top/bottom of the screen while moving in that direction (use C-l to reposition it). This does not result in more manual interventions to recenter text, because of the above.
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (setq scroll-preserve-screen-position t)
+    (setq scroll-conservatively 1)        ; affects `scroll-step'
+    (setq scroll-margin 0))
+#+end_src
+
+#+RESULTS:
+: t
+
+** NEXT Auto revert mode
+
+#+begin_src emacs-lisp
+  (use-package autorevert
+    :delight
+    :config
+    (setq auto-revert-verbose t)
+    :init ((after-init . global-auto-revert-mode)))
+#+end_src
+
+** DONE Delete trailing whitespace
+#+begin_quote
+  This always creates unnecessary diffs in git. Just delete it upon saving.
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :hook (before-save . delete-trailing-whitespace))
+#+end_src
+
+#+RESULTS:
+
 * TODO Selection candidates and search methods
 
 * TODO Directory, buffer, and window management
 
 * TODO Applications and utilities
-
-* TODO History and state
-
 * TODO Important configurations that I stopped using
 
 * Old configuration
@@ -229,7 +523,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :ensure t
     :init
     (elpy-enable)
-    (setq elpy-rpc-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")) 
+    (setq elpy-rpc-virtualenv-path "/home/jkoch/anaconda3/envs/thesis"))
 
   (setq python-shell-interpreter "/home/jkoch/anaconda3/envs/thesis/bin/ipython"
         python-shell-interpreter-args "--simple-prompt"
@@ -277,57 +571,12 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
 : ((\.m\' . matlab-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.[pP][dD][fF]\' . pdf-view-mode) (\.m\' . octave-mode) (\.py\' . python-mode) (\.hva\' . latex-mode) (\.drv\' . latex-mode) (\.ledger\' . ledger-mode) (/git-rebase-todo\' . git-rebase-mode) (\.tlc$ . tlc-mode) (\.m$ . matlab-mode) (\.po[tx]?\' . po-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|exr\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:\(?:pe\|[np]\)g\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|wd\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.pyw?\' . python-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.[ch]\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . html-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.\(?:desktop\|la\)\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.\(aux\|bbl\|toc\|lo[ft]\|idx\|ind\|glo\)\' . plain-tex-mode) (\.maple\' . maple-mode) (\.mpl\' . maple-mode) (\^maple- . maple-mode) (\^mpl- . maple-mode) (\.perl\' . perl-mode) (\.p\' . pascal-mode))
 
 ** Advanced Configuration
-*** =flyspell=
-Enable Flyspell Mode. 
-If you keep your spell check personal dictionary in particular location, change this variable as desired. 
-Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spellcheck_emacs).
-
-Using =aspell= as the dictionary will not work on Windows anymore as there is no windows binary which works with Emacs 26.1 and greater, therefore best practice is to switch to using =hunspell=.
-See link on how to do this for Windows [[https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html][here]] and for Linux simply go to your distribution and install it there.
-On Linux needed to download German dictionaries from [[https://github.com/wooorm/dictionaries][this link]] (something wrong with utf-8 and iconv???).
-
-And a user-defined function to easily switch using different dictionaries for different languages.
-
-#+begin_src emacs-lisp
-  (setenv "DICPATH"
-          "/usr/share/hunspell")
-#+end_src
-
-#+RESULTS:
-: /usr/share/hunspell
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flyspell
-    :bind (("<f8>" . ispell-word)
-           ("M-<f8>" . flyspell-mode)
-           ("C-c d" . ispell-change-dictionary))
-    :config
-    (when (executable-find "hunspell")
-      (setq-default ispell-program-name "hunspell")
-      (setq ispell-really-hunspell t))
-    (setq ispell-personal-dictionary (concat user-emacs-directory ".ispell"))
-    (dolist (hook '(text-mode-hook))
-       (add-hook hook (lambda () (flyspell-mode 1))))
-    (dolist (mode '(emacs-lisp-mode-hook
-                    python-mode-hook
-                    R-mode-hook))
-       (add-hook mode (lambda () (flyspell-prog-mode)))) 
-    (defun flyspell-check-next-highlighted-word ()
-      "Custom function to spell check next highlighted word"
-      (interactive)
-      (flyspell-goto-next-error)
-      (ispell-word)))
-#+END_SRC
-
-#+RESULTS:
-: ispell-change-dictionary
-
 *** =gud=
 General debugging commands.
 
 #+BEGIN_SRC emacs-lisp
   ;; for GDB/debugging in general
-  (global-set-key (kbd "M-<f1>") 'gud-next)   ;; equiv matlab step 1 
+  (global-set-key (kbd "M-<f1>") 'gud-next)   ;; equiv matlab step 1
   (global-set-key (kbd "M-<f7>") 'gud-cont)
 #+END_SRC
 
@@ -337,9 +586,9 @@ General debugging commands.
 *** =ivy-mode=
 
 #+BEGIN_QUOTE
-Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions. 
+Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions.
 
--taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc. 
+-taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc.
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
@@ -406,7 +655,7 @@ Set the Buffer List buffer as to default with "ibuffer".
                    ("emacs" (or
                              (name . "^\\*scratch\\*$")
                              (name . "^\\*Messages\\*$")))
-                   ("magit" (mode . Magit)) 
+                   ("magit" (mode . Magit))
                    )))))
 #+END_SRC
 
@@ -427,7 +676,7 @@ Plain-text double-entry accounting program.
                 (setq-local ledger-complete-in-steps t)
                 (setq-local (ledger-clear-whole-transactions t)))))
 
-  (use-package flycheck-ledger 
+  (use-package flycheck-ledger
     :after ledger-mode)
 #+END_SRC
 
@@ -498,7 +747,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
     :delight undo-tree-mode "Z"
     :bind (("C-z" . undo-tree-undo)
            ("C-S-z" . redo))
-    :config 
+    :config
     (global-undo-tree-mode) ;;turn on everywhere
     (defalias 'redo 'undo-tree-redo))
 #+END_SRC
@@ -1032,7 +1281,7 @@ I categorize it into a few new groups that I use as templates:
 Set a global ``refile`` org file as a staging area for new TODO items and basic settings to make refiling tasks easier. The code is based on the configuration in this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][article]].
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-default-notes-file "/winc/jk/myLife/refile.org")  
+  (setq org-default-notes-file "/winc/jk/myLife/refile.org")
 
   ; Include targets up to 9 levels deep
   (setq org-refile-targets (quote ((nil :maxlevel . 9)
@@ -1178,7 +1427,7 @@ Set a global ``refile`` org file as a staging area for new TODO items and basic 
     (save-excursion
       (beginning-of-line 0)
       (org-remove-empty-drawer-at (point))))
- 
+
   (defun bh/punch-in (arg)
     "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
     (interactive "p")
@@ -1237,8 +1486,8 @@ Set =pdflatex= as main default way to generate PDF documents from source org-mod
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-pdf-process
     '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
-      "bibtex %b" 
-      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f" 
+      "bibtex %b"
+      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
       "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
 #+END_SRC
 
@@ -1442,14 +1691,14 @@ Introduced due to changes from org-v9.1 to org-v9.2.
 | thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure                 | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
 | org              | :components     | (org-index org-blog org-publications org-portfolio org-static) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
 | thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure)     |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
- 
+
 *** =cdlatex-mode=
 
 #+BEGIN_SRC emacs-lisp
   (use-package cdlatex
     :defer 1
     :diminish org-cdlatex-mode
-    :config 
+    :config
     (add-hook 'org-mode-hook 'turn-on-org-cdlatex))
 #+END_SRC
 
@@ -1480,7 +1729,7 @@ uAS12QaN2JOirCcHE26mtEevAN2qpPEFF1q3q68VsN9lIb6/ejT+BwH3eO5xohYT
 -----END PGP MESSAGE-----
 
 *** =org-indent=
-   
+
 #+BEGIN_SRC emacs-lisp
   (use-package org-indent
     :after org

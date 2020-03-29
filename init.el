@@ -1,86 +1,38 @@
-;; init.el --- Emacs Configuration
-;; ------------------------------------------------
+;; init.el --- Personal GNU Emacs configuration file.
 
-;; Ensure at least Emacs Version 25.0 or greater
-;; ------------------------------------------------
-(when (version< emacs-version "25.0")
-  (warn "You probably need at least Emacs 25. You should upgrade. You may need to install leuven-theme manually."))
-
-;; Speed up init time by manipulating garbage collection
-;; ------------------------------------------------
-(setq gc-cons-threshold 100000000
-      gc-cons-percentage 0.9)
-
-;; (defun bh/reset-gc-cons-threshold ()
-;;   "Return the garbage collection to the normal values."
-;;   (setq gc-cons-threshold
-;; 	(car (get 'gc-cons-threshold 'standard-value)))
-;;   (setq gc-cons-percentage
-;; 	(car (get 'gc-cons-percentage 'standard-value))))
+;; Copyright (c) 2020 James Koch <jchkoch@gmail.com>
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; version 2
+;; of the License.
 ;; 
-;; (add-hook 'after-init-hook 'bh/reset-gc-cons-threshold)
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;; 
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, see <https://www.gnu.org/licenses/>.
 
-;; Turn on debugging and turn off after init
-;; ------------------------------------------------
-(setq debug-on-error t)
-(add-hook 'after-init-hook (lambda ()
-			     (setq debug-on-error nil)))
+;;; Commentary:
 
-;; Install Packages
-;; ------------------------------------------------
-(require 'package)
+;; This file sets up the essentials for incorporating my init org
+;; file. This is known as "literate programming" and is helpful for
+;; sharing Emacs configurations with wider audiences that include
+;; novice users (of which I myself belong to).
 
-(setq package-archives
-      '(("GNU ELPA"     . "http://elpa.gnu.org/packages/")
-        ("MELPA Stable" . "https://stable.melpa.org/packages/")
-        ("MELPA"        . "https://melpa.org/packages/")
-	("ORG"         . "http://orgmode.org/elpa/")
-	("GNU"         . "http://elpa.gnu.org/packages/")))
+;;; Code:
 
-(package-initialize)
+(when (version < emacs-version "27.0")
+  (require 'package)
 
-;; Bootstrap `use-package`
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+  (setq package-enable-at-startup nil)
+  
+  (setq package-archives
+	'("melpa"        . "https://melpa.org/packages/"))
 
-;; `use-package` configuration
-(use-package diminish :ensure t)
-(use-package delight :ensure t)
-(use-package use-package-ensure-system-package :ensure t)
-(setq use-package-always-ensure t)
+  (unless (package--initialized (package-initialize)))
 
-;; Basic Customizations
-;; ------------------------------------------------
-(when window-system
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (tooltip-mode -1))
-
-(setq inhibit-startup-message t)
-(setq initial-scratch-message "")
-
-(setq visible-bell t)
-(blink-cursor-mode -1)
-
-(column-number-mode 1)
-(display-time-mode 1)
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; Start the server
-;; ------------------------------------------------
-(server-start)
-
-;; Load personal config
-;; -----------------------------------------------
-(org-babel-load-file (concat user-emacs-directory "personal.org"))
-
-;; Load the config
-;; ------------------------------------------------
-(org-babel-load-file (concat user-emacs-directory "config.org"))
-
-;; Set customized variables to seperate file
-;; ------------------------------------------------
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file 'noerror)
+  (require 'org)
+  (org-babel-load-file (concat user-emacs-directory "config.org")))

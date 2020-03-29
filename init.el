@@ -24,15 +24,15 @@
 
 ;;; Code:
 
-(when (version < emacs-version "27.0")
-  (require 'package)
+(require 'package)
 
-  (setq package-enable-at-startup nil)
+(setq package-enable-at-startup nil)
+
+(setq package-archives
+      '(("melpa"        . "https://melpa.org/packages/")))
   
-  (setq package-archives
-	'("melpa"        . "https://melpa.org/packages/"))
+(package-initialize)
 
-  (unless (package--initialized (package-initialize)))
-
-  (require 'org)
-  (org-babel-load-file (concat user-emacs-directory "config.org")))
+(require 'org)
+(setq vc-follow-symlinks t)
+(org-babel-load-file (concat user-emacs-directory "config.org"))

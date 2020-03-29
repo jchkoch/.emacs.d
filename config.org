@@ -94,7 +94,7 @@ To maintain a clean and organized configuration, I prefer to have these automati
     :config
     (setq custom-file "~/.emacs.d/custom.el")
 
-    (unelss (file-exists-p custom-file)
+    (unless (file-exists-p custom-file)
             (write-region "" nil custom-file))
 
     (load custom-file))
@@ -132,11 +132,9 @@ In my workflow, there are very few cases when I need to disable this type of vis
 #+begin_src emacs-lisp
   (use-package emacs
     :config
-    (setq-default global-visual-line-mode t))
+    (setq global-visual-line-mode t))
 #+END_SRC
 
-#+RESULTS:
-: t
 ** DONE Themes that I use
 I tend to switch themes occasionally and so I make it as easy as possible for myself to do so.
 At the moment, I have switched to using the ~modus-vivendi~ theme developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
@@ -154,10 +152,7 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
     :defer t)
 #+end_src
 
-#+RESULTS:
-
-*** DONE Mode line
-The mode line is a fundamentally integral part of the Emacs interface.
+*** TODO Mode line
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -173,7 +168,7 @@ The mode line is a fundamentally integral part of the Emacs interface.
                     mode-line-modified
                     mode-line-remote
                     mode-line-frame-identification
-                    mode-line-buffer-indentification
+                    mode-line-buffer-identification
                     "  "
                     mode-line-position
                     " "
@@ -183,56 +178,48 @@ The mode line is a fundamentally integral part of the Emacs interface.
                     mode-line-end-spaces)))
 #+end_src
 
-#+RESULTS:
-: t
-
 **** DONE Battery status
 As my primary computer where I use Emacs is a laptop, it is convenient to include the battery status in the mode line. The following code is attributed to [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] who writes:
 
-#+begin_quote
-   Emacs offers a built-in library for presenting information about the status of the laptop's battery. Using it allows me to eliminate my dependence on the system panel and thus keep Emacs in full screen view without any interruptions.
+ #+begin_quote
+    Emacs offers a built-in library for presenting information about the status of the laptop's battery. Using it allows me to eliminate my dependence on the system panel and thus keep Emacs in full screen view without any interruptions.
 
-   The default update interval is set to a single minute (in seconds), which is generally fine though I find that a slightly higher value works just as well. As for the format, it is designed to show a context-dependent, single character indicator about the current status, as well as the battery's overall percentage.
+    The default update interval is set to a single minute (in seconds), which is generally fine though I find that a slightly higher value works just as well. As for the format, it is designed to show a context-dependent, single character indicator about the current status, as well as the battery's overall percentage.
 
-   Variable battery-mode-line-limit will hide the indicator if the value is above the declared threshold. 99 basically means "full". I use that instead of a 100 because sometimes the battery only ever fills up to 99.99, meaning that the indicator remains present at all times.
-#+end_quote
+    Variable battery-mode-line-limit will hide the indicator if the value is above the declared threshold. 99 basically means "full". I use that instead of a 100 because sometimes the battery only ever fills up to 99.99, meaning that the indicator remains present at all times.
+ #+end_quote
 
 
-#+begin_src emacs-lisp
-  (use-package battery
-    :config
-    (setq battery-mode-line-format " [%b%p%%]")
-    (setq battery-mode-line-limit 99)
-    (setq battery-update-interval 180)
-    (setq battery-load-low 20)
-    (setq battery-load-critical 10)
-    :init ((after-init . display-battery-mode)))
-#+end_src
-
-#+RESULTS:
-: t
+ #+begin_src emacs-lisp
+   (use-package battery
+     :config
+     (setq battery-mode-line-format " [%b%p%%] ")
+     (setq battery-mode-line-limit 99)
+     (setq battery-update-interval 180)
+     (setq battery-load-low 20)
+     (setq battery-load-critical 10)
+     :hook (after-init . display-battery-mode))
+ #+end_src
 
 **** DONE Display the current time
 Adjust the format of how the current time of day is displayed on the mode line.
 I use the 24h clock and like to also know the date.
 For the date I use the typical European format of "%Y-%M-%D".
 
-#+begin_src emacs-lisp
-  (use-package time
-    :config
-    (setq display-time-format "%Y-%M-%D  %H:%M")
-    ;;;; Covered by `display-time-format'
-    ;; (setq display-time-24hr-format t)
-    ;; (setq display-time-day-and-date t)
-    (setq display-time-interval 60)
-    (setq display-time-mail-directory nil)
-    (setq display-time-default-load-average nil)
-    :hook ((after-init . display-time-mode)))
-#+end_src
+ #+begin_src emacs-lisp
+   (use-package time
+     :config
+     (setq display-time-format "%Y-%M-%D  %H:%M")
+     ;;;; Covered by `display-time-format'
+     ;; (setq display-time-24hr-format t)
+     ;; (setq display-time-day-and-date t)
+     (setq display-time-interval 60)
+     (setq display-time-mail-directory nil)
+     (setq display-time-default-load-average nil)
+     :hook (after-init . display-time-mode))
+ #+end_src
 
-#+RESULTS:
-
-**** DONE Keycast mode
+*** DONE Keycast mode
 To quote [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
 
 #+begin_quote
@@ -323,7 +310,6 @@ This is a new package to me so I am still experimenting with it.
 
 #+RESULTS:
 : jk/toggle-line-numbers
-
 ** TODO Language settings for prose and code
 *** DONE Recognize sub-words
 
@@ -331,10 +317,9 @@ This is a new package to me so I am still experimenting with it.
   (use-package subword
     :delight
     :commands subword-mode
-    :init ((prog-mode-hook . subword-mode)))
+    :hook (prog-mode-hook . subword-mode))
 #+end_src
 
-#+RESULTS:
 *** DONE Flyspell (spell check)
 I need spell checking for both English and German. Enable Flyspell Mode.
 If you keep your spell check personal dictionary in particular location, change this variable as desired.
@@ -348,9 +333,6 @@ On GNU/Linux most likely you need to download extra dictionaries from [[https://
   (setenv "DICPATH"
           "/usr/share/hunspell")
 #+end_src
-
-#+RESULTS:
-: /usr/share/hunspell
 
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
@@ -393,8 +375,6 @@ On GNU/Linux most likely you need to download extra dictionaries from [[https://
            ("M-<f8>" . jk/ispell-toggle-dictionaries)))
 #+END_SRC
 
-#+RESULTS:
-: jk/ispell-toggle-dictionaries
 *** NEXT Flycheck (code linting)
 *** NEXT Markdown support
 *** DONE Parantheses
@@ -407,11 +387,9 @@ Extremely useful for writing ~elisp~ code and \LaTeX equations.
     (setq show-paren-style 'paranthesis)
     (setq show-paren-when-point-in-periphery t)
     (setq show-paren-when-point-inside-paren nil)
-    :init ((after-init . show-paren-mode)))
+    :hook (after-init . show-paren-mode))
 #+end_src
 
-#+RESULTS:
-: t
 *** DONE Tabs, indentation, and the TAB key
 As I fan of the Python programming language as well as Emacs, I believe strongly in tabs (i.e. in the sense of the tab character) when dealing with text files and indenting code.
 However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] notes:
@@ -430,6 +408,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     (setq-default tab-width 4)
     (setq-default indent-tabs-mode nil))
 #+end_src
+
 ** NEXT Registers
 ** DONE Scrolling behaviour
 #+begin_quote
@@ -446,9 +425,6 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     (setq scroll-margin 0))
 #+end_src
 
-#+RESULTS:
-: t
-
 ** NEXT Auto revert mode
 
 #+begin_src emacs-lisp
@@ -456,7 +432,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :delight
     :config
     (setq auto-revert-verbose t)
-    :init ((after-init . global-auto-revert-mode)))
+    :hook (after-init . global-auto-revert-mode))
 #+end_src
 
 ** DONE Delete trailing whitespace
@@ -469,15 +445,1062 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :hook (before-save . delete-trailing-whitespace))
 #+end_src
 
-#+RESULTS:
-
 * TODO Selection candidates and search methods
-
 * TODO Directory, buffer, and window management
-
 * TODO Applications and utilities
-* TODO Important configurations that I stopped using
+** Org-mode (TODO planner)
+ #+BEGIN_QUOTE
+ Org mode is for keeping notes, maintaining TODO lists, planning projects, and
+ authoring documents with a fast and effective plain-text system.
 
+ [[http://orgmode.org/][Carsten Dominik]]
+ #+END_QUOTE
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org
+     :ensure org-plus-contrib
+     :bind (("<f12>" . org-agenda)
+            ("C-c l" . org-insert-link)
+            ("C-o" . org-open-at-point)
+            ("C-c c" . org-capture)
+            ("<f2>" . org-edit-src-code)
+            ("<f3>" . org-edit-src-exit)
+            ("<f5>" . org-clock-in)
+            ("<f6>" . org-clock-out)
+            ("<f7>" . org-habit-toggle-habits)
+            ("<f9> I" . bh/punch-in)
+            ("<f9> O" . bh/punch-out)
+            ("<f9> SPC" . bh/clock-in-last-task)
+            ("C-c d" . org-decrypt-entry)))
+
+   (add-hook 'org-mode-hook
+             (lambda () (set-input-method "swedish-postfix")))
+ #+END_SRC
+
+ #+BEGIN_SRC emacs-lisp
+   (require 'ox-extra)
+   (ox-extras-activate '(ignore-headlines))
+   (setq org-list-allow-alphabetical t)
+ #+END_SRC
+
+*** TODO States
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-todo-keywords
+     (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
+             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+   (setq org-todo-keyword-faces
+     (quote (("TODO" :foreground "red" :weight bold)
+             ("NEXT" :foreground "blue" :weight bold)
+             ("DONE" :foreground "forest green" :weight bold)
+             ("REVIEW" :foreground "yellow" :weight bold)
+             ("WAITING" :foreground "orange" :weight bold)
+             ("HOLD" :foreground "magenta" :weight bold)
+             ("CANCELLED" :foreground "forest green" :weight bold)
+             ("MEETING" :foreground "forest green" :weight bold)
+             ("PHONE" :foreground "forest green" :weight bold))))
+
+   (setq org-use-fast-todo-selection t)
+ #+END_SRC
+
+ #+RESULTS:
+ : t
+
+*** Tag Configuration
+
+ #+BEGIN_SRC emacs-lisp
+   ;; TODO state tag triggers
+   (setq org-todo-state-tags-triggers
+         (quote (("CANCELLED" ("CANCELLED" . t))
+                 ("WAITING" ("WAITING" . t))
+                 ("HOLD" ("WAITING") ("HOLD" . t))
+                 (done ("WAITING") ("HOLD"))
+                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+   ;; Tag placement
+   (setq org-tags-column -70)
+ #+END_SRC
+
+ #+RESULTS:
+ : -70
+
+*** Agenda
+**** Set agenda files
+ Set directory where all my files for the Org-Mode Agenda exist.
+ This code will set a directory and will be recursive into sub-directories.
+ Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-agenda-files (list "/winc/jk/myLife/"))
+ #+END_SRC
+
+ #+RESULTS:
+ | /winc/jk/myLife/ |
+
+**** =org-habit=
+
+ #+BEGIN_SRC emacs-lisp
+   ;; (add-to-list 'org-modules 'org-habit)
+   (require 'org-habit)
+   (setq org-modules (quote (org-habit)))
+   (setq org-habit-show-habits-only-for-today t)
+   (setq org-habit-graph-column 45)
+ #+END_SRC
+
+ #+RESULTS:
+ : 45
+
+**** Custom agenda functions
+
+ #+BEGIN_SRC emacs-lisp
+   (defun bh/find-project-task ()
+     "Move point to the parent (project) task if any"
+     (save-restriction
+       (widen)
+       (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+         (while (org-up-heading-safe)
+           (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+             (setq parent-task (point))))
+         (goto-char parent-task)
+         parent-task)))
+
+   (defun bh/is-project-p ()
+     "Any task with a todo keyword subtask"
+     (save-restriction
+       (widen)
+       (let ((has-subtask)
+             (subtree-end (save-excursion (org-end-of-subtree t)))
+             (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+         (save-excursion
+           (forward-line 1)
+           (while (and (not has-subtask)
+                       (< (point) subtree-end)
+                       (re-search-forward "^\*+ " subtree-end t))
+             (when (member (org-get-todo-state) org-todo-keywords-1)
+               (setq has-subtask t))))
+         (and is-a-task has-subtask))))
+
+   (defun bh/is-project-subtree-p ()
+     "Any task with a todo keyword that is in a project subtree.
+   Callers of this function already widen the buffer view."
+     (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+                                 (point))))
+       (save-excursion
+         (bh/find-project-task)
+         (if (equal (point) task)
+             nil
+           t))))
+
+   (defun bh/is-task-p ()
+     "Any task with a todo keyword and no subtask"
+     (save-restriction
+       (widen)
+       (let ((has-subtask)
+             (subtree-end (save-excursion (org-end-of-subtree t)))
+             (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+         (save-excursion
+           (forward-line 1)
+           (while (and (not has-subtask)
+                       (< (point) subtree-end)
+                       (re-search-forward "^\*+ " subtree-end t))
+             (when (member (org-get-todo-state) org-todo-keywords-1)
+               (setq has-subtask t))))
+         (and is-a-task (not has-subtask)))))
+
+   (defun bh/is-subproject-p ()
+     "Any task which is a subtask of another project"
+     (let ((is-subproject)
+           (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+       (save-excursion
+         (while (and (not is-subproject) (org-up-heading-safe))
+           (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+             (setq is-subproject t))))
+       (and is-a-task is-subproject)))
+
+   (defun bh/list-sublevels-for-projects-indented ()
+     "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+     This is normally used by skipping functions where this variable is already local to the agenda."
+     (if (marker-buffer org-agenda-restrict-begin)
+         (setq org- tags-match-list-sublevels 'indented)
+       (setq org-tags-match-list-sublevels nil))
+     nil)
+
+   (defun bh/list-sublevels-for-projects ()
+     "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+     This is normally used by skipping functions where this variable is already local to the agenda."
+     (if (marker-buffer org-agenda-restrict-begin)
+         (setq org-tags-match-list-sublevels t)
+       (setq org-tags-match-list-sublevels nil))
+     nil)
+
+   (defvar bh/hide-scheduled-and-waiting-next-tasks t)
+
+   (defun bh/toggle-next-task-display ()
+     (interactive)
+     (setq bh/hide-scheduled-and-waiting-next-tasks (not bh/hide-scheduled-and-waiting-next-tasks))
+     (when  (equal major-mode 'org-agenda-mode)
+       (org-agenda-redo))
+     (message "%s WAITING and SCHEDULED NEXT Tasks" (if bh/hide-scheduled-and-waiting-next-tasks "Hide" "Show")))
+
+   (defun bh/skip-stuck-projects ()
+     "Skip trees that are not stuck projects"
+     (save-restriction
+       (widen)
+       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+         (if (bh/is-project-p)
+             (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                    (has-next ))
+               (save-excursion
+                 (forward-line 1)
+                 (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                   (unless (member "WAITING" (org-get-tags-at))
+                     (setq has-next t))))
+               (if has-next
+                   nil
+                 next-headline)) ; a stuck project, has subtasks but no next task
+           nil))))
+
+   (defun bh/skip-non-stuck-projects ()
+     "Skip trees that are not stuck projects"
+     ;; (bh/list-sublevels-for-projects-indented)
+     (save-restriction
+       (widen)
+       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+         (if (bh/is-project-p)
+             (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                    (has-next ))
+               (save-excursion
+                 (forward-line 1)
+                 (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                   (unless (member "WAITING" (org-get-tags-at))
+                     (setq has-next t))))
+               (if has-next
+                   next-headline
+                 nil)) ; a stuck project, has subtasks but no next task
+           next-headline))))
+
+   (defun bh/skip-non-projects ()
+     "Skip trees that are not projects"
+     ;; (bh/list-sublevels-for-projects-indented)
+     (if (save-excursion (bh/skip-non-stuck-projects))
+         (save-restriction
+           (widen)
+           (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+             (cond
+              ((bh/is-project-p)
+               nil)
+              ((and (bh/is-project-subtree-p) (not (bh/is-task-p)))
+               nil)
+              (t
+               subtree-end))))
+       (save-excursion (org-end-of-subtree t))))
+
+   (defun bh/skip-non-tasks ()
+     "Show non-project tasks.
+   Skip project and sub-project tasks, habits, and project related tasks."
+     (save-restriction
+       (widen)
+       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+         (cond
+          ((bh/is-task-p)
+           nil)
+          (t
+           next-headline)))))
+
+   (defun bh/skip-project-trees-and-habits ()
+     "Skip trees that are projects"
+     (save-restriction
+       (widen)
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (cond
+          ((bh/is-project-p)
+           subtree-end)
+          ((org-is-habit-p)
+           subtree-end)
+          (t
+           nil)))))
+
+   (defun bh/skip-projects-and-habits-and-single-tasks ()
+     "Skip trees that are projects, tasks that are habits, single non-project tasks"
+     (save-restriction
+       (widen)
+       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+         (cond
+          ((org-is-habit-p)
+           next-headline)
+          ((and bh/hide-scheduled-and-waiting-next-tasks
+                (member "WAITING" (org-get-tags-at)))
+           next-headline)
+          ((bh/is-project-p)
+           next-headline)
+          ((and (bh/is-task-p) (not (bh/is-project-subtree-p)))
+           next-headline)
+          (t
+           nil)))))
+
+   (defun bh/skip-project-tasks-maybe ()
+     "Show tasks related to the current restriction.
+   When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
+   When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+     (save-restriction
+       (widen)
+       (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+              (next-headline (save-excursion (or (outline-next-heading) (point-max))))
+              (limit-to-project (marker-buffer org-agenda-restrict-begin)))
+         (cond
+          ((bh/is-project-p)
+           next-headline)
+          ((org-is-habit-p)
+           subtree-end)
+          ((and (not limit-to-project)
+                (bh/is-project-subtree-p))
+           subtree-end)
+          ((and limit-to-project
+                (bh/is-project-subtree-p)
+                (member (org-get-todo-state) (list "NEXT")))
+           subtree-end)
+          (t
+           nil)))))
+
+   (defun bh/skip-project-tasks ()
+     "Show non-project tasks.
+   Skip project and sub-project tasks, habits, and project related tasks."
+     (save-restriction
+       (widen)
+       (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (cond
+          ((bh/is-project-p)
+           subtree-end)
+          ((org-is-habit-p)
+           subtree-end)
+          ((bh/is-project-subtree-p)
+           subtree-end)
+          (t
+           nil)))))
+
+   (defun bh/skip-non-project-tasks ()
+     "Show project tasks.
+   Skip project and sub-project tasks, habits, and loose non-project tasks."
+     (save-restriction
+       (widen)
+       (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+              (next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+         (cond
+          ((bh/is-project-p)
+           next-headline)
+          ((org-is-habit-p)
+           subtree-end)
+          ((and (bh/is-project-subtree-p)
+                (member (org-get-todo-state) (list "NEXT")))
+           subtree-end)
+          ((not (bh/is-project-subtree-p))
+           subtree-end)
+          (t
+           nil)))))
+
+   (defun bh/skip-projects-and-habits ()
+     "Skip trees that are projects and tasks that are habits"
+     (save-restriction
+       (widen)
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (cond
+          ((bh/is-project-p)
+           subtree-end)
+          ((org-is-habit-p)
+           subtree-end)
+          (t
+           nil)))))
+
+   (defun bh/skip-non-subprojects ()
+     "Skip trees that are not projects"
+     (let ((next-headline (save-excursion (outline-next-heading))))
+       (if (bh/is-subproject-p)
+           nil
+         next-headline)))
+
+ #+END_SRC
+
+ #+RESULTS:
+ : bh/skip-non-subprojects
+
+**** Custom agenda view
+ Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-agenda-span 'day)
+   (setq org-agenda-use-time-grid t)
+   (setq org-agenda-tags-column -155)
+   (add-hook 'org-agenda-mode-hook
+           (lambda ()
+             (visual-line-mode -1)
+             (toggle-truncate-lines 1)))
+
+   (setq org-agenda-custom-commands
+         (quote (("N" "Notes" tags "NOTE"
+                  ((org-agenda-overriding-header "Notes")
+                   (org-tags-match-list-sublevels t)))
+                 ("h" "Habits" tags-todo "STYLE=\"habit\""
+                  ((org-agenda-overriding-header "Habits")
+                   (org-agenda-sorting-strategy
+                    '(todo-state-down effort-up category-keep))))
+                 (" " "Agenda"
+                  ((agenda "" nil)
+                   (tags "REFILE"
+                         ((org-agenda-overriding-header "Tasks to Refile")
+                          (org-tags-match-list-sublevels nil)))
+                   (tags-todo "-CANCELLED/!NEXT"
+                              ((org-agenda-overriding-header (concat "Project Next Tasks"
+                                                                     (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                         ""
+                                                                       " (including WAITING and SCHEDULED tasks)")))
+                               (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
+                               (org-tags-match-list-sublevels t)
+                               (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-sorting-strategy
+                                '(todo-state-down effort-up category-keep))))
+                   (tags-todo "-HOLD-CANCELLED/!"
+                              ((org-agenda-overriding-header "Projects")
+                               (org-agenda-skip-function 'bh/skip-non-projects)
+                               (org-tags-match-list-sublevels 'indented)
+                               (org-agenda-sorting-strategy
+                                '(category-keep))))
+                   (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+                              ((org-agenda-overriding-header (concat "Project Subtasks"
+                                                                     (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                         ""
+                                                                       " (including WAITING and SCHEDULED tasks)")))
+                               (org-agenda-skip-function 'bh/skip-non-project-tasks)
+                               (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-sorting-strategy
+                                '(category-keep))))
+                   (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+                              ((org-agenda-overriding-header (concat "Standalone Tasks"
+                                                                     (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                         ""
+                                                                       " (including WAITING and SCHEDULED tasks)")))
+                               (org-agenda-skip-function 'bh/skip-project-tasks)
+                               (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-sorting-strategy
+                                '(category-keep))))
+                   (tags-todo "-CANCELLED/!"
+                              ((org-agenda-overriding-header "Stuck Projects")
+                               (org-agenda-skip-function 'bh/skip-non-stuck-projects)
+                               (org-agenda-sorting-strategy
+                                '(category-keep))))
+                   (tags-todo "-CANCELLED+WAITING|HOLD/!"
+                              ((org-agenda-overriding-header (concat "Waiting and Postponed Tasks"
+                                                                     (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                         ""
+                                                                       " (including WAITING and SCHEDULED tasks)")))
+                               (org-agenda-skip-function 'bh/skip-non-tasks)
+                               (org-tags-match-list-sublevels nil)
+                               (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                               (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)))
+                   (tags "-REFILE/"
+                         ((org-agenda-overriding-header "Tasks to Archive")
+                          (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
+                          (org-tags-match-list-sublevels nil))))
+                  nil))))
+ #+END_SRC
+
+ #+RESULTS:
+ | N | Notes  | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | ((org-agenda-overriding-header Notes) (org-tags-match-list-sublevels t))                                                |
+ | h | Habits | tags-todo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | STYLE="habit"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ((org-agenda-overriding-header Habits) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep)))) |
+ |   | Agenda | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-projects-and-habits-and-single-tasks)) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep))))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function (quote bh/skip-non-projects)) (org-tags-match-list-sublevels (quote indented)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Project Subtasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function (quote bh/skip-non-stuck-projects)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-tasks)) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function (quote bh/skip-non-archivable-tasks)) (org-tags-match-list-sublevels nil)))) | nil                                                                                                                     |
+
+*** Capturing
+ When a new task occurs and needs to be added, org-capture allows me to easily capture it.
+ I categorize it into a few new groups that I use as templates:
+ + A new task (t)
+ + A meeting (m)
+ + A email I need to respond to (e)
+ + A phone call (p)
+ + A new note (n)
+ + A interruption (i)
+ + A new habit (h)
+ + A org protocol (w)
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-agenda-diary-file "/winc/jk/myLife/diary.org")
+   (setq org-capture-templates
+         (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
+                  "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+                 ("e" "respond" entry (file "/winc/jk/myLife/refile.org")
+                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t)
+                 ("n" "note" entry (file "/winc/jk/myLife/refile.org")
+                  "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+                 ("i" "Journal" entry (file+datetree "/winc/jk/myLife/diary.org")
+                  "* %?\n%U\n" :clock-in t :clock-resume t)
+                 ("w" "org-protocol" entry (file "/winc/jk/myLife/refile.org")
+                  "* TODO Review %c\n%U\n" :immediate-finish t)
+                 ("m" "Meeting" entry (file "/winc/jk/myLife/refile.org")
+                  "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+                 ("p" "Phone call" entry (file "/winc/jk/myLife/refile.org")
+                  "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+                 ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
+                 "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+ #+END_SRC
+
+ #+RESULTS:
+ | t | todo | entry | (file /winc/jk/myLife/refile.org) | * TODO %? |
+
+*** Refiling
+ Set a global ``refile`` org file as a staging area for new TODO items and basic settings to make refiling tasks easier. The code is based on the configuration in this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][article]].
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-default-notes-file "/winc/jk/myLife/refile.org")
+
+   ; Include targets up to 9 levels deep
+   (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                    (org-agenda-files :maxlevel . 9))))
+
+   ; Allow refile to create parent tasks with confirmation
+   (setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+   ; Exclude DONE state tasks from refile targets
+   (defun bh/verify-refile-target ()
+     "Exclude todo keywords with a done state from refile targets"
+     (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+   (setq org-refile-target-verify-function 'bh/verify-refile-target)
+ #+END_SRC
+
+ #+RESULTS:
+ : bh/verify-refile-target
+
+**** Refiling hydra
+
+ #+BEGIN_SRC emacs-lisp
+   (defun my/refile (file headline &optional arg)
+     (let ((pos (save-excursion
+                  (find-file file)
+                  (org-find-exact-headline-in-buffer headline))))
+       (org-refile arg nil (list headline file nil pos)))
+     (switch-to-buffer (current-buffer)))
+
+   (defhydra bh/org-refile-hydra (:foreign-keys run)
+     "Refile"
+     ("t" (my/refile "todo.org" "Refiled Tasks") "Refile to main TODO file")
+     ("c" (my/refile "chalmers.org" "Administration") "Refile to NSERC USRA Administration")
+     ("m" (my/refile "bom065.org" "Schedule") "Refile to BOM065 Course")
+     ("s" (my/refile "vbb122.org" "Schedule") "Refile to VBB122 Course")
+     ("u" (my/refile "uofa.org" "Administration") "UAlberta Tasks")
+     ("j" org-refile-goto-last-stored "Jump to last refile")
+     ("q" nil "cancel"))
+
+     (global-set-key (kbd "<f9> r") 'bh/org-refile-hydra/body)
+ #+END_SRC
+
+ #+RESULTS:
+ : bh/org-refile-hydra/body
+
+*** Time clocking
+**** General configuration
+
+ #+BEGIN_SRC emacs-lisp
+   ;; resume clocking task when emacs restarts
+   (org-clock-persistence-insinuate)
+   ;; show lots of clock history to make choosing easier
+   (setq org-clock-history-length 23)
+   (setq org-clock-in-resume t)
+   ;; Include current clocking task in clock reports
+   (setq org-clock-report-include-clocking-task t)
+   ;; Clockreport time format
+   (setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
+   ;; change state to next when clocking in
+   (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
+   ;; log clocking information into drawers
+   (setq org-clock-into-drawer t)
+   ;; set drawers
+   (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
+   (setq org-clock-out-remove-zero-time-clocks t)
+   (setq org-clock-out-when-done t)
+   (setq org-clock-persist t)
+   (setq org-clock-persist-query-resume nil)
+   (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+   (setq bh/keep-clock-running nil)
+   (defvar bh/organization-task-id "default")
+   (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
+   (setq org-duration-format (quote h:mm))
+   (setq org-clock-idle-time 60)
+ #+END_SRC
+
+ #+RESULTS:
+ : 60
+
+**** Custom functions
+
+ #+BEGIN_SRC emacs-lisp
+   (defun bh/clock-in-to-next (kw)
+     "Switch a task from TODO to NEXT when clocking in.
+   Skips capture tasks, projects, and subprojects.
+   Switch projects and subprojects from NEXT back to TODO"
+     (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+       (cond
+        ((and (member (org-get-todo-state) (list "TODO"))
+              (bh/is-task-p))
+         "NEXT")
+        ((and (member (org-get-todo-state) (list "NEXT"))
+              (bh/is-project-p))
+         "TODO"))))
+
+   (defun bh/find-project-task ()
+     "Move point to the parent (project) task if any"
+     (save-restriction
+       (widen)
+       (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+         (while (org-up-heading-safe)
+           (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+             (setq parent-task (point))))
+         (goto-char parent-task)
+         parent-task)))
+
+   (defun bh/clock-in-default-task ()
+     (save-excursion
+       (org-with-point-at org-clock-default-task
+         (org-clock-in))))
+
+   (defun bh/clock-in-parent-task ()
+     "Move point to the parent (project) task if any and clock in"
+     (let ((parent-task))
+       (save-excursion
+         (save-restriction
+           (widen)
+           (while (and (not parent-task) (org-up-heading-safe))
+             (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+               (setq parent-task (point))))
+           (if parent-task
+               (org-with-point-at parent-task
+                 (org-clock-in))
+             (when bh/keep-clock-running
+               (bh/clock-in-default-task)))))))
+
+   (defun bh/clock-in-organization-task-as-default ()
+     (interactive)
+     (org-with-point-at (org-id-find bh/organization-task-id 'marker)
+       (org-clock-in '(16))))
+
+   (defun bh/clock-out-maybe ()
+     (when (and bh/keep-clock-running
+                (not org-clock-clocking-in)
+                (marker-buffer org-clock-default-task)
+                (not org-clock-resolving-clocks-due-to-idleness))
+       (bh/clock-in-parent-task)))
+
+   (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
+
+   (defun bh/remove-empty-drawer-on-clock-out ()
+     (interactive)
+     (save-excursion
+       (beginning-of-line 0)
+       (org-remove-empty-drawer-at (point))))
+
+   (defun bh/punch-in (arg)
+     "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
+     (interactive "p")
+     (setq bh/keep-clock-running t)
+     (if (equal major-mode 'org-agenda-mode)
+         ;; We're in the agenda
+         (let* ((marker (org-get-at-bol 'org-hd-marker))
+                (tags (org-with-point-at marker (org-get-tags-at))))
+           (if (and (eq arg 4) tags)
+               (org-agenda-clock-in '(16))
+             (bh/clock-in-organization-task-as-default)))
+       ;; We are not in the agenda
+       (save-restriction
+         (widen)
+         ; Find the tags on the current task
+         (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
+             (org-clock-in '(16))
+           (bh/clock-in-organization-task-as-default)))))
+
+   (defun bh/punch-out ()
+     (interactive)
+     (setq bh/keep-clock-running nil)
+     (when (org-clock-is-active)
+       (org-clock-out))
+     (org-agenda-remove-restriction-lock))
+ #+END_SRC
+
+**** Org clock convienence functionality
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-clock-convenience
+     :diminish org-clock-convenience-mode
+     :bind (:map org-agenda-mode-map
+              ("<S-up>" . org-clock-convenience-timestamp-up)
+              ("<S-down>" . org-clock-convenience-timestamp-down)
+              ("o" . org-clock-convenience-fill-gap)
+              ("e" . org-clock-convenience-fill-gap-both)))
+ #+END_SRC
+
+ #+RESULTS:
+ : org-clock-convenience-fill-gap-both
+
+*** Exporter configuration
+ Define all additional export backends.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-export-backends '(ascii beamer html icalendar latex odt ipynb))
+ #+END_SRC
+
+ #+RESULTS:
+ | ascii | beamer | html | icalendar | latex | odt | ipynb |
+
+**** =latex= export
+ Set =pdflatex= as main default way to generate PDF documents from source org-mode files.
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-latex-pdf-process
+     '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
+       "bibtex %b"
+       "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
+       "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+ #+END_SRC
+
+ Define beamer =LaTeX= class for presentations.
+
+ #+BEGIN_SRC emacs-lisp
+   (eval-after-load "ox-latex"
+     ;; update the list of LaTeX classes and associated header (encoding, etc.) and structure
+     '(add-to-list 'org-latex-classes
+                   `("beamer"
+                     ,(concat "\\documentclass[presentation]{beamer}\n"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              "[EXTRA]\n")
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+   (eval-after-load "ox-latex"
+     '(add-to-list 'org-latex-classes
+                   '("report-noparts"
+                     "\\documentclass{report}"
+                     ("\\chapter{%s}" . "\\chapter*{%s}")
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+ #+END_SRC
+
+ #+RESULTS:
+ | report-noparts | \documentclass{report}               | (\chapter{%s} . \chapter*{%s}) | (\section{%s} . \section*{%s}) | (\subsection{%s} . \subsection*{%s}) | (\subsubsection{%s} . \subsubsection*{%s}) | (\paragraph{%s} . \paragraph*{%s}) | (\subparagraph{%s} . \subparagraph*{%s}) |
+ | beamer         | \documentclass[presentation]{beamer} |                                |                                |                                      |                                            |                                    |                                          |
+
+*** Org-babel languages
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
+   (org-babel-do-load-languages
+    'org-babel-load-languages (quote ((emacs-lisp . t)
+                                      (shell . t)
+                                      (latex . t)
+                                      (ditaa . t)
+                                      (python . t)
+                                      (ipython . t)
+                                      (ledger . t))))
+   (setq org-confirm-babel-evaluate nil)
+   (setq org-src-fontify-natively t)
+   (setq org-src-tab-acts-natively t)
+   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+ #+END_SRC
+
+ #+RESULTS:
+ | org-display-inline-images |
+
+*** Org template selector
+ Introduced due to changes from org-v9.1 to org-v9.2.
+
+ #+begin_src emacs-lisp
+   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+   (add-to-list 'org-structure-template-alist '("p" . "src python"))
+   (add-to-list 'org-structure-template-alist '("ipy" . "src ipython"))
+   (require 'org-tempo)
+ #+end_src
+
+ #+RESULTS:
+ : org-tempo
+
+*** Preview =latex= in =org-mode=
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
+   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+ #+END_SRC
+
+ #+RESULTS:
+ | :foreground | White | :background | default | :scale | 2.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
+
+*** Publishing
+**** HTML settings
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-publish-use-timestamps-flag t
+         org-html-head-include-default-style nil)
+
+   (setq org-html-preamble-format '(("en" "")))
+
+   (setq my-blog-header-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-header.html")
+   (defun my-html-preamble (arg)
+     (with-temp-buffer
+       (insert-file-contents my-blog-header-file)
+       (buffer-string)))
+
+   (setq  my-blog-footer-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-footer.html")
+   (defun my-html-postamble (arg)
+       (with-temp-buffer
+         (insert-file-contents my-blog-footer-file)
+         (buffer-string)))
+ #+END_SRC
+
+ #+RESULTS:
+ : my-html-postamble
+
+**** Publish projects
+
+ #+BEGIN_SRC emacs-lisp
+   (setq org-publish-project-alist
+         '(
+           ("org-index"
+            :base-directory "/winc/jk/website/jckoch.gitlab.io/src"
+            :base-extension "org"
+            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
+            :recursive nil
+            :publishing-function org-html-publish-to-html
+            :htmlized-source t
+            :html-preamble my-html-preamble
+            :html-postamble my-html-postamble
+            )
+           ("org-blog"
+            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
+            :base-extension "org"
+            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
+            :recursive t
+            :publishing-function org-html-publish-to-html
+            :htmlized-source t
+            :html-preamble my-html-preamble
+            :html-postamble my-html-postamble
+            )
+           ("org-portfolio"
+            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/portfolio"
+            :base-extension "org"
+            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/portfolio"
+            :recursive t
+            :publishing-function org-html-publish-to-html
+            :htmlized-source t
+            :html-preamble my-html-preamble
+            :html-postamble my-html-postamble
+            )
+           ("org-publications"
+            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
+            :base-extension "org"
+            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
+            :recursive nil
+            :publishing-function org-html-publish-to-html
+            :htmlized-source t
+            :html-preamble my-html-preamble
+            :html-postamble my-html-postamble
+            )
+           ("org-static"
+            :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
+            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+            :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
+            :recursive t
+            :publishing-function org-publish-attachment
+            :htmlized-source t
+            :html-preamble my-html-preamble
+            :html-postamble my-html-postamble
+            )
+           ("thesis-main"
+            :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
+            :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish"
+            :publishing-function org-latex-publish-to-latex
+            :body-only nil
+            :make-index nil
+            )
+           ("thesis-include"
+            :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
+            :base-extension "tex"
+            :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
+            :recursive t
+            :publishing-function org-publish-attachment
+            :body-only t
+            :make-index nil
+            )
+           ("thesis-chapters"
+            :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
+            :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
+            :publishing-function org-latex-publish-to-latex
+            :body-only t
+            :make-index nil
+            )
+           ("thesis-figure"
+            :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/figure"
+            :base-extension "png\\|jpg\\|gif\\|pdf"
+            :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/figure"
+            :recursive t
+            :publishing-function org-publish-attachment
+            )
+           ("org" :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static"))
+           ("thesis" :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure"))))
+ #+end_src
+
+ #+RESULTS:
+ | org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src                          | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+ | org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog                     | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+ | org-portfolio    | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/portfolio                | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/portfolio    | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+ | org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications             | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
+ | org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/                         | :base-extension       | css\                                                     | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
+ | thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis                        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish          | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+ | thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include                | :base-extension       | tex                                                      | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include    | :recursive | t                     | :publishing-function                                   | org-publish-attachment   | :body-only       | t                    | :make-index            | nil                   |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+ | thesis-chapters  | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/chapters               | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/chapters | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+ | thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure                 | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+ | org              | :components     | (org-index org-blog org-publications org-portfolio org-static) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+ | thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure)     |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
+
+*** =cdlatex-mode=
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package cdlatex
+     :defer 1
+     :diminish org-cdlatex-mode
+     :config
+     (add-hook 'org-mode-hook 'turn-on-org-cdlatex))
+ #+END_SRC
+
+*** =org-crypt=
+
+ #+BEGIN_SRC emacs-lisp
+   (require 'org-crypt)
+   (org-crypt-use-before-save-magic)
+   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+   (setq org-crypt-key nil)
+ #+END_SRC
+
+ #+RESULTS:
+ : t
+
+*** =org-gcal-sync=
+ -----BEGIN PGP MESSAGE-----
+
+ jA0EBwMCs6vI6ec9fGXw0sCqAdPIvgwC38u6u61A3MRPGdn1rSF0MBTR+I3ETgoK
+ apx3f0P8dJkbl2OjJl1f5KoTEXU21tiFvzAPisvqUpxzZ7wvxKKPqLEMHHkPaMSb
+ 4pweorWdAsDyGdFsKTtwqlHL8Et0thTGmBHlnC9U4W1OAJFmSR0N9VyW+KVyQTxV
+ e9Ko495SOhfUjKuSWhGQGp/IQigxkzfkGJNkkz4uxjeYzaf5Y8TnuNRQ3C0Fov8H
+ 2jz3+Lv9I6mxcVfHoU8Xpkg8tFQlFYacLn8DR04xiFDv54VhJeckJxPX9/W6xzwq
+ uAS12QaN2JOirCcHE26mtEevAN2qpPEFF1q3q68VsN9lIb6/ejT+BwH3eO5xohYT
+ 3AEVSt0H0bjvpbmcDAMmXJ4F4cSAM/oBYrbBaJMRwghQpIfjJ62u6HbxBWqykVph
+ 30LEQ8/Qe1mru3MANVpST+CMHINkKueC343FPxnyMpmYlxbviDOP02wvn70=
+ =IIzR
+ -----END PGP MESSAGE-----
+
+*** =org-indent=
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-indent
+     :after org
+     :ensure nil
+     :diminish org-indent-mode
+     :config
+     (setq org-startup-indented t))
+ #+END_SRC
+
+*** =org-pomodoro=
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-pomodoro
+     :ensure t
+     :bind ("C-c T" . org-pomodoro)
+     :config
+     (setq org-pomodoro-length 25)
+     (setq org-pomodoro-long-break-length 15)
+     (setq org-pomodoro-short-break-length 5))
+ #+END_SRC
+
+ #+RESULTS:
+ : org-pomodoro
+*** =org-tree-slide=
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-tree-slide
+     :defer 5
+     :diminish org-tree-slide-mode
+     :bind (("<f11>" . org-tree-slide-mode)))
+ #+END_SRC
+*** =org-ref=
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-ref
+     :delight org-ref "cite"
+     :init
+     (require 'org-ref)
+     (require 'doi-utils)
+     (require 'org-ref-pdf)
+     (require 'org-ref-isbn)
+     (require 'org-ref-url-utils)
+     (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
+           org-ref-default-bibliography '("/winc/jk/references/references.bib")
+           org-ref-pdf-directory "/winc/jk/references/pdfs/")
+     (setq bibtex-completion-pdf-open-function
+       (lambda (fpath)
+         (start-process "open" "*open*" "open" fpath)))
+     :config
+     (setq bibtex-autokey-year-length 4
+           bibtex-autokey-name-year-separator "_"
+           bibtex-autokey-year-title-separator "_"
+           bibtex-autokey-titleword-separator ""
+           bibtex-autokey-titlewords 3
+           bibtex-autokey-titlewords-stretch 1
+           bibtex-autokey-titleword-length 5)
+     ;; Helm-bibtex options
+     (setq helm-bibtex-pdf-field "File")
+     ; open pdf with system pdf viewer
+     (defun my/org-ref-open-pdf-at-point ()
+       "Open the pdf for bibtex key under point if it exists."
+       (interactive)
+       (let* ((results (org-ref-get-bibtex-key-and-file))
+              (key (car results))
+              (pdf-file (funcall org-ref-get-pdf-filename-function key)))
+         (if (file-exists-p pdf-file)
+             (find-file pdf-file)
+           (message "No PDF found for %s" key))))
+     (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
+     ;;(setq helm-bibtex-pdf-open-function 'org-open-file)
+     :bind (("C-j" . org-ref-bibtex-hydra/body)))
+ #+END_SRC
+
+ #+RESULTS:
+ : org-ref-bibtex-hydra/body
+
+ Some miscellaneous extra tidbit to make citations appear as [#, Author Year].
+
+ #+begin_src emacs-lisp
+   (defun harvard-cite (key page)
+     (interactive (list (completing-read "Cite: " (orhc-bibtex-candidates))
+                        (read-string "Page: ")))
+     (insert
+      (org-make-link-string (format "cite:%s"
+                                    (cdr (assoc
+                                          "=key="
+                                          (cdr (assoc key (orhc-bibtex-candidates))))))
+                            page)))
+
+   (setq org-ref-bibtex-files '("/winc/jk/references/references.bib"))
+ #+end_src
+
+ #+RESULTS:
+ | /winc/jk/references/references.bib |
+* TODO Important configurations that I stopped using
 * Old configuration
 ** Languages
 *** =latex=
@@ -764,1350 +1787,3 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
 
 #+RESULTS:
 : ox-ipynb
-
-** =org-mode=
-
-#+BEGIN_QUOTE
-Org mode is for keeping notes, maintaining TODO lists, planning projects, and
-authoring documents with a fast and effective plain-text system.
-
-[[http://orgmode.org/][Carsten Dominik]]
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure org-plus-contrib
-    :bind (("<f12>" . org-agenda)
-           ("C-c l" . org-insert-link)
-           ("C-o" . org-open-at-point)
-           ("C-c c" . org-capture)
-           ("<f2>" . org-edit-src-code)
-           ("<f3>" . org-edit-src-exit)
-           ("<f5>" . org-clock-in)
-           ("<f6>" . org-clock-out)
-           ("<f7>" . org-habit-toggle-habits)
-           ("<f9> I" . bh/punch-in)
-           ("<f9> O" . bh/punch-out)
-           ("<f9> SPC" . bh/clock-in-last-task)
-           ("C-c d" . org-decrypt-entry)))
-
-  (add-hook 'org-mode-hook
-            (lambda () (set-input-method "swedish-postfix")))
-#+END_SRC
-
-#+RESULTS:
-: org-decrypt-entry
-
-#+BEGIN_SRC emacs-lisp
-  (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines))
-  (setq org-list-allow-alphabetical t)
-#+END_SRC
-
-#+RESULTS:
-: t
-
-*** TODO States
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords
-    (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
-            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-
-  (setq org-todo-keyword-faces
-    (quote (("TODO" :foreground "red" :weight bold)
-            ("NEXT" :foreground "blue" :weight bold)
-            ("DONE" :foreground "forest green" :weight bold)
-            ("REVIEW" :foreground "yellow" :weight bold)
-            ("WAITING" :foreground "orange" :weight bold)
-            ("HOLD" :foreground "magenta" :weight bold)
-            ("CANCELLED" :foreground "forest green" :weight bold)
-            ("MEETING" :foreground "forest green" :weight bold)
-            ("PHONE" :foreground "forest green" :weight bold))))
-
-  (setq org-use-fast-todo-selection t)
-#+END_SRC
-
-#+RESULTS:
-: t
-
-*** Tag Configuration
-
-#+BEGIN_SRC emacs-lisp
-  ;; TODO state tag triggers
-  (setq org-todo-state-tags-triggers
-        (quote (("CANCELLED" ("CANCELLED" . t))
-                ("WAITING" ("WAITING" . t))
-                ("HOLD" ("WAITING") ("HOLD" . t))
-                (done ("WAITING") ("HOLD"))
-                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-
-  ;; Tag placement
-  (setq org-tags-column -70)
-#+END_SRC
-
-#+RESULTS:
-: -70
-
-*** Agenda
-**** Set agenda files
-Set directory where all my files for the Org-Mode Agenda exist.
-This code will set a directory and will be recursive into sub-directories.
-Taken from https://www.reddit.com/r/orgmode/comments/6q6cdk/adding_files_to_the_agenda_list_recursively/.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (list "/winc/jk/myLife/"))
-#+END_SRC
-
-#+RESULTS:
-| /winc/jk/myLife/ |
-
-**** =org-habit=
-
-#+BEGIN_SRC emacs-lisp
-  ;; (add-to-list 'org-modules 'org-habit)
-  (require 'org-habit)
-  (setq org-modules (quote (org-habit)))
-  (setq org-habit-show-habits-only-for-today t)
-  (setq org-habit-graph-column 45)
-#+END_SRC
-
-#+RESULTS:
-: 45
-
-**** Custom agenda functions
-
-#+BEGIN_SRC emacs-lisp
-  (defun bh/find-project-task ()
-    "Move point to the parent (project) task if any"
-    (save-restriction
-      (widen)
-      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-        (while (org-up-heading-safe)
-          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-            (setq parent-task (point))))
-        (goto-char parent-task)
-        parent-task)))
-
-  (defun bh/is-project-p ()
-    "Any task with a todo keyword subtask"
-    (save-restriction
-      (widen)
-      (let ((has-subtask)
-            (subtree-end (save-excursion (org-end-of-subtree t)))
-            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-        (save-excursion
-          (forward-line 1)
-          (while (and (not has-subtask)
-                      (< (point) subtree-end)
-                      (re-search-forward "^\*+ " subtree-end t))
-            (when (member (org-get-todo-state) org-todo-keywords-1)
-              (setq has-subtask t))))
-        (and is-a-task has-subtask))))
-
-  (defun bh/is-project-subtree-p ()
-    "Any task with a todo keyword that is in a project subtree.
-  Callers of this function already widen the buffer view."
-    (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-                                (point))))
-      (save-excursion
-        (bh/find-project-task)
-        (if (equal (point) task)
-            nil
-          t))))
-
-  (defun bh/is-task-p ()
-    "Any task with a todo keyword and no subtask"
-    (save-restriction
-      (widen)
-      (let ((has-subtask)
-            (subtree-end (save-excursion (org-end-of-subtree t)))
-            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-        (save-excursion
-          (forward-line 1)
-          (while (and (not has-subtask)
-                      (< (point) subtree-end)
-                      (re-search-forward "^\*+ " subtree-end t))
-            (when (member (org-get-todo-state) org-todo-keywords-1)
-              (setq has-subtask t))))
-        (and is-a-task (not has-subtask)))))
-
-  (defun bh/is-subproject-p ()
-    "Any task which is a subtask of another project"
-    (let ((is-subproject)
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (while (and (not is-subproject) (org-up-heading-safe))
-          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-            (setq is-subproject t))))
-      (and is-a-task is-subproject)))
-
-  (defun bh/list-sublevels-for-projects-indented ()
-    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-    This is normally used by skipping functions where this variable is already local to the agenda."
-    (if (marker-buffer org-agenda-restrict-begin)
-        (setq org- tags-match-list-sublevels 'indented)
-      (setq org-tags-match-list-sublevels nil))
-    nil)
-
-  (defun bh/list-sublevels-for-projects ()
-    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-    This is normally used by skipping functions where this variable is already local to the agenda."
-    (if (marker-buffer org-agenda-restrict-begin)
-        (setq org-tags-match-list-sublevels t)
-      (setq org-tags-match-list-sublevels nil))
-    nil)
-
-  (defvar bh/hide-scheduled-and-waiting-next-tasks t)
-
-  (defun bh/toggle-next-task-display ()
-    (interactive)
-    (setq bh/hide-scheduled-and-waiting-next-tasks (not bh/hide-scheduled-and-waiting-next-tasks))
-    (when  (equal major-mode 'org-agenda-mode)
-      (org-agenda-redo))
-    (message "%s WAITING and SCHEDULED NEXT Tasks" (if bh/hide-scheduled-and-waiting-next-tasks "Hide" "Show")))
-
-  (defun bh/skip-stuck-projects ()
-    "Skip trees that are not stuck projects"
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (if (bh/is-project-p)
-            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                   (has-next ))
-              (save-excursion
-                (forward-line 1)
-                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                  (unless (member "WAITING" (org-get-tags-at))
-                    (setq has-next t))))
-              (if has-next
-                  nil
-                next-headline)) ; a stuck project, has subtasks but no next task
-          nil))))
-
-  (defun bh/skip-non-stuck-projects ()
-    "Skip trees that are not stuck projects"
-    ;; (bh/list-sublevels-for-projects-indented)
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (if (bh/is-project-p)
-            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                   (has-next ))
-              (save-excursion
-                (forward-line 1)
-                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                  (unless (member "WAITING" (org-get-tags-at))
-                    (setq has-next t))))
-              (if has-next
-                  next-headline
-                nil)) ; a stuck project, has subtasks but no next task
-          next-headline))))
-
-  (defun bh/skip-non-projects ()
-    "Skip trees that are not projects"
-    ;; (bh/list-sublevels-for-projects-indented)
-    (if (save-excursion (bh/skip-non-stuck-projects))
-        (save-restriction
-          (widen)
-          (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-            (cond
-             ((bh/is-project-p)
-              nil)
-             ((and (bh/is-project-subtree-p) (not (bh/is-task-p)))
-              nil)
-             (t
-              subtree-end))))
-      (save-excursion (org-end-of-subtree t))))
-
-  (defun bh/skip-non-tasks ()
-    "Show non-project tasks.
-  Skip project and sub-project tasks, habits, and project related tasks."
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (cond
-         ((bh/is-task-p)
-          nil)
-         (t
-          next-headline)))))
-
-  (defun bh/skip-project-trees-and-habits ()
-    "Skip trees that are projects"
-    (save-restriction
-      (widen)
-      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (cond
-         ((bh/is-project-p)
-          subtree-end)
-         ((org-is-habit-p)
-          subtree-end)
-         (t
-          nil)))))
-
-  (defun bh/skip-projects-and-habits-and-single-tasks ()
-    "Skip trees that are projects, tasks that are habits, single non-project tasks"
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (cond
-         ((org-is-habit-p)
-          next-headline)
-         ((and bh/hide-scheduled-and-waiting-next-tasks
-               (member "WAITING" (org-get-tags-at)))
-          next-headline)
-         ((bh/is-project-p)
-          next-headline)
-         ((and (bh/is-task-p) (not (bh/is-project-subtree-p)))
-          next-headline)
-         (t
-          nil)))))
-
-  (defun bh/skip-project-tasks-maybe ()
-    "Show tasks related to the current restriction.
-  When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
-  When not restricted, skip project and sub-project tasks, habits, and project related tasks."
-    (save-restriction
-      (widen)
-      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-             (next-headline (save-excursion (or (outline-next-heading) (point-max))))
-             (limit-to-project (marker-buffer org-agenda-restrict-begin)))
-        (cond
-         ((bh/is-project-p)
-          next-headline)
-         ((org-is-habit-p)
-          subtree-end)
-         ((and (not limit-to-project)
-               (bh/is-project-subtree-p))
-          subtree-end)
-         ((and limit-to-project
-               (bh/is-project-subtree-p)
-               (member (org-get-todo-state) (list "NEXT")))
-          subtree-end)
-         (t
-          nil)))))
-
-  (defun bh/skip-project-tasks ()
-    "Show non-project tasks.
-  Skip project and sub-project tasks, habits, and project related tasks."
-    (save-restriction
-      (widen)
-      (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (cond
-         ((bh/is-project-p)
-          subtree-end)
-         ((org-is-habit-p)
-          subtree-end)
-         ((bh/is-project-subtree-p)
-          subtree-end)
-         (t
-          nil)))))
-
-  (defun bh/skip-non-project-tasks ()
-    "Show project tasks.
-  Skip project and sub-project tasks, habits, and loose non-project tasks."
-    (save-restriction
-      (widen)
-      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-             (next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (cond
-         ((bh/is-project-p)
-          next-headline)
-         ((org-is-habit-p)
-          subtree-end)
-         ((and (bh/is-project-subtree-p)
-               (member (org-get-todo-state) (list "NEXT")))
-          subtree-end)
-         ((not (bh/is-project-subtree-p))
-          subtree-end)
-         (t
-          nil)))))
-
-  (defun bh/skip-projects-and-habits ()
-    "Skip trees that are projects and tasks that are habits"
-    (save-restriction
-      (widen)
-      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (cond
-         ((bh/is-project-p)
-          subtree-end)
-         ((org-is-habit-p)
-          subtree-end)
-         (t
-          nil)))))
-
-  (defun bh/skip-non-subprojects ()
-    "Skip trees that are not projects"
-    (let ((next-headline (save-excursion (outline-next-heading))))
-      (if (bh/is-subproject-p)
-          nil
-        next-headline)))
-
-#+END_SRC
-
-#+RESULTS:
-: bh/skip-non-subprojects
-
-**** Custom agenda view
-Custom agenda view to see today's calendar and a list of NEXT tasks that I can work on next.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-span 'day)
-  (setq org-agenda-use-time-grid t)
-  (setq org-agenda-tags-column -155)
-  (add-hook 'org-agenda-mode-hook
-          (lambda ()
-            (visual-line-mode -1)
-            (toggle-truncate-lines 1)))
-
-  (setq org-agenda-custom-commands
-        (quote (("N" "Notes" tags "NOTE"
-                 ((org-agenda-overriding-header "Notes")
-                  (org-tags-match-list-sublevels t)))
-                ("h" "Habits" tags-todo "STYLE=\"habit\""
-                 ((org-agenda-overriding-header "Habits")
-                  (org-agenda-sorting-strategy
-                   '(todo-state-down effort-up category-keep))))
-                (" " "Agenda"
-                 ((agenda "" nil)
-                  (tags "REFILE"
-                        ((org-agenda-overriding-header "Tasks to Refile")
-                         (org-tags-match-list-sublevels nil)))
-                  (tags-todo "-CANCELLED/!NEXT"
-                             ((org-agenda-overriding-header (concat "Project Next Tasks"
-                                                                    (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                        ""
-                                                                      " (including WAITING and SCHEDULED tasks)")))
-                              (org-agenda-skip-function 'bh/skip-projects-and-habits-and-single-tasks)
-                              (org-tags-match-list-sublevels t)
-                              (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-sorting-strategy
-                               '(todo-state-down effort-up category-keep))))
-                  (tags-todo "-HOLD-CANCELLED/!"
-                             ((org-agenda-overriding-header "Projects")
-                              (org-agenda-skip-function 'bh/skip-non-projects)
-                              (org-tags-match-list-sublevels 'indented)
-                              (org-agenda-sorting-strategy
-                               '(category-keep))))
-                  (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-                             ((org-agenda-overriding-header (concat "Project Subtasks"
-                                                                    (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                        ""
-                                                                      " (including WAITING and SCHEDULED tasks)")))
-                              (org-agenda-skip-function 'bh/skip-non-project-tasks)
-                              (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-sorting-strategy
-                               '(category-keep))))
-                  (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-                             ((org-agenda-overriding-header (concat "Standalone Tasks"
-                                                                    (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                        ""
-                                                                      " (including WAITING and SCHEDULED tasks)")))
-                              (org-agenda-skip-function 'bh/skip-project-tasks)
-                              (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-sorting-strategy
-                               '(category-keep))))
-                  (tags-todo "-CANCELLED/!"
-                             ((org-agenda-overriding-header "Stuck Projects")
-                              (org-agenda-skip-function 'bh/skip-non-stuck-projects)
-                              (org-agenda-sorting-strategy
-                               '(category-keep))))
-                  (tags-todo "-CANCELLED+WAITING|HOLD/!"
-                             ((org-agenda-overriding-header (concat "Waiting and Postponed Tasks"
-                                                                    (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                        ""
-                                                                      " (including WAITING and SCHEDULED tasks)")))
-                              (org-agenda-skip-function 'bh/skip-non-tasks)
-                              (org-tags-match-list-sublevels nil)
-                              (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                              (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)))
-                  (tags "-REFILE/"
-                        ((org-agenda-overriding-header "Tasks to Archive")
-                         (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                         (org-tags-match-list-sublevels nil))))
-                 nil))))
-#+END_SRC
-
-#+RESULTS:
-| N | Notes  | tags                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOTE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | ((org-agenda-overriding-header Notes) (org-tags-match-list-sublevels t))                                                |
-| h | Habits | tags-todo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | STYLE="habit"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ((org-agenda-overriding-header Habits) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep)))) |
-|   | Agenda | ((agenda  nil) (tags REFILE ((org-agenda-overriding-header Tasks to Refile) (org-tags-match-list-sublevels nil))) (tags-todo -CANCELLED/!NEXT ((org-agenda-overriding-header (concat Project Next Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-projects-and-habits-and-single-tasks)) (org-tags-match-list-sublevels t) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (todo-state-down effort-up category-keep))))) (tags-todo -HOLD-CANCELLED/! ((org-agenda-overriding-header Projects) (org-agenda-skip-function (quote bh/skip-non-projects)) (org-tags-match-list-sublevels (quote indented)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Project Subtasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -REFILE-CANCELLED-WAITING-HOLD/! ((org-agenda-overriding-header (concat Standalone Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-project-tasks)) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED/! ((org-agenda-overriding-header Stuck Projects) (org-agenda-skip-function (quote bh/skip-non-stuck-projects)) (org-agenda-sorting-strategy (quote (category-keep))))) (tags-todo -CANCELLED+WAITING | HOLD/! ((org-agenda-overriding-header (concat Waiting and Postponed Tasks (if bh/hide-scheduled-and-waiting-next-tasks   (including WAITING and SCHEDULED tasks)))) (org-agenda-skip-function (quote bh/skip-non-tasks)) (org-tags-match-list-sublevels nil) (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks) (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks))) (tags -REFILE/ ((org-agenda-overriding-header Tasks to Archive) (org-agenda-skip-function (quote bh/skip-non-archivable-tasks)) (org-tags-match-list-sublevels nil)))) | nil                                                                                                                     |
-
-*** Capturing
-When a new task occurs and needs to be added, org-capture allows me to easily capture it.
-I categorize it into a few new groups that I use as templates:
-+ A new task (t)
-+ A meeting (m)
-+ A email I need to respond to (e)
-+ A phone call (p)
-+ A new note (n)
-+ A interruption (i)
-+ A new habit (h)
-+ A org protocol (w)
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-diary-file "/winc/jk/myLife/diary.org")
-  (setq org-capture-templates
-        (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
-                 "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("e" "respond" entry (file "/winc/jk/myLife/refile.org")
-                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("n" "note" entry (file "/winc/jk/myLife/refile.org")
-                 "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("i" "Journal" entry (file+datetree "/winc/jk/myLife/diary.org")
-                 "* %?\n%U\n" :clock-in t :clock-resume t)
-                ("w" "org-protocol" entry (file "/winc/jk/myLife/refile.org")
-                 "* TODO Review %c\n%U\n" :immediate-finish t)
-                ("m" "Meeting" entry (file "/winc/jk/myLife/refile.org")
-                 "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-                ("p" "Phone call" entry (file "/winc/jk/myLife/refile.org")
-                 "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-                ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
-                "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
-#+END_SRC
-
-#+RESULTS:
-| t | todo | entry | (file /winc/jk/myLife/refile.org) | * TODO %? |
-
-*** Refiling
-Set a global ``refile`` org file as a staging area for new TODO items and basic settings to make refiling tasks easier. The code is based on the configuration in this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][article]].
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-default-notes-file "/winc/jk/myLife/refile.org")
-
-  ; Include targets up to 9 levels deep
-  (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                   (org-agenda-files :maxlevel . 9))))
-
-  ; Allow refile to create parent tasks with confirmation
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-  ; Exclude DONE state tasks from refile targets
-  (defun bh/verify-refile-target ()
-    "Exclude todo keywords with a done state from refile targets"
-    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-  (setq org-refile-target-verify-function 'bh/verify-refile-target)
-#+END_SRC
-
-#+RESULTS:
-: bh/verify-refile-target
-
-**** Refiling hydra
-
-#+BEGIN_SRC emacs-lisp
-  (defun my/refile (file headline &optional arg)
-    (let ((pos (save-excursion
-                 (find-file file)
-                 (org-find-exact-headline-in-buffer headline))))
-      (org-refile arg nil (list headline file nil pos)))
-    (switch-to-buffer (current-buffer)))
-
-  (defhydra bh/org-refile-hydra (:foreign-keys run)
-    "Refile"
-    ("t" (my/refile "todo.org" "Refiled Tasks") "Refile to main TODO file")
-    ("c" (my/refile "chalmers.org" "Administration") "Refile to NSERC USRA Administration")
-    ("m" (my/refile "bom065.org" "Schedule") "Refile to BOM065 Course")
-    ("s" (my/refile "vbb122.org" "Schedule") "Refile to VBB122 Course")
-    ("u" (my/refile "uofa.org" "Administration") "UAlberta Tasks")
-    ("j" org-refile-goto-last-stored "Jump to last refile")
-    ("q" nil "cancel"))
-
-    (global-set-key (kbd "<f9> r") 'bh/org-refile-hydra/body)
-#+END_SRC
-
-#+RESULTS:
-: bh/org-refile-hydra/body
-
-*** Time clocking
-**** General configuration
-
-#+BEGIN_SRC emacs-lisp
-  ;; resume clocking task when emacs restarts
-  (org-clock-persistence-insinuate)
-  ;; show lots of clock history to make choosing easier
-  (setq org-clock-history-length 23)
-  (setq org-clock-in-resume t)
-  ;; Include current clocking task in clock reports
-  (setq org-clock-report-include-clocking-task t)
-  ;; Clockreport time format
-  (setq org-time-clocksum-format (quote (:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)))
-  ;; change state to next when clocking in
-  (setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
-  ;; log clocking information into drawers
-  (setq org-clock-into-drawer t)
-  ;; set drawers
-  (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
-  (setq org-clock-out-remove-zero-time-clocks t)
-  (setq org-clock-out-when-done t)
-  (setq org-clock-persist t)
-  (setq org-clock-persist-query-resume nil)
-  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-  (setq bh/keep-clock-running nil)
-  (defvar bh/organization-task-id "default")
-  (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
-  (setq org-duration-format (quote h:mm))
-  (setq org-clock-idle-time 60)
-#+END_SRC
-
-#+RESULTS:
-: 60
-
-**** Custom functions
-
-#+BEGIN_SRC emacs-lisp
-  (defun bh/clock-in-to-next (kw)
-    "Switch a task from TODO to NEXT when clocking in.
-  Skips capture tasks, projects, and subprojects.
-  Switch projects and subprojects from NEXT back to TODO"
-    (when (not (and (boundp 'org-capture-mode) org-capture-mode))
-      (cond
-       ((and (member (org-get-todo-state) (list "TODO"))
-             (bh/is-task-p))
-        "NEXT")
-       ((and (member (org-get-todo-state) (list "NEXT"))
-             (bh/is-project-p))
-        "TODO"))))
-
-  (defun bh/find-project-task ()
-    "Move point to the parent (project) task if any"
-    (save-restriction
-      (widen)
-      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-        (while (org-up-heading-safe)
-          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-            (setq parent-task (point))))
-        (goto-char parent-task)
-        parent-task)))
-
-  (defun bh/clock-in-default-task ()
-    (save-excursion
-      (org-with-point-at org-clock-default-task
-        (org-clock-in))))
-
-  (defun bh/clock-in-parent-task ()
-    "Move point to the parent (project) task if any and clock in"
-    (let ((parent-task))
-      (save-excursion
-        (save-restriction
-          (widen)
-          (while (and (not parent-task) (org-up-heading-safe))
-            (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-              (setq parent-task (point))))
-          (if parent-task
-              (org-with-point-at parent-task
-                (org-clock-in))
-            (when bh/keep-clock-running
-              (bh/clock-in-default-task)))))))
-
-  (defun bh/clock-in-organization-task-as-default ()
-    (interactive)
-    (org-with-point-at (org-id-find bh/organization-task-id 'marker)
-      (org-clock-in '(16))))
-
-  (defun bh/clock-out-maybe ()
-    (when (and bh/keep-clock-running
-               (not org-clock-clocking-in)
-               (marker-buffer org-clock-default-task)
-               (not org-clock-resolving-clocks-due-to-idleness))
-      (bh/clock-in-parent-task)))
-
-  (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
-
-  (defun bh/remove-empty-drawer-on-clock-out ()
-    (interactive)
-    (save-excursion
-      (beginning-of-line 0)
-      (org-remove-empty-drawer-at (point))))
-
-  (defun bh/punch-in (arg)
-    "Start continuous clocking and set the default task to the selected task.  If no task is selected set the Organization task as the default task."
-    (interactive "p")
-    (setq bh/keep-clock-running t)
-    (if (equal major-mode 'org-agenda-mode)
-        ;; We're in the agenda
-        (let* ((marker (org-get-at-bol 'org-hd-marker))
-               (tags (org-with-point-at marker (org-get-tags-at))))
-          (if (and (eq arg 4) tags)
-              (org-agenda-clock-in '(16))
-            (bh/clock-in-organization-task-as-default)))
-      ;; We are not in the agenda
-      (save-restriction
-        (widen)
-        ; Find the tags on the current task
-        (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
-            (org-clock-in '(16))
-          (bh/clock-in-organization-task-as-default)))))
-
-  (defun bh/punch-out ()
-    (interactive)
-    (setq bh/keep-clock-running nil)
-    (when (org-clock-is-active)
-      (org-clock-out))
-    (org-agenda-remove-restriction-lock))
-#+END_SRC
-
-**** Org clock convienence functionality
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-clock-convenience
-    :diminish org-clock-convenience-mode
-    :bind (:map org-agenda-mode-map
-             ("<S-up>" . org-clock-convenience-timestamp-up)
-             ("<S-down>" . org-clock-convenience-timestamp-down)
-             ("o" . org-clock-convenience-fill-gap)
-             ("e" . org-clock-convenience-fill-gap-both)))
-#+END_SRC
-
-#+RESULTS:
-: org-clock-convenience-fill-gap-both
-
-*** Exporter configuration
-Define all additional export backends.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-export-backends '(ascii beamer html icalendar latex odt ipynb))
-#+END_SRC
-
-#+RESULTS:
-| ascii | beamer | html | icalendar | latex | odt | ipynb |
-
-**** =latex= export
-Set =pdflatex= as main default way to generate PDF documents from source org-mode files.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-latex-pdf-process
-    '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
-      "bibtex %b"
-      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
-      "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
-#+END_SRC
-
-Define beamer =LaTeX= class for presentations.
-
-#+BEGIN_SRC emacs-lisp
-  (eval-after-load "ox-latex"
-    ;; update the list of LaTeX classes and associated header (encoding, etc.) and structure
-    '(add-to-list 'org-latex-classes
-                  `("beamer"
-                    ,(concat "\\documentclass[presentation]{beamer}\n"
-                             "[DEFAULT-PACKAGES]"
-                             "[PACKAGES]"
-                             "[EXTRA]\n")
-                    ("\\section{%s}" . "\\section*{%s}")
-                    ("\\subsection{%s}" . "\\subsection*{%s}")
-                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
-  (eval-after-load "ox-latex"
-    '(add-to-list 'org-latex-classes
-                  '("report-noparts"
-                    "\\documentclass{report}"
-                    ("\\chapter{%s}" . "\\chapter*{%s}")
-                    ("\\section{%s}" . "\\section*{%s}")
-                    ("\\subsection{%s}" . "\\subsection*{%s}")
-                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-#+END_SRC
-
-#+RESULTS:
-| report-noparts | \documentclass{report}               | (\chapter{%s} . \chapter*{%s}) | (\section{%s} . \section*{%s}) | (\subsection{%s} . \subsection*{%s}) | (\subsubsection{%s} . \subsubsection*{%s}) | (\paragraph{%s} . \paragraph*{%s}) | (\subparagraph{%s} . \subparagraph*{%s}) |
-| beamer         | \documentclass[presentation]{beamer} |                                |                                |                                      |                                            |                                    |                                          |
-
-*** Org-babel languages
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
-  (org-babel-do-load-languages
-   'org-babel-load-languages (quote ((emacs-lisp . t)
-                                     (shell . t)
-                                     (latex . t)
-                                     (ditaa . t)
-                                     (python . t)
-                                     (ipython . t)
-                                     (ledger . t))))
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-#+END_SRC
-
-#+RESULTS:
-| org-display-inline-images |
-
-*** Org template selector
-Introduced due to changes from org-v9.1 to org-v9.2.
-
-#+begin_src emacs-lisp
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("p" . "src python"))
-  (add-to-list 'org-structure-template-alist '("ipy" . "src ipython"))
-  (require 'org-tempo)
-#+end_src
-
-#+RESULTS:
-: org-tempo
-
-*** Preview =latex= in =org-mode=
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-#+END_SRC
-
-#+RESULTS:
-| :foreground | White | :background | default | :scale | 2.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
-
-*** Publishing
-**** HTML settings
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-publish-use-timestamps-flag t
-        org-html-head-include-default-style nil)
-
-  (setq org-html-preamble-format '(("en" "")))
-
-  (setq my-blog-header-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-header.html")
-  (defun my-html-preamble (arg)
-    (with-temp-buffer
-      (insert-file-contents my-blog-header-file)
-      (buffer-string)))
-
-  (setq  my-blog-footer-file "/winc/jk/website/jckoch.gitlab.io/src/html-templates/level-0-footer.html")
-  (defun my-html-postamble (arg)
-      (with-temp-buffer
-        (insert-file-contents my-blog-footer-file)
-        (buffer-string)))
-#+END_SRC
-
-#+RESULTS:
-: my-html-postamble
-
-**** Publish projects
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-publish-project-alist
-        '(
-          ("org-index"
-           :base-directory "/winc/jk/website/jckoch.gitlab.io/src"
-           :base-extension "org"
-           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
-           :recursive nil
-           :publishing-function org-html-publish-to-html
-           :htmlized-source t
-           :html-preamble my-html-preamble
-           :html-postamble my-html-postamble
-           )
-          ("org-blog"
-           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
-           :base-extension "org"
-           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
-           :recursive t
-           :publishing-function org-html-publish-to-html
-           :htmlized-source t
-           :html-preamble my-html-preamble
-           :html-postamble my-html-postamble
-           )
-          ("org-portfolio"
-           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/portfolio"
-           :base-extension "org"
-           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/portfolio"
-           :recursive t
-           :publishing-function org-html-publish-to-html
-           :htmlized-source t
-           :html-preamble my-html-preamble
-           :html-postamble my-html-postamble
-           )
-          ("org-publications"
-           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
-           :base-extension "org"
-           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
-           :recursive nil
-           :publishing-function org-html-publish-to-html
-           :htmlized-source t
-           :html-preamble my-html-preamble
-           :html-postamble my-html-postamble
-           )
-          ("org-static"
-           :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
-           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
-           :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
-           :recursive t
-           :publishing-function org-publish-attachment
-           :htmlized-source t
-           :html-preamble my-html-preamble
-           :html-postamble my-html-postamble
-           )
-          ("thesis-main"
-           :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
-           :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish"
-           :publishing-function org-latex-publish-to-latex
-           :body-only nil
-           :make-index nil
-           )
-          ("thesis-include"
-           :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
-           :base-extension "tex"
-           :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
-           :recursive t
-           :publishing-function org-publish-attachment
-           :body-only t
-           :make-index nil
-           )
-          ("thesis-chapters"
-           :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
-           :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
-           :publishing-function org-latex-publish-to-latex
-           :body-only t
-           :make-index nil
-           )
-          ("thesis-figure"
-           :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/figure"
-           :base-extension "png\\|jpg\\|gif\\|pdf"
-           :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/figure"
-           :recursive t
-           :publishing-function org-publish-attachment
-           )
-          ("org" :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static"))
-          ("thesis" :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure"))))
-#+end_src
-
-#+RESULTS:
-| org-index        | :base-directory | /winc/jk/website/jckoch.gitlab.io/src                          | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html              | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-blog         | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/blog                     | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/blog         | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-portfolio    | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/portfolio                | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/portfolio    | :recursive | t                     | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-publications | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/publications             | :base-extension       | org                                                      | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/publications | :recursive | nil                   | :publishing-function                                   | org-html-publish-to-html | :htmlized-source | t                    | :html-preamble         | my-html-preamble      | :html-postamble                                | my-html-postamble |   |                      |                        |                  |   |                |                  |                 |                   |
-| org-static       | :base-directory | /winc/jk/website/jckoch.gitlab.io/src/                         | :base-extension       | css\                                                     | js\                   | png\                                                       | jpg\       | gif\                  | pdf\                                                   | mp3\                     | ogg\             | swf\                 | html                   | :publishing-directory | /winc/jk/website/jckoch.gitlab.io/public_html/ | :recursive        | t | :publishing-function | org-publish-attachment | :htmlized-source | t | :html-preamble | my-html-preamble | :html-postamble | my-html-postamble |
-| thesis-main      | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis                        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish          | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | nil                   | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-include   | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/include                | :base-extension       | tex                                                      | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/include    | :recursive | t                     | :publishing-function                                   | org-publish-attachment   | :body-only       | t                    | :make-index            | nil                   |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-chapters  | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/chapters               | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/chapters | :publishing-function  | org-latex-publish-to-latex                                 | :body-only | t                     | :make-index                                            | nil                      |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis-figure    | :base-directory | /winc/jk/chalmers/courses/THESIS/thesis/figure                 | :base-extension       | png\                                                     | jpg\                  | gif\                                                       | pdf        | :publishing-directory | /winc/jk/chalmers/courses/THESIS/thesis/publish/figure | :recursive               | t                | :publishing-function | org-publish-attachment |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| org              | :components     | (org-index org-blog org-publications org-portfolio org-static) |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-| thesis           | :components     | (thesis-main thesis-include thesis-chapters thesis-figure)     |                       |                                                          |                       |                                                            |            |                       |                                                        |                          |                  |                      |                        |                       |                                                |                   |   |                      |                        |                  |   |                |                  |                 |                   |
-
-*** =cdlatex-mode=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package cdlatex
-    :defer 1
-    :diminish org-cdlatex-mode
-    :config
-    (add-hook 'org-mode-hook 'turn-on-org-cdlatex))
-#+END_SRC
-
-*** =org-crypt=
-
- #+BEGIN_SRC emacs-lisp
-   (require 'org-crypt)
-   (org-crypt-use-before-save-magic)
-   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-   (setq org-crypt-key nil)
- #+END_SRC
-
- #+RESULTS:
- : t
-
-*** =org-gcal-sync=
------BEGIN PGP MESSAGE-----
-
-jA0EBwMCs6vI6ec9fGXw0sCqAdPIvgwC38u6u61A3MRPGdn1rSF0MBTR+I3ETgoK
-apx3f0P8dJkbl2OjJl1f5KoTEXU21tiFvzAPisvqUpxzZ7wvxKKPqLEMHHkPaMSb
-4pweorWdAsDyGdFsKTtwqlHL8Et0thTGmBHlnC9U4W1OAJFmSR0N9VyW+KVyQTxV
-e9Ko495SOhfUjKuSWhGQGp/IQigxkzfkGJNkkz4uxjeYzaf5Y8TnuNRQ3C0Fov8H
-2jz3+Lv9I6mxcVfHoU8Xpkg8tFQlFYacLn8DR04xiFDv54VhJeckJxPX9/W6xzwq
-uAS12QaN2JOirCcHE26mtEevAN2qpPEFF1q3q68VsN9lIb6/ejT+BwH3eO5xohYT
-3AEVSt0H0bjvpbmcDAMmXJ4F4cSAM/oBYrbBaJMRwghQpIfjJ62u6HbxBWqykVph
-30LEQ8/Qe1mru3MANVpST+CMHINkKueC343FPxnyMpmYlxbviDOP02wvn70=
-=IIzR
------END PGP MESSAGE-----
-
-*** =org-indent=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-indent
-    :after org
-    :ensure nil
-    :diminish org-indent-mode
-    :config
-    (setq org-startup-indented t))
-#+END_SRC
-
-*** =org-pomodoro=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro
-    :ensure t
-    :bind ("C-c T" . org-pomodoro)
-    :config
-    (setq org-pomodoro-length 25)
-    (setq org-pomodoro-long-break-length 15)
-    (setq org-pomodoro-short-break-length 5))
-#+END_SRC
-
-#+RESULTS:
-: org-pomodoro
-*** =org-tree-slide=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-tree-slide
-    :defer 5
-    :diminish org-tree-slide-mode
-    :bind (("<f11>" . org-tree-slide-mode)))
-#+END_SRC
-*** =org-ref=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-ref
-    :delight org-ref "cite"
-    :init
-    (require 'org-ref)
-    (require 'doi-utils)
-    (require 'org-ref-pdf)
-    (require 'org-ref-isbn)
-    (require 'org-ref-url-utils)
-    (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
-          org-ref-default-bibliography '("/winc/jk/references/references.bib")
-          org-ref-pdf-directory "/winc/jk/references/pdfs/")
-    (setq bibtex-completion-pdf-open-function
-      (lambda (fpath)
-        (start-process "open" "*open*" "open" fpath)))
-    :config
-    (setq bibtex-autokey-year-length 4
-          bibtex-autokey-name-year-separator "_"
-          bibtex-autokey-year-title-separator "_"
-          bibtex-autokey-titleword-separator ""
-          bibtex-autokey-titlewords 3
-          bibtex-autokey-titlewords-stretch 1
-          bibtex-autokey-titleword-length 5)
-    ;; Helm-bibtex options
-    (setq helm-bibtex-pdf-field "File")
-    ; open pdf with system pdf viewer
-    (defun my/org-ref-open-pdf-at-point ()
-      "Open the pdf for bibtex key under point if it exists."
-      (interactive)
-      (let* ((results (org-ref-get-bibtex-key-and-file))
-             (key (car results))
-             (pdf-file (funcall org-ref-get-pdf-filename-function key)))
-        (if (file-exists-p pdf-file)
-            (find-file pdf-file)
-          (message "No PDF found for %s" key))))
-    (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
-    ;;(setq helm-bibtex-pdf-open-function 'org-open-file)
-    :bind (("C-j" . org-ref-bibtex-hydra/body)))
-#+END_SRC
-
-#+RESULTS:
-: org-ref-bibtex-hydra/body
-
-Some miscellaneous extra tidbit to make citations appear as [#, Author Year].
-
-#+begin_src emacs-lisp
-  (defun harvard-cite (key page)
-    (interactive (list (completing-read "Cite: " (orhc-bibtex-candidates))
-                       (read-string "Page: ")))
-    (insert
-     (org-make-link-string (format "cite:%s"
-                                   (cdr (assoc
-                                         "=key="
-                                         (cdr (assoc key (orhc-bibtex-candidates))))))
-                           page)))
-
-  (setq org-ref-bibtex-files '("/winc/jk/references/references.bib"))
-#+end_src
-
-#+RESULTS:
-| /winc/jk/references/references.bib |
-
-
-================================================================================================
-Project Subtasks
-Friday     14 February 2020
-
-================================================================================================
-Tasks to Refile
-  refile:     DONE Antwort - adjust using Mom's revision comments :REFILE::
-  refile:     DONE Email to Dr. Driver                :REFILE::
-  refile:     DONE Email to Patrick Geers             :REFILE::
-
-================================================================================================
-Project Next Tasks
-
-================================================================================================
-Projects
-  blog:       TODO _Blog Posts_            :BLOG_POSTS:WEBSITE:
-  cs229:      .TODO Lectures                           :cs229::
-  cs229:      .TODO Problem Sets                       :cs229::
-  cs229:      ..TODO Problem Set #1                    :cs229::
-  cs229:      ..TODO Problem Set #2                    :cs229::
-  cs229:      ..TODO Problem Set #3                    :cs229::
-  cs229:      ..TODO Problem Set #4                    :cs229::
-  Professional:.TODO Job Applications       :PROFESSIONAL::JOBS:
-  thesis:     .TODO Thesis Research            :THESIS::THESIS:
-  thesis:     ..TODO Literature Review :THESIS:THESIS::literature:
-  thesis:     ...TODO Journal Articles :THESIS:THESIS:literature::
-  thesis:     ....TODO New design approaches :THESIS:THESIS:literature::
-  thesis:     ....TODO Brittle failure modes :THESIS:THESIS:literature::
-  thesis:     .....TODO Block shear :THESIS:THESIS:literature::
-  thesis:     ....TODO Fracture mechanics approaches :THESIS:THESIS:literature::
-  thesis:     ...TODO Conference Proceedings :THESIS:THESIS:literature::
-  thesis:     ....TODO Brittle failure modes :THESIS:THESIS:literature::
-  thesis:     ..TODO Weekly Meeting Agendas/Presentations :THESIS:THESIS::MEETING:
-
-================================================================================================
-Project Subtasks
-  blog:       TODO Release new blog post :BLOG_POSTS:WEBSITE::noexport:
-  blog:       TODO Research Mjosa Tower to try and visit :BLOG_POSTS:WEBSITE::noexport:
-  blog:       TODO Non-linear finite element methods :BLOG_POSTS:WEBSITE::noexport:
-  blog:       TODO Strip method v. DDM :BLOG_POSTS:WEBSITE:noexport::
-  blog:       TODO [[file:posts/shanghaiquarryintercontinentialwonderland.org][Shanghai Quarry Intercontinential Wonderland]] :BLOG_POSTS:WEBSITE:noexport::noexport:
-  blog:       TODO [[file:posts/whentreesmeetbuildings.org][When Trees meet Buildings (B1M)]] :BLOG_POSTS:WEBSITE:noexport::noexport:
-  blog:       TODO Metropol Parasol Structure :BLOG_POSTS:WEBSITE:noexport::noexport:
-  cs229:      TODO Lecture 8                           :cs229::
-  cs229:      TODO Lecture 9                           :cs229::
-  cs229:      TODO Lecture 10                          :cs229::
-  cs229:      TODO Lecture 11                          :cs229::
-  cs229:      TODO Lecture 12                          :cs229::
-  cs229:      TODO Lecture 13                          :cs229::
-  cs229:      TODO Lecture 14                          :cs229::
-  cs229:      TODO Lecture 15                          :cs229::
-  cs229:      TODO Lecture 16                          :cs229::
-  cs229:      TODO Lecture 17                          :cs229::
-  cs229:      TODO Lecture 18                          :cs229::
-  cs229:      TODO Lecture 19                          :cs229::
-  cs229:      TODO Lecture 20                          :cs229::
-  cs229:      TODO Question 1: Newton's method for computing least squares :cs229::
-  cs229:      TODO Question 3: Multi-variate least squares :cs229::
-  cs229:      TODO Question 4: Naive Bayes             :cs229::
-  cs229:      TODO Question 5: Exponential family and geometric distribution :cs229::
-  cs229:      TODO Question 1: Kernel ridge regression :cs229::
-  cs229:      TODO Question 2: \(l_2\) norm soft margin SVMs :cs229::
-  cs229:      TODO Question 3: SVM with Gaussian kernel :cs229::
-  cs229:      TODO Question 5: Uniform convergence     :cs229::
-  cs229:      TODO Question 1: Uniform convergence and Model Selection :cs229::
-  cs229:      TODO Question 2: VC Dimension            :cs229::
-  cs229:      TODO Question 5: The Generalized EM algorithm :cs229::
-  cs229:      TODO Question 1: EM for supervised learning :cs229::
-  cs229:      TODO Question 2: Factor Analysis and PCA :cs229::
-  cs229:      TODO Question 4: Convergence of Policy Iteration :cs229::
-  podcast:    TODO The Mjøsa Tower & Interview with :podcast:episodes:S01::Ep01:
-  podcast:    TODO Öresund Bridge & Interview with :podcast:episodes:S01::Ep02:
-  podcast:    TODO Structure #1:   :podcast:episodes:S02::Ep02:
-  podcast:    TODO Engineering Concept #1: Arches :podcast:episodes:S02::Ep03:
-  podcast:    TODO Structure #2: UBC Brock Commons :podcast:episodes:S02::Ep04:
-  podcast:    TODO Engineering Concept #2: Trusses :podcast:episodes:S02::Ep05:
-  podcast:    TODO Structure #3: Kjøllsæter Bridge :podcast:episodes:S02::Ep06:
-  podcast:    TODO Engineering Concept #3: Column design :podcast:episodes:S02::Ep07:
-  podcast:    TODO Structure #4:   :podcast:episodes:S02::Ep08:
-  podcast:    TODO Engineering Concept #4: Beam design :podcast:episodes:S02::Ep09:
-  podcast:    TODO Structure #5:   :podcast:episodes:S02::Ep10:
-  podcast:    TODO Engineering Concept #1: :podcast:episodes:S03::Ep01:
-  podcast:    TODO Structure #1:   :podcast:episodes:S03::Ep02:
-  podcast:    TODO Engineering Concept #2: :podcast:episodes:S03::Ep03:
-  podcast:    TODO Structure #2:   :podcast:episodes:S03::Ep04:
-  podcast:    TODO Engineering Concept #3: :podcast:episodes:S03::Ep05:
-  podcast:    TODO Structure #3:   :podcast:episodes:S03::Ep06:
-  podcast:    TODO Engineering Concept #4: :podcast:episodes:S03::Ep07:
-  podcast:    TODO Structure #4:   :podcast:episodes:S03::Ep08:
-  podcast:    TODO Engineering Concept #5: :podcast:episodes:S03::Ep09:
-  podcast:    TODO Structure #5:   :podcast:episodes:S03::Ep10:
-  podcast:    TODO Engineering Concept #1: :podcast:episodes:S04::Ep01:
-  podcast:    TODO Structure #1:   :podcast:episodes:S04::Ep02:
-  podcast:    TODO Engineering Concept #2: :podcast:episodes:S04::Ep03:
-  podcast:    TODO Structure #2:   :podcast:episodes:S04::Ep04:
-  podcast:    TODO Engineering Concept #3: :podcast:episodes:S04::Ep05:
-  podcast:    TODO Structure #3:   :podcast:episodes:S04::Ep06:
-  podcast:    TODO Engineering Concept #4: :podcast:episodes:S04::Ep07:
-  podcast:    TODO Structure #4:   :podcast:episodes:S04::Ep08:
-  podcast:    TODO Engineering Concept #5: :podcast:episodes:S04::Ep09:
-  podcast:    TODO Structure #5:   :podcast:episodes:S04::Ep10:
-  Professional:TODO Research Uni-Stuttgart Structural Engineering Institutes :PROFESSIONAL:JOBS:PHD::
-  Professional:TODO [0/2] Fast+Epp Junior Structural Engineer - Vancouver :PROFESSIONAL:JOBS::
-  Professional:TODO [0/2] Knippers Helbig Structural Engineer - Stuttgart :PROFESSIONAL:JOBS::
-  Professional:TODO [0/1] Schlaich Bergermann Partner Structural Engineer - Stuttgart :PROFESSIONAL:JOBS::
-  Technology: TODO learn how to write tests :PROGRAMMING:PYTHON::
-  Technology: TODO Python Tutorial for Beginners 9: :PROGRAMMING:PYTHON::WATCH:
-  Technology: TODO figure out what python modules, classes are!!! :PROGRAMMING:PYTHON::WATCH:
-  Technology: TODO Retaining structures          :PROGRAMMING::
-  Technology: TODO Pile foundations              :PROGRAMMING::
-  Technology: TODO Shallow foundations           :PROGRAMMING::
-  Technology: TODO Structural hand calculations  :PROGRAMMING::
-  Technology: TODO Finite elements               :PROGRAMMING::
-  Technology: TODO =section-properties= [GitHub] :PROGRAMMING::
-  Technology: TODO Make Emacs Config Work Under Windows :PROGRAMMING:EMACS::
-  Technology: TODO fix bug connecting to connection file :PROGRAMMING:EMACS:JUPYTER:PYTHON:ORGMODE::
-  Technology: TODO Submit Issue to gregsexton/ob-ipython About :async seems to interfere with :display parameter in src block definitions :PROGRAMMING:EMACS:JUPYTER:PYTHON:ORGMODE::HOME:
-  Technology: TODO Issue with exec-from-shell variable in emacs config :PROGRAMMING:EMACS:JUPYTER:PYTHON:ORGMODE::
-  Technology: TODO Learn Elisp             :PROGRAMMING:EMACS::
-  Technology: TODO Investigate multiple default clock in tasks :PROGRAMMING:EMACS::
-  Technology: TODO elfeed to track publications in structural journals :PROGRAMMING:EMACS::
-  Technology: TODO elfeed to track emacs related stuff :PROGRAMMING:EMACS::
-  Technology: TODO Email in Emacs using MU and MU4E :PROGRAMMING:EMACS::
-  Technology: TODO Minimal Example        :PROGRAMMING:PANDOC::
-  Technology: TODO Look into more privacy techniques :PROGRAMMING::
-  Technology: TODO Teach coding using MATLAB :PROGRAMMING:CARPENTRIES:TEACHING::
-  Technology: TODO SWC Git Lesson :PROGRAMMING:CARPENTRIES:TEACHING::SWC:
-  Technology: TODO SWC Command Line Lesson :PROGRAMMING:CARPENTRIES:TEACHING::SWC:
-  Technology: TODO SWC Python Lesson :PROGRAMMING:CARPENTRIES:TEACHING::SWC:
-  thesis:     TODO Splitting        :THESIS:THESIS:literature::
-  thesis:     TODO cite:Jensen_2009 :THESIS:THESIS:literature::
-  thesis:     TODO cite:Jensen_2010 :THESIS:THESIS:literature::
-  thesis:     TODO cite:Jensen_2011 :THESIS:THESIS:literature::
-  thesis:     TODO Numerical modeling connections :THESIS:THESIS:literature::
-  thesis:     TODO Embedment strength of timber :THESIS:THESIS:literature::
-  thesis:     TODO Material Variability :THESIS:THESIS:literature::
-  thesis:     TODO Block shear      :THESIS:THESIS:literature::
-  thesis:     TODO Row shear        :THESIS:THESIS:literature::
-  thesis:     TODO Fracture mechanics approaches :THESIS:THESIS:literature::
-  thesis:     TODO Develop automated Python calculation :THESIS:THESIS::
-  Accommodation:TODO Pay Rent               :HOME:ACCOMMODATION::
-
-================================================================================================
-Standalone Tasks
-  books:      TODO Flow
-  books:      TODO Sapiens
-  University: TODO Monthly Transit Card :UNIVERSITY:ADMINISTRATION::
-  University: TODO [#A] Email Chalmersstudentbostader and ask why I am not accumulating points :UNIVERSITY:ADMINISTRATION::
-  Courses:    TODO Semester 4             :UNIVERSITY:COURSES::
-  contacts:   TODO Adeeb, Samer
-  Learning:   TODO CS229: Machine Learning Course   :LEARNING::
-  Learning:   TODO Learning Grasshopper             :LEARNING::
-  podcast:    TODO Administration/Organization :podcast::admin:
-  Professional:TODO Structural Engineering       :PROFESSIONAL::
-  Professional:TODO [[file:/winc/jk/podcast/podcast.org][My podcast]] :PROFESSIONAL::PODCAST:
-  Recipes:    TODO Pan-Seared Salmon Fillet      :RECIPES:all::
-  Recipes:    TODO Mushroom Risotto       :RECIPES:vegetarian::
-  Recipes:    TODO Noodle Stir Fry        :RECIPES:vegetarian::
-  Recipes:    TODO Thai Sweet Potato and Carrot Soup :RECIPES:vegetarian::
-  Recipes:    TODO Quinoa Chili           :RECIPES:vegetarian::
-  Finances:   TODO Save new Monthly Statement to my banking documents :HOME:FINANCES:CIBC::
-  Finances:   TODO Pay Monthly Bill       :HOME:FINANCES:CIBC::
-  Music:      TODO New Artists I like             :HOME:MUSIC::
-
-================================================================================================
-Stuck Projects
-  podcast:    TODO Episodes                 :podcast::episodes:
-  podcast:    TODO Season 1: Timber structures :podcast:episodes::S01:
-  podcast:    TODO Season 2: Master thesis projects :podcast:episodes::S02:
-  podcast:    TODO Season 3: Bridge structures :podcast:episodes::S03:
-  podcast:    TODO Season 4: Finite element analysis :podcast:episodes::S04:
-  Professional:TODO PhD Opportunities   :PROFESSIONAL:JOBS::PHD:
-  Professional:TODO Correspondence with RD about PhD opportunities :PROFESSIONAL:JOBS:PHD::
-  Professional:TODO [[file:/winc/jk/website/jckoch.gitlab.io/][My website]] :PROFESSIONAL::WEBSITE:
-  Technology: TODO Programming Projects          :PROGRAMMING::
-  Technology: TODO Learn how to create good python project structures :PROGRAMMING::PYTHON:
-  Technology: TODO =geocalc=: Geotechnical engineering calculations :PROGRAMMING::
-  Technology: TODO =structcalc=: Structural engineering calculations :PROGRAMMING::
-  Technology: TODO Emacs Configuration     :PROGRAMMING::EMACS:
-  Technology: TODO ob-ipython :PROGRAMMING:EMACS::JUPYTER:PYTHON:ORGMODE:
-  Technology: TODO Pandoc: Document Conversion :PROGRAMMING::PANDOC:
-  Technology: TODO Computer Privacy & Security   :PROGRAMMING::
-  Technology: TODO The Carpentries :PROGRAMMING::CARPENTRIES:TEACHING:
-  Accommodation:TODO Tunnelsgatan - Gunnel Idemark (CURRENT RESIDENCE) :HOME:ACCOMMODATION::
-
-================================================================================================
-Waiting and Postponed Tasks
-
-================================================================================================
-Tasks to Archive
-  birthdays:  January                                   :HOME::
-  birthdays:  February                                  :HOME::
-  birthdays:  March                                     :HOME::
-  birthdays:  April                                     :HOME::
-  birthdays:  May                                       :HOME::
-  birthdays:  June                                      :HOME::
-  birthdays:  July                                      :HOME::
-  birthdays:  August                                    :HOME::
-  birthdays:  September                                 :HOME::
-  birthdays:  October                                   :HOME::
-  birthdays:  November                                  :HOME::
-  birthdays:  December                                  :HOME::
-  birthdays:  Unknown                                   :HOME::
-  blog:       Clock Table                            :noexport:
-  blog:       TODO _Blog Posts_            :BLOG_POSTS:WEBSITE:
-  bob:        Heat equation - python                  :FAMILY::
-  bob:        Miscellaneous Examples                  :FAMILY::
-  bob:        DONE Respond to Dad on alternative to TreeComp :FAMILY::
-  bob:        NEXT [#A] HTML Web Form Filler          :FAMILY::
-  bob:        DONE Respond to Dad on org mode python question for Stefan :FAMILY::
-  bob:        MIG Welders                        :FAMILY::NOTE:
-  bob:        DONE Email to Dad ask him to read my proposed research outline :FAMILY::
-  bob:        DONE Email Dad with ox-ipynb setup in emacs :FAMILY::
-  books:      Book List
-  University: Chalmers             :UNIVERSITY::ADMINISTRATION:
-  Courses:    MPSEB Courses               :UNIVERSITY::COURSES:
-  chalmers:   Eurocode Review                     :UNIVERSITY::
-  contacts:   A
-  contacts:   B
-  contacts:   C
-  contacts:   D
-  contacts:   E
-  contacts:   F
-  contacts:   G
-  contacts:   H
-  contacts:   I
-  contacts:   J
-  contacts:   K
-  contacts:   L
-  contacts:   M
-  contacts:   N
-  contacts:   O
-  contacts:   P
-  contacts:   Q
-  contacts:   R
-  contacts:   S
-  contacts:   T
-  contacts:   U
-  contacts:   V
-  contacts:   W
-  contacts:   X
-  contacts:   Y
-  contacts:   Z
-  contacts:   UNSORTED
-  contacts:   TEMPLATES
-  cs229:      Machine Learning                          :cs229:
-  diary:      2018                                     :DIARY::
-  diary:      2019                                     :DIARY::
-  diary:      2020                                     :DIARY::
-  gmail-gcal: Structural Dynamics Exam
-  gmail-gcal: Concrete Structures Exam
-  gmail-gcal: Mass Timber Conference
-  Government: Government                           :GOVERNMENT:
-  Learning:   Learning                               :LEARNING:
-  monika:     DONE Send Mom dates on flights for myself :FAMILY::
-  podcast:    Structurally Sound                      :podcast:
-  podcast:    Podcast intro jingle                       :NOTE:
-  podcast:    Best quality cheap podcast setup           :NOTE:
-  Professional:Professional Activities            :PROFESSIONAL:
-  Technology: Computer Programming                :PROGRAMMING:
-  projects:   Projects                              :PROJECTS::
-  Recipes:    Recipes                                 :RECIPES:
-  thesis:     Clock report                   :THESIS::noexport:
-  thesis:     Administration                          :THESIS::
-  thesis:     Initial Research Tasks                  :THESIS::
-  thesis:     Research                                :THESIS::
-  thesis:     References                       :THESIS::ignore:
-  Habits:     Habits                             :HOME::HABITS:
-  Accommodation:Accommodation               :HOME::ACCOMMODATION:
-  Website:    Blog                              :HOME::WEBSITE:
-  Reading:    Books                             :HOME::READING:
-  Education:  Chalmers                        :HOME::EDUCATION:
-  Finances:   Finances                         :HOME::FINANCES:
-  Government: Government                     :HOME::GOVERNMENT:
-  Health:     Health                             :HOME::HEALTH:
-  Learning:   Learning                         :HOME::LEARNING:
-  Podcast:    Podcast                           :HOME::PODCAST:
-  Professional:Professional                 :HOME::PROFESSIONAL:
-  Professional:Programming                   :HOME::PROGRAMMING:
-  Travel:     Travel                             :HOME::TRAVEL:
-  Recipes:    Recipes                           :HOME::RECIPES:
-  Music:      Music                               :HOME::MUSIC:
-  Podcast:    Podcast                           :HOME::PODCAST:
-  todo:       Miscellaneous Notes                  :HOME::NOTE:
-  Travel:     Travel                                   :TRAVEL:

@@ -20,11 +20,11 @@ Set a user name and email address for Emacs to use if needed.
 Change the default directory that emacs opens in to fit your needs.
 
 #+begin_src emacs-lisp
-(setq default-directory "/winc/jk/myLife")
+(setq default-directory "/winc/jk/myLife/")
 #+end_src
 
 #+RESULTS:
-: /winc/jk/myLife
+: /winc/jk/myLife/
 
 * Emacs Appearance & Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 

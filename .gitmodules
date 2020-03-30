@@ -1,3 +1,6 @@
 [submodule "ob-ipython"]
 	path = dev-pkgs/ob-ipython
 	url = https://github.com/jchkoch/ob-ipython.git
+[submodule "dev-pkgs/dash"]
+	path = dev-pkgs/dash
+	url = https://github.com/magnars/dash.el.git

@@ -521,6 +521,8 @@ authoring documents with a fast and effective plain-text system.
                                      (org-agenda-files :maxlevel . 9))))
     (setq org-refile-allow-creating-parent-nodes (quote confirm))
     (setq org-refile-target-verify-function 'bh/verify-refile-target)
+    ;; code blocks
+    (setq org-confirm-babel-evaluate nil)
     ;; preview latex equations
     (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
     (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
@@ -1145,7 +1147,6 @@ His agenda view customisations are pure Emacs gold.
     :after (org ob-ipython)
     :config
     (setq org-src-tab-acts-natively t)
-    (setq org-confirm-babel-evaluate nil)
     (setq org-src-fontify-natively t)
 
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")

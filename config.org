@@ -170,6 +170,7 @@ A last note is that I disable the "hello file" function because it seems to be v
     (setq use-file-dialog nil)
     (setq use-dialog-box t)         ; only for mouse events
     (setq inhibit-splash-screen t)
+    (defalias 'yes-or-no-p 'y-or-n-p)
     (global-unset-key (kbd "C-z"))
     (global-unset-key (kbd "C-x C-z"))
     (global-unset-key (kbd "C-h h")))

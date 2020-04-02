@@ -101,14 +101,14 @@ To maintain a clean and organized configuration, I prefer to have these automati
     (load custom-file))
 #+end_src
 
-* TODO Personal and security settings
+* DONE Personal and security settings
 ** DONE Default directory
 
 #+begin_src emacs-lisp
   (setq default-directory "/winc/jk/myLife/")
 #+end_src
 
-** REVIEW Authenticate source
+** DONE Authenticate source
 
 #+begin_src emacs-lisp
   (use-package auth-source
@@ -150,7 +150,7 @@ Ivy-pass is an interactive interface for password completion in Emacs for the St
     :commands ivy-pass)
 #+END_SRC
 
-* TODO General interface and interactions
+* DONE General interface and interactions
 This section contains configurations for aspects of the Emacs user interface.
 
 ** DONE Disable GUI components
@@ -211,10 +211,12 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
                     mode-line-frame-identification
                     mode-line-buffer-identification
                     "  "
+                    (vc-mode vc-mode)
+                    " "
                     mode-line-position
                     " "
                     mode-line-modes
-                    " "
+                    "  "
                     mode-line-misc-info
                     mode-line-end-spaces)))
 #+end_src
@@ -351,7 +353,7 @@ This is a new package to me so I am still experimenting with it.
 
 #+RESULTS:
 : jk/toggle-line-numbers
-** TODO Language settings for prose and code
+** DONE Language settings for prose and code
 *** DONE Recognize sub-words
 
 #+begin_src emacs-lisp
@@ -417,7 +419,7 @@ On GNU/Linux most likely you need to download extra dictionaries from [[https://
            ("M-<f8>" . jk/ispell-toggle-dictionaries)))
 #+END_SRC
 
-*** REVIEW Flycheck (code linting)
+*** DONE Flycheck (code linting)
 
 #+begin_src emacs-lisp
   (use-package flycheck
@@ -439,7 +441,7 @@ Also, a Flycheck indicator in the mode line.
     :hook (flycheck-mode . flycheck-indicator-mode))
 #+end_src
 
-*** REVIEW Markdown support
+*** DONE Markdown support
 
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -491,7 +493,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
 #+end_src
 
 * TODO Applications and utilities
-** REVIEW Org-Mode (getting things done)
+** TODO Org-Mode (getting things done)
 To quote [[http://orgmode.org/][Carsten Dominik]],
 
 #+BEGIN_QUOTE
@@ -915,7 +917,7 @@ His agenda view customisations are pure Emacs gold.
 
 #+begin_src emacs-lisp
   (use-package org-agenda
-    :after org
+    :after org-habit
     :config
     (setq org-agenda-files (list default-directory))
     (setq org-agenda-span 'day)
@@ -1103,7 +1105,8 @@ His agenda view customisations are pure Emacs gold.
 **** DONE Org time clocking configuration
 
 #+begin_src emacs-lisp
-  (use-package org
+  (use-package org-clock
+    :after org-capture
     :config
     (org-clock-persistence-insinuate)                  ; resume clocking task when emacs restarts
     (setq org-clock-history-length 23)                 ; show lots of clock history to make choosing easier
@@ -1127,13 +1130,16 @@ His agenda view customisations are pure Emacs gold.
     (defvar bh/organization-task-id "default")
     (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
     (setq org-duration-format (quote h:mm))
-    (setq org-clock-idle-time 60))
+    (setq org-clock-idle-time 60)
+  :bind (("<f4>" . org-clock-in)
+         ("<f5>" . org-clock-out)))
 #+end_src
 
 **** DONE Org clock convenience agenda functions
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-clock-convenience
+    :after org-clock
     :delight
     :bind (:map org-agenda-mode-map
                 ("<S-up>" . org-clock-convenience-timestamp-up)
@@ -1141,24 +1147,20 @@ His agenda view customisations are pure Emacs gold.
                 ("o" . org-clock-convenience-fill-gap)
                 ("e" . org-clock-convenience-fill-gap-both)))
 #+END_SRC
-*** REVIEW Org source code blocks
+*** DONE Org source code blocks
 
 #+begin_src emacs-lisp
   (use-package org-src
-    :after (org ob-ipython)
+    :after org
     :config
     (setq org-src-tab-acts-natively t)
     (setq org-src-fontify-natively t)
-
-    (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (org-babel-do-load-languages
      'org-babel-load-languages (quote ((emacs-lisp . t)
                                        (shell . t)
                                        (latex . t)
-                                       (ditaa . t)
-                                       (python . t)
-                                       (ipython . t)
-                                       (ledger . t))))
+                                       (ditaa . t))))
+    (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2>" . org-edit-src-code)
            ("<f3>" . org-edit-src-exit)))
@@ -1331,7 +1333,7 @@ From John Kitchin. Downloaded (static) elisp file.
              ))))
 #+end_src
 
-*** REVIEW Org \LaTeX Mode
+*** DONE Org \LaTeX Mode
 
 #+begin_src emacs-lisp
   (use-package cdlatex
@@ -1340,7 +1342,7 @@ From John Kitchin. Downloaded (static) elisp file.
     :commands turn-on-org-cdlatex)
 #+end_src
 
-*** REVIEW Org bibliography management
+*** DONE Org bibliography management
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-ref
@@ -1605,6 +1607,7 @@ Plain-text double-entry accounting program.
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
     :mode "\\.ledger\\'"
+    :commands (org-babel-execute:ledger)
     :config
     (add-hook 'ledger-mode-hook
               (lambda ()
@@ -1626,33 +1629,6 @@ Plain-text double-entry accounting program.
     :commands run-octave)
 #+end_src
 
-** REVIEW Python mode
-
-#+begin_src emacs-lisp
-  (use-package python-mode
-    :delight python-mode "PI"
-    :mode "\\.py\\'"
-    :config
-    (setq python-shell-virtualenv-path "/home/jkoch/anaconda3/envs/thesis")
-    (setq python-shell-interpreter "/home/jkoch/anaconda3/envs/thesis/bin/ipython"
-        python-shell-interpreter-args "--simple-prompt"
-        python-shell-prompt-detect-failure-warning nil))
-#+end_src
-
-** REVIEW Interactive python
-
-#+begin_src emacs-lisp
-  (use-package ob-ipython
-    :load-path "dev-pkgs/ob-ipython"
-    :delight python-mode "iPI"
-    :config
-    (setq ob-ipython-suppress-execution-count t)
-    (setq ob-ipython-command "/home/jkoch/anaconda3/envs/thesis/bin/jupyter"))
-
-  (use-package dash
-    :ensure t)
-#+end_src
-
 ** DONE Try new packages
 A package to try out other interesting GNU Emacs packages without having to install the packages.
 
@@ -1660,3 +1636,53 @@ A package to try out other interesting GNU Emacs packages without having to inst
   (use-package try
     :ensure t)
 #+END_SRC
+** DONE Python mode
+
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :delight python-mode "PI"
+    :mode "\\.py\\'")
+#+end_src
+
+** DONE Python virtual environments
+Use the package ~pyvenv~ to manage and automatically activate different python versions/virtual environments using ~pyenv~ shell script based program.
+Similarly as to how ~pyenv~ placing a file in directories where you want to use specific python versions/virtual environments, follow the same principle and set the python version/virtual environment in a file called ~.dir-locals.el~ with the contents specified as:
+
+#+begin_example
+  ((nil . ((pyvenv-workon . "ENV_NAME"))))
+#+end_example
+
+, where ENV_NAME should be replaced by your virtual-environments name.
+
+#+begin_src emacs-lisp
+  (use-package pyvenv
+    :ensure t
+    :after org
+    :init
+    (add-to-list 'exec-path "~/.pyenv/shims")
+    (setenv "WORKON_HOME"  "~/.pyenv/versions/miniconda3-latest/envs/")
+    (pyvenv-mode 1)
+    (pyvenv-tracking-mode 1)
+    :bind ("<f1>" . pyvenv-workon))
+#+end_src
+
+#+RESULTS:
+
+** DONE Python source blocks
+
+#+begin_src emacs-lisp
+  (use-package ob-python
+    :after pyvenv
+    :commands (org-babel-execute:python)
+    :config (setq python-indent-offset 4))
+#+end_src
+
+** DONE Interactive python
+
+#+begin_src emacs-lisp
+  (use-package ob-ipython
+    :after pyvenv
+    :load-path "dev-pkgs/ob-ipython"
+    :commands (org-babel-execute:ipython)
+    :config (setq python-indent-offset 4))
+#+end_src

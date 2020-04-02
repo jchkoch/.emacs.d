@@ -512,12 +512,13 @@ authoring documents with a fast and effective plain-text system.
     :config
     (setq org-structure-template-alist
           '(("s" . "src")
+            ("x" . "export latex")
             ("E" . "src emacs-lisp")
             ("e" . "example")
             ("q" . "quote")
             ("V" . "verbatim")
             ("p" . "src python")
-            ("ipy" . "src ipython")))
+            ("ipy" . "src ipython :session :results output drawer")))
     ;; refile, todo
     (setq org-default-notes-file "/winc/jk/myLife/refile.org")
     (setq org-refile-targets (quote ((nil :maxlevel . 9)

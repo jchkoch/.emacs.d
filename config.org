@@ -171,6 +171,7 @@ A last note is that I disable the "hello file" function because it seems to be v
     (setq use-dialog-box t)         ; only for mouse events
     (setq inhibit-splash-screen t)
     (defalias 'yes-or-no-p 'y-or-n-p)
+    (global-visual-line-mode 1)
     (global-unset-key (kbd "C-z"))
     (global-unset-key (kbd "C-x C-z"))
     (global-unset-key (kbd "C-h h")))
@@ -520,7 +521,7 @@ authoring documents with a fast and effective plain-text system.
             ("p" . "src python")
             ("ipy" . "src ipython :session :results output drawer")))
     ;; refile, todo
-    (setq org-default-notes-file "/winc/jk/myLife/refile.org")
+    (setq org-default-notes-file (concat default-directory "refile.org"))
     (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                      (org-agenda-files :maxlevel . 9))))
     (setq org-refile-allow-creating-parent-nodes (quote confirm))
@@ -540,7 +541,7 @@ authoring documents with a fast and effective plain-text system.
   (use-package ox-extra
     :after org
     :config
-    (ox-extras-activate '(ignore-headlines))
+    (setq ox-extras-activate '(ignore-headlines))
     (setq org-list-allow-alphabetical t))
 #+end_src
 
@@ -611,21 +612,21 @@ I categorize it into a few new groups that I use as templates:
     :after org
     :config
     (setq org-capture-templates
-          (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
+          (quote (("t" "todo" entry (file (concat default-directory "refile.org"))
                    "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("e" "respond" entry (file "/winc/jk/myLife/refile.org")
+                  ("e" "respond" entry (file (concat default-directory "refile.org"))
                    "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("n" "note" entry (file "/winc/jk/myLife/refile.org")
+                  ("n" "note" entry (file (concat default-directory "refile.org"))
                    "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("i" "Journal" entry (file+datetree "/winc/jk/myLife/diary.org")
+                  ("i" "Journal" entry (file+datetree (concat default-directory "diary.org"))
                    "* %?\n%U\n" :clock-in t :clock-resume t)
-                  ("w" "org-protocol" entry (file "/winc/jk/myLife/refile.org")
+                  ("w" "org-protocol" entry (file (concat default-directory "refile.org"))
                    "* TODO Review %c\n%U\n" :immediate-finish t)
-                  ("m" "Meeting" entry (file "/winc/jk/myLife/refile.org")
+                  ("m" "Meeting" entry (file (concat default-directory "refile.org"))
                    "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-                  ("p" "Phone call" entry (file "/winc/jk/myLife/refile.org")
+                  ("p" "Phone call" entry (file (concat default-directory "refile.org"))
                    "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-                  ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
+                  ("h" "Habit" entry (file (concat default-directory "refile.org"))
                   "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))))
 
 #+end_src
@@ -923,6 +924,7 @@ His agenda view customisations are pure Emacs gold.
     (setq org-agenda-files (list default-directory))
     (setq org-agenda-span 'day)
     (setq org-agenda-use-time-grid t)
+    (setq org-agenda-diary-file (concat default-directory "diary.org"))
 
     (setq org-modules (quote (org-habit)))
     (setq org-habit-show-habits-only-for-today t)
@@ -1389,7 +1391,8 @@ From John Kitchin. Downloaded (static) elisp file.
           bibtex-autokey-titlewords-stretch 1
           bibtex-autokey-titleword-length 5)
     (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
-    (setq org-ref-completion-library 'org-ref-ivy-cite))
+    (setq org-ref-completion-library 'org-ref-ivy-cite)
+    :bind ("C-c i" . org-ref-insert-ref-link))
 #+END_SRC
 
 *** DONE Org basic presentations

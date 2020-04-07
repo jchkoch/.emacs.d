@@ -612,22 +612,23 @@ I categorize it into a few new groups that I use as templates:
     :after org
     :config
     (setq org-capture-templates
-          (quote (("t" "todo" entry (file (concat default-directory "refile.org"))
+          (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
                    "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("e" "respond" entry (file (concat default-directory "refile.org"))
+                  ("e" "respond" entry (file "/winc/jk/myLife/refile.org")
                    "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("n" "note" entry (file (concat default-directory "refile.org"))
+                  ("n" "note" entry (file "/winc/jk/myLife/refile.org")
                    "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-                  ("i" "Journal" entry (file+datetree (concat default-directory "diary.org"))
+                  ("i" "Journal" entry (file+datetree "/winc/jk/myLife/diary.org")
                    "* %?\n%U\n" :clock-in t :clock-resume t)
-                  ("w" "org-protocol" entry (file (concat default-directory "refile.org"))
+                  ("w" "org-protocol" entry (file "/winc/jk/myLife/refile.org")
                    "* TODO Review %c\n%U\n" :immediate-finish t)
-                  ("m" "Meeting" entry (file (concat default-directory "refile.org"))
+                  ("m" "Meeting" entry (file "/winc/jk/myLife/refile.org")
                    "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-                  ("p" "Phone call" entry (file (concat default-directory "refile.org"))
+                  ("p" "Phone call" entry (file "/winc/jk/myLife/refile.org")
                    "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-                  ("h" "Habit" entry (file (concat default-directory "refile.org"))
-                  "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))))
+                  ("h" "Habit" entry (file "/winc/jk/myLife/refile.org")
+                   "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+    :bind ("C-c c" . org-capture))
 
 #+end_src
 
@@ -1162,7 +1163,8 @@ His agenda view customisations are pure Emacs gold.
      'org-babel-load-languages (quote ((emacs-lisp . t)
                                        (shell . t)
                                        (latex . t)
-                                       (ditaa . t))))
+                                       (ditaa . t)
+                                       (python . t))))
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2>" . org-edit-src-code)
@@ -1648,45 +1650,30 @@ A package to try out other interesting GNU Emacs packages without having to inst
     :mode "\\.py\\'")
 #+end_src
 
-** DONE Python virtual environments
-Use the package ~pyvenv~ to manage and automatically activate different python versions/virtual environments using ~pyenv~ shell script based program.
-Similarly as to how ~pyenv~ placing a file in directories where you want to use specific python versions/virtual environments, follow the same principle and set the python version/virtual environment in a file called ~.dir-locals.el~ with the contents specified as:
-
-#+begin_example
-  ((nil . ((pyvenv-workon . "ENV_NAME"))))
-#+end_example
-
-, where ENV_NAME should be replaced by your virtual-environments name.
+** NEXT Python versions: Pyenv-mode
 
 #+begin_src emacs-lisp
+  (use-package pyenv-mode
+    :ensure t)
+
   (use-package pyvenv
     :ensure t
-    :after org
     :init
     (add-to-list 'exec-path "~/.pyenv/shims")
-    (setenv "WORKON_HOME"  "~/.pyenv/versions/miniconda3-latest/envs/")
+    (setenv "WORKON_HOME" "~/.pyenv/versions") ;; "/home/jkoch/anaconda3/envs/" ;; /miniconda3-latest/envs/
     (pyvenv-mode 1)
-    (pyvenv-tracking-mode 1)
     :bind ("<f1>" . pyvenv-workon))
 #+end_src
 
-#+RESULTS:
-
-** DONE Python source blocks
+** NEXT Python IDE: Elpy-mode
 
 #+begin_src emacs-lisp
-  (use-package ob-python
-    :after pyvenv
-    :commands (org-babel-execute:python)
-    :config (setq python-indent-offset 4))
-#+end_src
-
-** DONE Interactive python
-
-#+begin_src emacs-lisp
-  (use-package ob-ipython
-    :after pyvenv
-    :load-path "dev-pkgs/ob-ipython"
-    :commands (org-babel-execute:ipython)
-    :config (setq python-indent-offset 4))
+  (use-package elpy
+    :ensure t
+    :init
+    (setq elpy-rpc-virtualenv-path "~/.pyenv/versions/default3")
+    (elpy-enable)
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    :hook (pyenv-mode . elpy-rpc-restart))
 #+end_src

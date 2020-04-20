@@ -72,6 +72,13 @@ Thereby ensuring that at the next launch of Emacs, new customisations are parsed
     :hook (kill-emacs . jk/delete-emacs-init))
 #+end_src
 
+** REVIEW Ability to define hydras
+
+#+begin_src emacs-lisp
+  (use-package hydra
+    :ensure t)
+#+end_src
+
 ** DONE Edit mode line names
 In Emacs, depending on what type of file you visit or special buffers different modes may be active.
 The name of the modes, active in any buffer, are shown on the modeline.
@@ -187,11 +194,20 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
     (setq custom-safe-themes t)
     (set-default 'cursor-type 'bar)
 
-    (load-theme 'modus-vivendi t))
 
+    (load-theme 'tango-dark t))
+#+end_src
+
+*** DONE Install non-standard extra themes                :disabled:
+
+#+begin_src emacs-lisp
   (use-package modus-vivendi-theme
-    :ensure t
-    :defer t)
+    :disabled
+    :ensure t)
+
+  (use-package modus-operandi-theme
+    :disabled
+    :ensure t)
 #+end_src
 
 *** DONE Mode line
@@ -308,12 +324,13 @@ The fringe areas are to the right and left side of the Emacs frame. As [[https:/
 #+RESULTS:
 : t
 
-*** DONE Diff highlights in the left fringe
+*** DONE Diff highlights in the left fringe               :disabled:
 The ~diff-hl~ package uses either fringe area to display changes in the current buffer if the file in the buffer is under version control.
 This is a new package to me so I am still experimenting with it.
 
 #+begin_src emacs-lisp
   (use-package diff-hl
+    :disabled
     :ensure t
     :config
     (setq diff-hl-draw-borders nil)
@@ -348,12 +365,10 @@ This is a new package to me so I am still experimenting with it.
           (display-line-numbers-mode -1)
         (display-line-numbers-mode)))
 
-    :bind (("<f6>" . jk/toggle-invisibles)
-           ("<f7>" . jk/toggle-line-numbers)))
+    :bind ("<f3>" . jk/toggle-line-numbers)
+    :commands jk/toggle-invisibles)
 #+end_src
 
-#+RESULTS:
-: jk/toggle-line-numbers
 ** DONE Language settings for prose and code
 *** DONE Recognize sub-words
 
@@ -493,6 +508,88 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :hook (before-save . delete-trailing-whitespace))
 #+end_src
 
+** TODO Coding settings and completions
+*** DONE Python mode
+
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :delight python-mode "PI"
+    :mode "\\.py\\'")
+#+end_src
+
+*** REVIEW Python versions: Pyenv-mode
+
+#+begin_src emacs-lisp
+  (use-package pyenv-mode
+    :ensure t)
+
+  (use-package pyvenv
+    :ensure t
+    :init
+    (add-to-list 'exec-path "~/.pyenv/shims")
+    (setenv "WORKON_HOME" "~/.pyenv/versions") ;; "/home/jkoch/anaconda3/envs/" ;; /miniconda3-latest/envs/
+    (pyvenv-mode 1)
+    :bind ("<f4>" . pyvenv-workon))
+#+end_src
+
+*** REVIEW Python IDE: Elpy-mode
+
+#+begin_src emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init
+    (setq elpy-rpc-virtualenv-path "~/.pyenv/versions/default3")
+    (elpy-enable)
+    :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (setq python-shell-interpreter "python"
+          python-shell-interpreter-args "-i"
+          python-shell-prompt-detect-failure-warning nil)
+    :bind
+    (:map elpy-mode-map
+          ("C-M-n" . elpy-nav-forward-block)
+          ("C-M-p" . elpy-nav-backward-block)))
+#+end_src
+
+#+RESULTS:
+: elpy-nav-backward-block
+
+*** REVIEW Company mode
+
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :delight company-mode
+    :init
+    (global-company-mode)
+    :config
+    ;; set default `company-backends'
+    (setq company-backends
+          '((company-files          ; files & directory
+             company-keywords       ; keywords
+             company-capf)  ; completion-at-point-functions
+            (company-abbrev company-dabbrev)
+            )))
+
+  (use-package company-statistics
+    :ensure t
+    :init
+    (company-statistics-mode))
+
+  (use-package company-web
+    :ensure t)
+
+  (use-package company-try-hard
+    :ensure t
+    :bind (("C-<tab>" . company-try-hard)
+           :map company-active-map
+           ("C-<tab>" . company-try-hard)))
+
+  (use-package company-quickhelp
+    :ensure t
+    :config
+    (company-quickhelp-mode))
+#+end_src
 * TODO Applications and utilities
 ** TODO Org-Mode (getting things done)
 To quote [[http://orgmode.org/][Carsten Dominik]],
@@ -609,7 +706,6 @@ I categorize it into a few new groups that I use as templates:
 
 #+begin_src emacs-lisp
   (use-package org-capture
-    :after org
     :config
     (setq org-capture-templates
           (quote (("t" "todo" entry (file "/winc/jk/myLife/refile.org")
@@ -1005,7 +1101,7 @@ His agenda view customisations are pure Emacs gold.
                    nil))))
 
     :hook ((org-agenda-mode . visual-line-mode))
-    :bind (("<f12>" . org-agenda)
+    :bind (("<f10>" . org-agenda)
            ("C-x h" . org-habit-toggle-habits)))
 #+end_src
 
@@ -1110,7 +1206,6 @@ His agenda view customisations are pure Emacs gold.
 
 #+begin_src emacs-lisp
   (use-package org-clock
-    :after org-capture
     :config
     (org-clock-persistence-insinuate)                  ; resume clocking task when emacs restarts
     (setq org-clock-history-length 23)                 ; show lots of clock history to make choosing easier
@@ -1135,8 +1230,8 @@ His agenda view customisations are pure Emacs gold.
     (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
     (setq org-duration-format (quote h:mm))
     (setq org-clock-idle-time 60)
-  :bind (("<f4>" . org-clock-in)
-         ("<f5>" . org-clock-out)))
+  :bind (("<f7> i" . org-clock-in)
+         ("<f7> o" . org-clock-out)))
 #+end_src
 
 **** DONE Org clock convenience agenda functions
@@ -1151,6 +1246,7 @@ His agenda view customisations are pure Emacs gold.
                 ("o" . org-clock-convenience-fill-gap)
                 ("e" . org-clock-convenience-fill-gap-both)))
 #+END_SRC
+
 *** DONE Org source code blocks
 
 #+begin_src emacs-lisp
@@ -1167,8 +1263,8 @@ His agenda view customisations are pure Emacs gold.
                                        (python . t))))
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-    :bind (("<f2>" . org-edit-src-code)
-           ("<f3>" . org-edit-src-exit)))
+    :bind (("<f2> c" . org-edit-src-code)
+           ("<f2> x" . org-edit-src-exit)))
 #+end_src
 
 *** DONE Org export
@@ -1403,7 +1499,7 @@ From John Kitchin. Downloaded (static) elisp file.
   (use-package org-tree-slide
     :defer t
     :delight org-tree-slide "treePRES"
-    :bind (("<f11>" . org-tree-slide-mode)))
+    :bind (("<f1>" . org-tree-slide-mode)))
 #+END_SRC
 
 *** REVIEW Org gmail sync
@@ -1420,6 +1516,16 @@ From John Kitchin. Downloaded (static) elisp file.
           org-gcal-file-alist '(("jchkoch@gmail.com" .  "/winc/jk/myLife/gmail-gcal.org")
                                 ("jckoch@ualberta.ca" . "/winc/jk/myLife/ualberta-gcal.org"))))
 #+END_SRC
+
+*** NEXT Pomodoro technique in org mode
+
+#+begin_src emacs-lisp
+  (use-package org-pomodoro
+    :ensure t
+    :config
+    (setq org-pomodoro-manual-break t)
+    :bind ("<f7> p" . org-pomodoro))
+#+end_src
 
 ** DONE \LaTeX documents
 
@@ -1642,38 +1748,3 @@ A package to try out other interesting GNU Emacs packages without having to inst
   (use-package try
     :ensure t)
 #+END_SRC
-** DONE Python mode
-
-#+begin_src emacs-lisp
-  (use-package python-mode
-    :delight python-mode "PI"
-    :mode "\\.py\\'")
-#+end_src
-
-** NEXT Python versions: Pyenv-mode
-
-#+begin_src emacs-lisp
-  (use-package pyenv-mode
-    :ensure t)
-
-  (use-package pyvenv
-    :ensure t
-    :init
-    (add-to-list 'exec-path "~/.pyenv/shims")
-    (setenv "WORKON_HOME" "~/.pyenv/versions") ;; "/home/jkoch/anaconda3/envs/" ;; /miniconda3-latest/envs/
-    (pyvenv-mode 1)
-    :bind ("<f1>" . pyvenv-workon))
-#+end_src
-
-** NEXT Python IDE: Elpy-mode
-
-#+begin_src emacs-lisp
-  (use-package elpy
-    :ensure t
-    :init
-    (setq elpy-rpc-virtualenv-path "~/.pyenv/versions/default3")
-    (elpy-enable)
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    :hook (pyenv-mode . elpy-rpc-restart))
-#+end_src

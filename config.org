@@ -103,12 +103,14 @@ To maintain a clean and organized configuration, I prefer to have these automati
 
 * DONE Personal and security settings
 ** DONE Default directory
+Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
 
 #+begin_src emacs-lisp
   (setq default-directory "/winc/jk/myLife/")
 #+end_src
 
-** DONE Authenticate source
+** REVIEW Authenticate source
+Package to remove sensitive data from this configuration to allow sharing on GitHub.
 
 #+begin_src emacs-lisp
   (use-package auth-source

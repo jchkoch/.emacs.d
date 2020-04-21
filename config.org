@@ -192,21 +192,17 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
   (use-package emacs
     :config
     (setq custom-safe-themes t)
-    (set-default 'cursor-type 'bar)
-
-
-    (load-theme 'tango-dark t))
+    (set-default 'cursor-type 'bar))
+  ;  (load-theme 'tango-dark t))
 #+end_src
 
-*** DONE Install non-standard extra themes                :disabled:
+*** DONE Install non-standard extra themes
 
 #+begin_src emacs-lisp
   (use-package modus-vivendi-theme
-    :disabled
     :ensure t)
 
   (use-package modus-operandi-theme
-    :disabled
     :ensure t)
 #+end_src
 
@@ -326,7 +322,7 @@ The fringe areas are to the right and left side of the Emacs frame. As [[https:/
 
 *** DONE Diff highlights in the left fringe               :disabled:
 The ~diff-hl~ package uses either fringe area to display changes in the current buffer if the file in the buffer is under version control.
-This is a new package to me so I am still experimenting with it.
+This is a new package to me so I am still experimenting with it. I don't really like it. I find it too distracting from the editing or creation of content. I find myself being drawn to git and the depths of branching, merging, and re-basing instead of creating new content.
 
 #+begin_src emacs-lisp
   (use-package diff-hl

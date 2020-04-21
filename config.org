@@ -664,25 +664,25 @@ authoring documents with a fast and effective plain-text system.
     (setq org-list-allow-alphabetical t))
 #+end_src
 
-**** DONE \TODO States
+**** REVIEW \TODO States
 
 #+begin_src emacs-lisp
   (use-package org
     :config
     (setq org-todo-keywords
-          (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
-                  (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
+            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")))
 
     (setq org-todo-keyword-faces
-          (quote (("TODO" :foreground "red" :weight bold)
-                  ("NEXT" :foreground "blue" :weight bold)
-                  ("DONE" :foreground "forest green" :weight bold)
-                  ("REVIEW" :foreground "yellow" :weight bold)
-                  ("WAITING" :foreground "orange" :weight bold)
-                  ("HOLD" :foreground "magenta" :weight bold)
-                  ("CANCELLED" :foreground "forest green" :weight bold)
-                  ("MEETING" :foreground "forest green" :weight bold)
-                  ("PHONE" :foreground "forest green" :weight bold))))
+          '(("TODO" :foreground "#ff6666" :weight bold)
+            ("NEXT" :foreground "#6666ff" :weight bold)
+            ("DONE" :foreground "#32cd32" :weight bold)
+            ("REVIEW" :foreground "#ff0000" :weight bold)
+            ("WAITING" :foreground "#ffc966" :weight bold)
+            ("HOLD" :foreground "#ff66ff" :weight bold)
+            ("CANCELLED" :foreground "#32cd32" :weight bold)
+            ("MEETING" :foreground "#32cd32" :weight bold)
+            ("PHONE" :foreground "#32cd32" :weight bold)))
 
     (setq org-use-fast-todo-selection t))
 #+end_src

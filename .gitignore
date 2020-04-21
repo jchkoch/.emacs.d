@@ -39,3 +39,4 @@ srecode-map.el
 /transient/*.el
 .cask/*   
 *.sqlite
+/company-statistics-cache.el

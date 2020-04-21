@@ -199,6 +199,36 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
 
   (use-package modus-operandi-theme
     :ensure t)
+
+  (use-package emacs
+    :config
+    (setq custom-safe-themes t)
+
+    (defun prot/modus-operandi ()
+      "Enable some Modus Operandi variables and load the theme.
+       This is used internally by `prot/modus-themes-toggle'."
+      (load-theme 'modus-operandi t))
+
+    (defun prot/modus-vivendi ()
+      "Enable some Modus Vivendi variables and load the theme.
+       This is used internally by `prot/modus-themes-toggle'."
+      (load-theme 'modus-vivendi t))
+
+    (defcustom prot/modus-themes-toggle-hook nil
+      "Hook that runs after `prot/modus-themes-toggle' is invoked."
+      :type 'hook)
+
+    (defun prot/modus-themes-toggle ()
+      "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'.
+       Also run `prot/modus-themes-toggle-hook'."
+      (interactive)
+      (if (eq (car custom-enabled-themes) 'modus-operandi)
+          (prot/modus-vivendi)
+        (prot/modus-operandi))
+      (run-hooks 'prot/modus-themes-toggle-hook))
+
+    :bind ("<f5>" . prot/modus-themes-toggle)
+    :hook (after-init . prot/modus-operandi))
 #+end_src
 
 *** DONE Mode line

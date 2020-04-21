@@ -504,7 +504,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :hook (before-save . delete-trailing-whitespace))
 #+end_src
 
-** TODO Coding settings and completions
+** DONE Coding settings and completions
 *** DONE Python mode
 
 #+begin_src emacs-lisp
@@ -513,7 +513,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :mode "\\.py\\'")
 #+end_src
 
-*** REVIEW Python versions: Pyenv-mode
+*** DONE Python versions: Pyenv-mode
 
 #+begin_src emacs-lisp
   (use-package pyenv-mode
@@ -528,7 +528,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :bind ("<f4>" . pyvenv-workon))
 #+end_src
 
-*** REVIEW Python IDE: Elpy-mode
+*** DONE Python IDE: Elpy-mode
 
 #+begin_src emacs-lisp
   (use-package elpy
@@ -550,7 +550,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
 #+RESULTS:
 : elpy-nav-backward-block
 
-*** REVIEW Company mode
+*** DONE Company mode
 
 #+begin_src emacs-lisp
   (use-package company
@@ -586,6 +586,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :config
     (company-quickhelp-mode))
 #+end_src
+
 * TODO Applications and utilities
 ** TODO Org-Mode (getting things done)
 To quote [[http://orgmode.org/][Carsten Dominik]],
@@ -1498,7 +1499,17 @@ From John Kitchin. Downloaded (static) elisp file.
     :bind (("<f1>" . org-tree-slide-mode)))
 #+END_SRC
 
-*** REVIEW Org gmail sync
+*** DONE Pomodoro technique in org mode
+
+#+begin_src emacs-lisp
+  (use-package org-pomodoro
+    :ensure t
+    :config
+    (setq org-pomodoro-manual-break t)
+    :bind ("<f7> p" . org-pomodoro))
+#+end_src
+
+*** TODO Org gmail sync
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-gcal
@@ -1512,16 +1523,6 @@ From John Kitchin. Downloaded (static) elisp file.
           org-gcal-file-alist '(("jchkoch@gmail.com" .  "/winc/jk/myLife/gmail-gcal.org")
                                 ("jckoch@ualberta.ca" . "/winc/jk/myLife/ualberta-gcal.org"))))
 #+END_SRC
-
-*** NEXT Pomodoro technique in org mode
-
-#+begin_src emacs-lisp
-  (use-package org-pomodoro
-    :ensure t
-    :config
-    (setq org-pomodoro-manual-break t)
-    :bind ("<f7> p" . org-pomodoro))
-#+end_src
 
 ** DONE \LaTeX documents
 

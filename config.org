@@ -72,13 +72,6 @@ Thereby ensuring that at the next launch of Emacs, new customisations are parsed
     :hook (kill-emacs . jk/delete-emacs-init))
 #+end_src
 
-** REVIEW Ability to define hydras
-
-#+begin_src emacs-lisp
-  (use-package hydra
-    :ensure t)
-#+end_src
-
 ** DONE Edit mode line names
 In Emacs, depending on what type of file you visit or special buffers different modes may be active.
 The name of the modes, active in any buffer, are shown on the modeline.

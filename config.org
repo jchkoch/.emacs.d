@@ -69,7 +69,13 @@ Thereby ensuring that at the next launch of Emacs, new customisations are parsed
       (let ((configs "~/.emacs.d/config.el"))
         (when configs
           (delete-file configs))))
-    :hook (kill-emacs . jk/delete-emacs-init))
+    (defun jk/delete-emacs-custom-init()
+      (interactive)
+      (let ((configs "~/.emacs.d/custom.el"))
+        (when configs
+          (delete-file configs))))
+    :hook ((kill-emacs . jk/delete-emacs-init)
+           (kill-emacs . jk/delete-emacs-custom-init)))
 #+end_src
 
 ** DONE Edit mode line names
@@ -269,7 +275,6 @@ As my primary computer where I use Emacs is a laptop, it is convenient to includ
 
     Variable battery-mode-line-limit will hide the indicator if the value is above the declared threshold. 99 basically means "full". I use that instead of a 100 because sometimes the battery only ever fills up to 99.99, meaning that the indicator remains present at all times.
  #+end_quote
-
 
  #+begin_src emacs-lisp
    (use-package battery
@@ -536,6 +541,10 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
   (use-package python-mode
     :delight python-mode "PI"
     :mode "\\.py\\'")
+
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i --simple-prompt"
+        python-shell-prompt-detect-failure-warning nil)
 #+end_src
 
 *** DONE Python versions: Pyenv-mode
@@ -563,17 +572,11 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     (elpy-enable)
     :config
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (setq python-shell-interpreter "python"
-          python-shell-interpreter-args "-i"
-          python-shell-prompt-detect-failure-warning nil)
     :bind
     (:map elpy-mode-map
           ("C-M-n" . elpy-nav-forward-block)
           ("C-M-p" . elpy-nav-backward-block)))
 #+end_src
-
-#+RESULTS:
-: elpy-nav-backward-block
 
 *** DONE Company mode
 
@@ -588,7 +591,7 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     (setq company-backends
           '((company-files          ; files & directory
              company-keywords       ; keywords
-             company-capf)  ; completion-at-point-functions
+             company-capf)          ; completion-at-point-functions
             (company-abbrev company-dabbrev)
             )))
 
@@ -610,6 +613,17 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :ensure t
     :config
     (company-quickhelp-mode))
+#+end_src
+
+*** NEXT Python debugger
+
+#+begin_src emacs-lisp
+  (use-package realgud
+     :ensure t)
+
+  (use-package realgud-ipdb
+     :after realgud
+     :ensure t)
 #+end_src
 
 * TODO Applications and utilities
@@ -1074,6 +1088,17 @@ His agenda view customisations are pure Emacs gold.
                                 (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
                                 (org-agenda-sorting-strategy
                                  '(todo-state-down effort-up category-keep))))
+                    (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+                               ((org-agenda-overriding-header (concat "Standalone Tasks"
+                                                                      (if bh/hide-scheduled-and-waiting-next-tasks
+                                                                          ""
+                                                                        " (including WAITING and SCHEDULED tasks)")))
+                                (org-agenda-skip-function 'bh/skip-project-tasks)
+                                (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
+                                (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
+                                (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
+                                (org-agenda-sorting-strategy
+                                 '(category-keep))))
                     (tags-todo "-HOLD-CANCELLED/!"
                                ((org-agenda-overriding-header "Projects")
                                 (org-agenda-skip-function 'bh/skip-non-projects)
@@ -1086,17 +1111,6 @@ His agenda view customisations are pure Emacs gold.
                                                                           ""
                                                                         " (including WAITING and SCHEDULED tasks)")))
                                 (org-agenda-skip-function 'bh/skip-non-project-tasks)
-                                (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-                                (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-                                (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-                                (org-agenda-sorting-strategy
-                                 '(category-keep))))
-                    (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-                               ((org-agenda-overriding-header (concat "Standalone Tasks"
-                                                                      (if bh/hide-scheduled-and-waiting-next-tasks
-                                                                          ""
-                                                                        " (including WAITING and SCHEDULED tasks)")))
-                                (org-agenda-skip-function 'bh/skip-project-tasks)
                                 (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
                                 (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
                                 (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
@@ -1126,6 +1140,9 @@ His agenda view customisations are pure Emacs gold.
     :bind (("<f10>" . org-agenda)
            ("C-x h" . org-habit-toggle-habits)))
 #+end_src
+
+#+RESULTS:
+: org-habit-toggle-habits
 
 *** DONE Org time clocking
 **** DONE Custom clocking functions
@@ -1281,13 +1298,35 @@ His agenda view customisations are pure Emacs gold.
      'org-babel-load-languages (quote ((emacs-lisp . t)
                                        (shell . t)
                                        (latex . t)
-                                       (ditaa . t)
-                                       (python . t))))
+                                       (ditaa . t))))
+  ;;                                     (python . t)
+  ;;                                     (jupyter . t)
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2> c" . org-edit-src-code)
            ("<f2> x" . org-edit-src-exit)))
 #+end_src
+
+**** NEXT ob-ipython
+
+#+begin_src emacs-lisp
+  (use-package ob-ipython
+     :disabled
+     :load-path "dev-pkgs/ob-ipython"
+     :config
+     (setq python-shell-interpreter "ipython"))
+#+end_src
+
+#+RESULTS:
+: t
+
+**** NEXT emacs-jupyter
+
+#+begin_src emacs-lisp
+  (use-package jupyter)
+#+end_src
+
+#+RESULTS:
 
 *** DONE Org export
 Define all additional export backends.
@@ -1299,6 +1338,9 @@ Define beamer =LaTeX= class for presentations.
     :after org
     :config
     (setq org-export-backends '(ascii beamer html icalendar latex odt ipynb))
+    (add-to-list 'org-latex-packages-alist '("" "listings"))
+    (add-to-list 'org-latex-packages-alist '("" "color"))
+    (setq org-latex-listings t)
 
     (setq org-latex-pdf-process
           '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
@@ -1325,8 +1367,18 @@ Define beamer =LaTeX= class for presentations.
                       ("\\subsection{%s}" . "\\subsection*{%s}")
                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
+                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+    (eval-after-load "ox-latex"
+      '(add-to-list 'org-latex-classes
+                    '("svjour3"
+                      "\\documentclass{svjour3}"
+                      ("\\section{%s}" . "\\section*{%s}")
+                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 **** DONE Export org-mode to Jupyter notebooks
 

@@ -1,4 +1,4 @@
-#+TITLE: emacs configuration
+#+TITLE: Emacs configuration
 #+AUTHOR: J. C. Koch
 #+EMAIL: jchkoch@gmail.com
 
@@ -6,7 +6,7 @@
 ** DONE Links to this document
 | /HTML VERSION/ | [[https://jckoch.gitlab.com/dotemacs][jckoch.gitlab.com/dotemacs]] |
 | /GIT REPO/     | [[https://gitlab.com/jckoch/.emacs.d][gitlab.com/jckoch/.emacs.d]] |
-** DONE What is this
+** DONE What is this?
 This document contains the majority of my configurations for GNU Emacs and is known in this document as ~config.org~.
 It is designed using the principle of "literate programming" which combines the written language and inline code blocks.
 Emacs knows how to only evaluate the ~elisp~ (Emacs Lisp) code included herein while the written language is for humans to better understand the code and the underlying rationale of the developer.
@@ -14,13 +14,16 @@ Emacs knows how to only evaluate the ~elisp~ (Emacs Lisp) code included herein w
 Literate programming has the advantage of being more deliberate and explanatory than terse ~elisp~ scripts.
 This makes it useful for the purposes of sharing knowledge to all users of varying level of experience.
 This document itself is written in ~org-mode~ and contains all /package configurations/ for my Emacs setup.
-** DONE How to use this document
+** DONE How to use this document?
 This document assumes that a user has a basic familiarity with ~Emacs~ and specifically ~org-mode~.
 However, both novice and experienced users of ~Emacs~ should be able to find beneficial and practical uses of the present document.
 As with all things ~Emacs~, the user is encouraged to customise their configuration to suit their purposes.
 Therefore, it is encouraged that the user picks and chooses the ~elisp~ code presented herein which most appeals to them, discarding the rest which does not suit them.
+Two approaches can be used to pick and choose which you would like to keep and which to discard:
+1. Delete all the ~elisp~ code you do not want.
+2. Insert the code ~:disabled~ within the ~use-package pkg-name~ declarations or in instances where ~use-package~ is not used simply comment out the ~elisp~ code.
 This document and relevant additional files are available in a version controlled git repository for all to load into ~Emacs~.
-** DONE Where I run Emacs
+** DONE Where I run Emacs?
 My OS of choice is openSUSE Leap distribution of GNU/Linux.
 My Emacs is pre-packaged from my operating system.
 I decided to utilize the distribution provided Emacs package for the stability that is associated with not tracking the bleeding edge version contained in the Emacs source repository.
@@ -107,7 +110,9 @@ To maintain a clean and organized configuration, I prefer to have these automati
     (load custom-file))
 #+end_src
 
-* DONE Personal and security settings
+* DONE Personal and security settings           :user_config_required:
+The two setting configured here are personal to each user using this configuration and therefore must be configured by each user uniquely.
+
 ** DONE Default directory
 Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
 
@@ -115,8 +120,9 @@ Define the default directory for which =C=x C-f= starts the process of selecting
   (setq default-directory "/winc/jk/myLife/")
 #+end_src
 
-** REVIEW Authenticate source
+** DONE Authenticate source
 Package to remove sensitive data from this configuration to allow sharing on GitHub.
+This package is primarily needed to allow access to my passwords stored in the standard UNIX password manager which uses GPG encryption.
 
 #+begin_src emacs-lisp
   (use-package auth-source
@@ -185,19 +191,8 @@ A last note is that I disable the "hello file" function because it seems to be v
     (global-unset-key (kbd "C-h h")))
 #+end_src
 
-** DONE Themes that I use
-I tend to switch themes occasionally and so I make it as easy as possible for myself to do so.
-At the moment, I have switched to using the ~modus-vivendi~ theme developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
-
-#+begin_src emacs-lisp
-  (use-package emacs
-    :config
-    (setq custom-safe-themes t)
-    (set-default 'cursor-type 'bar))
-  ;  (load-theme 'tango-dark t))
-#+end_src
-
-*** DONE Install non-standard extra themes
+** DONE Install non-standard extra themes
+Ensure that the non-standard (custom) themes which I use are installed so that they may be loaded in this configuration and activated as the current theme.
 
 #+begin_src emacs-lisp
   (use-package modus-vivendi-theme
@@ -205,10 +200,20 @@ At the moment, I have switched to using the ~modus-vivendi~ theme developed by [
 
   (use-package modus-operandi-theme
     :ensure t)
+#+end_src
 
+** DONE Themes that I use
+I tend to switch themes occasionally and so I make it as easy as possible for myself to do so.
+At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
+
+The ~elisp~ code here simply allows Emacs to consider custom themes to be safe and allow these themes to be loaded and activated as the current theme.
+The cursor type is also modified to a *bar* not a /blinking box/.
+
+#+begin_src emacs-lisp
   (use-package emacs
     :config
     (setq custom-safe-themes t)
+    (set-default 'cursor-type 'bar)
 
     (defun prot/modus-operandi ()
       "Enable some Modus Operandi variables and load the theme.
@@ -543,23 +548,17 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :mode "\\.py\\'")
 
   (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i --simple-prompt"
-        python-shell-prompt-detect-failure-warning nil)
+        python-shell-interpreter-args "-i --simple-prompt")
 #+end_src
 
-*** DONE Python versions: Pyenv-mode
+*** DONE ob-ipython
+Set up for =ob-ipython= package. Here the "base" virtual environment of the anaconda python distribution is used by setting the =org-babel-python-command= to the location of the =ipython= executable (or symlink) of the anaconda python distribution.
 
 #+begin_src emacs-lisp
-  (use-package pyenv-mode
-    :ensure t)
-
-  (use-package pyvenv
-    :ensure t
-    :init
-    (add-to-list 'exec-path "~/.pyenv/shims")
-    (setenv "WORKON_HOME" "~/.pyenv/versions") ;; "/home/jkoch/anaconda3/envs/" ;; /miniconda3-latest/envs/
-    (pyvenv-mode 1)
-    :bind ("<f4>" . pyvenv-workon))
+  (use-package ob-ipython
+     :load-path "dev-pkgs/ob-ipython"
+     :config
+     (setq org-babel-python-command "ipython"))
 #+end_src
 
 *** DONE Python IDE: Elpy-mode
@@ -568,66 +567,13 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
   (use-package elpy
     :ensure t
     :init
-    (setq elpy-rpc-virtualenv-path "~/.pyenv/versions/default3")
-    (elpy-enable)
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    :bind
-    (:map elpy-mode-map
-          ("C-M-n" . elpy-nav-forward-block)
-          ("C-M-p" . elpy-nav-backward-block)))
+    (setq pyvenv-activate "/home/jkoch/anaconda3/envs/main")
+    (setq elpy-rpc-virtualenv-path 'current)
+    (elpy-enable))
 #+end_src
 
-*** DONE Company mode
-
-#+begin_src emacs-lisp
-  (use-package company
-    :ensure t
-    :delight company-mode
-    :init
-    (global-company-mode)
-    :config
-    ;; set default `company-backends'
-    (setq company-backends
-          '((company-files          ; files & directory
-             company-keywords       ; keywords
-             company-capf)          ; completion-at-point-functions
-            (company-abbrev company-dabbrev)
-            )))
-
-  (use-package company-statistics
-    :ensure t
-    :init
-    (company-statistics-mode))
-
-  (use-package company-web
-    :ensure t)
-
-  (use-package company-try-hard
-    :ensure t
-    :bind (("C-<tab>" . company-try-hard)
-           :map company-active-map
-           ("C-<tab>" . company-try-hard)))
-
-  (use-package company-quickhelp
-    :ensure t
-    :config
-    (company-quickhelp-mode))
-#+end_src
-
-*** NEXT Python debugger
-
-#+begin_src emacs-lisp
-  (use-package realgud
-     :ensure t)
-
-  (use-package realgud-ipdb
-     :after realgud
-     :ensure t)
-#+end_src
-
-* TODO Applications and utilities
-** TODO Org-Mode (getting things done)
+* DONE Applications and utilities
+** DONE Org-Mode (getting things done)
 To quote [[http://orgmode.org/][Carsten Dominik]],
 
 #+BEGIN_QUOTE
@@ -639,6 +585,7 @@ authoring documents with a fast and effective plain-text system.
 
 #+begin_src emacs-lisp
   (use-package org
+    :ensure org-plus-contrib
     :init
     (defun bh/verify-refile-target ()
       "Exclude todo keywords with a done state from refile targets"
@@ -664,69 +611,66 @@ authoring documents with a fast and effective plain-text system.
     ;; preview latex equations
     (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
     (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+    ;; get extra functionality (ignore headlines but export content)
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines))
     :bind (("C-c l" . org-insert-link)
            ("C-o" . org-open-at-point)
            ("<f9> I" . bh/punch-in)
            ("<f9> O" . bh/punch-out)
            ("<f9> SPC" . bh/clock-in-last-task)
            ("C-c d" . org-decrypt-entry)))
-
-  (use-package ox-extra
-    :after org
-    :config
-    (setq ox-extras-activate '(ignore-headlines))
-    (setq org-list-allow-alphabetical t))
 #+end_src
 
-**** REVIEW \TODO States
+*** DONE Org-todo states
 
-#+begin_src emacs-lisp
-  (use-package org
-    :config
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
-            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")))
+ #+begin_src emacs-lisp
+   (use-package org
+     :config
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "REVIEW(r)")
+             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")))
 
-    (setq org-todo-keyword-faces
-          '(("TODO" :foreground "#ff6666" :weight bold)
-            ("NEXT" :foreground "#6666ff" :weight bold)
-            ("DONE" :foreground "#32cd32" :weight bold)
-            ("REVIEW" :foreground "#ff0000" :weight bold)
-            ("WAITING" :foreground "#ffc966" :weight bold)
-            ("HOLD" :foreground "#ff66ff" :weight bold)
-            ("CANCELLED" :foreground "#32cd32" :weight bold)
-            ("MEETING" :foreground "#32cd32" :weight bold)
-            ("PHONE" :foreground "#32cd32" :weight bold)))
+     (setq org-todo-keyword-faces
+           '(("TODO" :foreground "#ff6666" :weight bold)
+             ("NEXT" :foreground "#6666ff" :weight bold)
+             ("DONE" :foreground "#32cd32" :weight bold)
+             ("REVIEW" :foreground "#ff0000" :weight bold)
+             ("WAITING" :foreground "#ffc966" :weight bold)
+             ("HOLD" :foreground "#ff66ff" :weight bold)
+             ("CANCELLED" :foreground "#32cd32" :weight bold)
+             ("MEETING" :foreground "#32cd32" :weight bold)
+             ("PHONE" :foreground "#32cd32" :weight bold)))
 
-    (setq org-use-fast-todo-selection t))
-#+end_src
+     (setq org-use-fast-todo-selection t))
+ #+end_src
 
-**** DONE Tag Configuration
+*** DONE Org-tag configuration
 
-#+begin_src emacs-lisp
-  (use-package org
-    :config
-    (setq org-todo-state-tags-triggers                              ; TODO state tag triggers
-          (quote (("CANCELLED" ("CANCELLED" . t))
-                  ("WAITING" ("WAITING" . t))
-                  ("HOLD" ("WAITING") ("HOLD" . t))
-                  (done ("WAITING") ("HOLD"))
-                  ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                  ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                  ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+ #+begin_src emacs-lisp
+   (use-package org
+     :config
+     (setq org-todo-state-tags-triggers                              ; TODO state tag triggers
+           (quote (("CANCELLED" ("CANCELLED" . t))
+                   ("WAITING" ("WAITING" . t))
+                   ("HOLD" ("WAITING") ("HOLD" . t))
+                   (done ("WAITING") ("HOLD"))
+                   ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                   ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                   ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-    (setq org-tags-column -70))                                     ; Tag placement
-#+end_src
+     (setq org-tags-column -70))                                     ; Tag placement
+ #+end_src
 
-**** DONE Org indent
+*** DONE Org indent
 
-#+begin_src emacs-lisp
-  (use-package org-indent
-    :after org
-    :delight
-    :config
-    (setq org-startup-indented t))
-#+end_src
+ #+begin_src emacs-lisp
+   (use-package org-indent
+     :after org
+     :delight
+     :config
+     (setq org-startup-indented t))
+ #+end_src
 
 *** DONE Org-capture templates
 When a new task occurs and needs to be added, org-capture allows me to easily capture it.
@@ -1298,35 +1242,15 @@ His agenda view customisations are pure Emacs gold.
      'org-babel-load-languages (quote ((emacs-lisp . t)
                                        (shell . t)
                                        (latex . t)
-                                       (ditaa . t))))
-  ;;                                     (python . t)
-  ;;                                     (jupyter . t)
+                                       (ledger . t)
+                                       (ditaa . t)
+                                       (python . t)
+                                       (ipython . t))))
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2> c" . org-edit-src-code)
            ("<f2> x" . org-edit-src-exit)))
 #+end_src
-
-**** NEXT ob-ipython
-
-#+begin_src emacs-lisp
-  (use-package ob-ipython
-     :disabled
-     :load-path "dev-pkgs/ob-ipython"
-     :config
-     (setq python-shell-interpreter "ipython"))
-#+end_src
-
-#+RESULTS:
-: t
-
-**** NEXT emacs-jupyter
-
-#+begin_src emacs-lisp
-  (use-package jupyter)
-#+end_src
-
-#+RESULTS:
 
 *** DONE Org export
 Define all additional export backends.
@@ -1374,11 +1298,15 @@ Define beamer =LaTeX= class for presentations.
                       "\\documentclass{svjour3}"
                       ("\\section{%s}" . "\\section*{%s}")
                       ("\\subsection{%s}" . "\\subsection*{%s}")
+                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+    (eval-after-load "ox-latex"
+      '(add-to-list 'org-latex-classes
+                    '("elsarticle"
+                      "\\documentclass{elsarticle}"
+                      ("\\section{%s}" . "\\section*{%s}")
+                      ("\\subsection{%s}" . "\\subsection*{%s}")
                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
 #+END_SRC
-
-#+RESULTS:
-: t
 
 **** DONE Export org-mode to Jupyter notebooks
 
@@ -1430,6 +1358,16 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-preamble my-html-preamble
              :html-postamble my-html-postamble
              )
+            ("org-navbar"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/navbar-templates"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
             ("org-blog"
              :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
              :base-extension "org"
@@ -1471,7 +1409,7 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org"
-             :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static")
+             :components ("org-index" "org-navbar" "org-blog" "org-publications" "org-portfolio" "org-static")
              )
             ("thesis-main"
              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
@@ -1585,21 +1523,6 @@ From John Kitchin. Downloaded (static) elisp file.
     (setq org-pomodoro-manual-break t)
     :bind ("<f7> p" . org-pomodoro))
 #+end_src
-
-*** TODO Org gmail sync
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-gcal
-    :disabled
-    :ensure t
-    :config
-    (setq client-id '(password-store-copy-field "org-gcal" "user"))
-    (setq client-secret '(password-store-copy-field "org-gcal" "secret"))
-    (setq org-gcal-client-id client-id
-          org-gcal-client-secret org-gcal-client-secret
-          org-gcal-file-alist '(("jchkoch@gmail.com" .  "/winc/jk/myLife/gmail-gcal.org")
-                                ("jckoch@ualberta.ca" . "/winc/jk/myLife/ualberta-gcal.org"))))
-#+END_SRC
 
 ** DONE \LaTeX documents
 

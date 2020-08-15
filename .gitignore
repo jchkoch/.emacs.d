@@ -40,3 +40,6 @@ srecode-map.el
 .cask/*   
 *.sqlite
 /company-statistics-cache.el
+/.cache/
+/.mc-lists.el
+/request/

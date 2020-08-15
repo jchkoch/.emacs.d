@@ -12,3 +12,8 @@ Ob-ipython uses additional functions from John Kitchin's scimax as a workaround 
 Clone the git repository on GitHub (https://github.com/jchkoch/.emacs.d.git).
 Modify all user specified file paths in the file "config.org".
 If not modified, Emacs may not load the configuration file properly.
+** Notes on the git repository
++ for a stable configuration follow the ~master~ branch
++ to develop the configuration use the ~devel~ branch
+  - any new configuration code first must be merged into the ~stable~ branch and used in my workflow for a few months to work out any bugs
+  - the ~master~ branch will remain *stable*

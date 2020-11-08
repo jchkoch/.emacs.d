@@ -1732,13 +1732,13 @@ Plain-text double-entry accounting program.
     :after ledger-mode)
 #+END_SRC
 
-** DONE octave mode (replacing matlab mode)
+** NEXT octave mode (replacing matlab mode)
 
 #+begin_src emacs-lisp
-  (use-package octave
-    :ensure t
-    :mode ("\\.m$" . octave-mode)
-    :commands run-octave)
+  ;; (use-package octave
+  ;;   :ensure t
+  ;;   :mode ("\\.m$" . octave-mode)
+  ;;   :commands run-octave)
 #+end_src
 
 ** DONE Try new packages

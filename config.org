@@ -57,6 +57,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, see <https://www.gnu.org/licenses/>.
 * DONE Base settings
+** DONE Disable GUI components
+Since I normally use the GUI variant of Emacs and yet I also prefer not to have any of the GUI elements that come with Emacs out-of-the-box.
+The only element which remains is the modeline which, of course, is not part of the GUI anyway...
+Additionally, the pair of keybindings to minimise and suspend the frame are disabled since I rarely minimise applications instead relying heavily on virtual desktops instead.
+A last note is that I disable the "hello file" function because it seems to be very slow to open in Emacs on my GNU/Linux system.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :init
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (tooltip-mode -1)
+    :config
+    (setq use-file-dialog nil)
+    (setq use-dialog-box t)         ; only for mouse events
+    (setq inhibit-splash-screen t)
+    (defalias 'yes-or-no-p 'y-or-n-p)
+    (global-visual-line-mode 1)
+    (global-unset-key (kbd "C-z"))
+    (global-unset-key (kbd "C-x C-z"))
+    (global-unset-key (kbd "C-h h")))
+#+end_src
+
 ** DONE Always rebuild init
 When Emacs expands this ~org-mode~ file into the actual ~elisp~ code, it tangles (i.e. combines) all the code blocks from ~config.org~ into a new file ~config.el~.
 Emacs then loads this new file when launched with the customisations in the state when this new file, ~config.el~, was written.
@@ -110,89 +134,9 @@ To maintain a clean and organized configuration, I prefer to have these automati
     (load custom-file))
 #+end_src
 
-* DONE Personal and security settings           :user_config_required:
-The two setting configured here are personal to each user using this configuration and therefore must be configured by each user uniquely.
-
-** DONE Default directory
-Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
-
-#+begin_src emacs-lisp
-  (setq default-directory "/winc/jk/myLife/")
-#+end_src
-
-** DONE Authenticate source
-Package to remove sensitive data from this configuration to allow sharing on GitHub.
-This package is primarily needed to allow access to my passwords stored in the standard UNIX password manager which uses GPG encryption.
-
-#+begin_src emacs-lisp
-  (use-package auth-source
-    :config
-    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
-    (setq user-full-name "James Koch")
-    (setq user-mail-address "jchkoch@gmail.com"))
-#+end_src
-
-* DONE Complete framework and extras
-** DONE Ivy mode
-#+BEGIN_QUOTE
-Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions.
-
--taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc.
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :delight
-    :init (ivy-mode 1)
-    :bind (("C-c C-r" . ivy-resume)
-           ("C-x B" . ivy-switch-buffer-other-window))
-    :config
-    (setq ivy-count-format "%d/%d")
-    (setq ivy-use-virtual-buffers t)
-    (setq org-refile-use-outline-path 'file
-          org-outline-path-complete-in-steps nil))
-#+END_SRC
-
-** DONE Ivy pass
-Ivy-pass is an interactive interface for password completion in Emacs for the Standard Unix Password Store. Ivy-pass uses the completion mechanism from Ivy for password completion.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy-pass
-    :after ivy
-    :delight
-    :bind (("C-c p" . ivy-pass))
-    :commands ivy-pass)
-#+END_SRC
-
-* DONE General interface and interactions
-This section contains configurations for aspects of the Emacs user interface.
-
-** DONE Disable GUI components
-Since I normally use the GUI variant of Emacs, I prefer not to have any of the GUI elements that come with it out-of-the-box.
-The only element which remains is the modeline which, of course, is not part of the GUI anyway...
-Additionally, the pair of keybindings to minimise and suspend the frame are disabled since I rarely minimise applications instead relying heavily on virtual desktops instead.
-A last note is that I disable the "hello file" function because it seems to be very slow to open in Emacs on my GNU/Linux system.
-
-#+begin_src emacs-lisp
-  (use-package emacs
-    :init
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
-    (tooltip-mode -1)
-    :config
-    (setq use-file-dialog nil)
-    (setq use-dialog-box t)         ; only for mouse events
-    (setq inhibit-splash-screen t)
-    (defalias 'yes-or-no-p 'y-or-n-p)
-    (global-visual-line-mode 1)
-    (global-unset-key (kbd "C-z"))
-    (global-unset-key (kbd "C-x C-z"))
-    (global-unset-key (kbd "C-h h")))
-#+end_src
-
-** DONE Install non-standard extra themes
-Ensure that the non-standard (custom) themes which I use are installed so that they may be loaded in this configuration and activated as the current theme.
+** DONE Themes that I use
+First ensure that the non-standard (custom) themes which I use are installed so that they may be loaded in this configuration and activated as the current theme.
+At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
 
 #+begin_src emacs-lisp
   (use-package modus-vivendi-theme
@@ -202,10 +146,7 @@ Ensure that the non-standard (custom) themes which I use are installed so that t
     :ensure t)
 #+end_src
 
-** DONE Themes that I use
-I tend to switch themes occasionally and so I make it as easy as possible for myself to do so.
-At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
-
+I also tend to switch themes between a light and dark theme and so I make it as easy as possible for myself to do so.
 The ~elisp~ code here simply allows Emacs to consider custom themes to be safe and allow these themes to be loaded and activated as the current theme.
 The cursor type is also modified to a *bar* not a /blinking box/.
 
@@ -400,6 +341,63 @@ This is a new package to me so I am still experimenting with it. I don't really 
     :commands jk/toggle-invisibles)
 #+end_src
 
+* DONE Personal and security settings           :user_config_required:
+The two setting configured here are personal to each user using this configuration and therefore must be configured by each user uniquely.
+
+** DONE Default directory
+Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
+
+#+begin_src emacs-lisp
+  (setq default-directory "/winc/jk/myLife/")
+#+end_src
+
+** DONE Authenticate source
+Package to remove sensitive data from this configuration to allow sharing on GitHub.
+This package is primarily needed to allow access to my passwords stored in the standard UNIX password manager which uses GPG encryption.
+
+#+begin_src emacs-lisp
+  (use-package auth-source
+    :config
+    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
+    (setq user-full-name "James Koch")
+    (setq user-mail-address "jchkoch@gmail.com"))
+#+end_src
+
+* DONE Complete framework and extras
+** DONE Ivy mode
+#+BEGIN_QUOTE
+Ivy is an interactive interface for completion in Emacs. Emacs uses completion mechanism in a variety of contexts: code, menus, commands, variables, functions, etc. Completion entails listing, sorting, filtering, previewing, and applying actions on selected items. When active, ivy-mode completes the selection process by narrowing available choices while previewing in the minibuffer. Selecting the final candidate is either through simple keyboard character inputs or through powerful regular expressions.
+
+-taken from Ivy User Manual Copyright (C) 2015-2018 Free Software Foundation, Inc.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :delight
+    :init (ivy-mode 1)
+    :bind (("C-c C-r" . ivy-resume)
+           ("C-x B" . ivy-switch-buffer-other-window))
+    :config
+    (setq ivy-count-format "%d/%d")
+    (setq ivy-use-virtual-buffers t)
+    (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil))
+#+END_SRC
+
+** DONE Ivy pass
+Ivy-pass is an interactive interface for password completion in Emacs for the Standard Unix Password Store. Ivy-pass uses the completion mechanism from Ivy for password completion.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-pass
+    :after ivy
+    :delight
+    :bind (("C-c p" . ivy-pass))
+    :commands ivy-pass)
+#+END_SRC
+
+* DONE General interface and interactions
+This section contains configurations for aspects of the Emacs user interface.
+
 ** DONE Language settings for prose and code
 *** DONE Recognize sub-words
 
@@ -415,7 +413,7 @@ I need spell checking for both English and German. Enable Flyspell Mode.
 If you keep your spell check personal dictionary in particular location, change this variable as desired.
 Some of this configuration is taken from Joel Kuiper (https://joelkuiper.eu/spellcheck_emacs) and some more from [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] including a user-defined function to easily switch using different dictionaries for different languages.
 
-Note: Using =aspell= as the dictionary will not work on Windows anymore as there is no windows binary which works with Emacs 26.1 and greater, therefore best practice is to switch to using =hunspell=.
+Note: Using =aspell= as the dictionary will not work on Windows anymore as there is *no Windows binary* which works with Emacs 26.1 and greater, therefore best practice is to switch to using =hunspell=.
 See link on how to do this for Windows [[https://lists.gnu.org/archive/html/help-gnu-emacs/2014-04/msg00030.html][here]] and for Linux simply go to your distribution and install it there.
 On GNU/Linux most likely you need to download extra dictionaries from [[https://github.com/wooorm/dictionaries][this link]] like for the German language.
 
@@ -458,13 +456,15 @@ On GNU/Linux most likely you need to download extra dictionaries from [[https://
     (defun jk/ispell-toggle-dictionaries ()
       "Toggle between English and German dictionaries."
       (interactive)
-      (if (string= ispell-current-dictionary "en_US")
-          (ispell-change-dictionary "de_DE-other")
-        (ispell-change-dictionary "en_US")))
+      (if (string= ispell-current-dictionary "en_CA-large")
+          (ispell-change-dictionary "de_DE")
+        (ispell-change-dictionary "en_CA-large")))
 
     :bind (("<f8>" . ispell-word)
            ("M-<f8>" . jk/ispell-toggle-dictionaries)))
 #+END_SRC
+
+characterise
 
 *** DONE Flycheck (code linting)
 
@@ -1731,15 +1731,6 @@ Plain-text double-entry accounting program.
   (use-package flycheck-ledger
     :after ledger-mode)
 #+END_SRC
-
-** NEXT octave mode (replacing matlab mode)
-
-#+begin_src emacs-lisp
-  ;; (use-package octave
-  ;;   :ensure t
-  ;;   :mode ("\\.m$" . octave-mode)
-  ;;   :commands run-octave)
-#+end_src
 
 ** DONE Try new packages
 A package to try out other interesting GNU Emacs packages without having to install the packages.

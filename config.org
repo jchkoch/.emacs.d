@@ -1311,8 +1311,11 @@ Define beamer =LaTeX= class for presentations.
 **** DONE Export org-mode to Jupyter notebooks
 
 #+begin_src emacs-lisp
-  (use-package ox-ipynb
-    :load-path "dev-pkgs/ox-ipynb")
+  ;;(use-package ox-ipynb
+  ;;  :load-path "dev-pkgs/ox-ipynb")
+
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/ox-ipynb")
+  (require 'ox-ipynb)
 #+end_src
 
 **** DONE Experimental Microsoft Word export

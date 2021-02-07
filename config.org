@@ -1665,6 +1665,16 @@ Set the Buffer List buffer as to default with "ibuffer".
            ("/ g" . ibuffer-filter-by-content)))
 #+END_SRC
 
+** DONE File utility: Dired
+Setup for Dired mode to use as a file utility manager.
+For example, turn on when using split panes that the default destination for copying files is the other open pane.
+
+#+begin_src emacs-lisp
+  (use-package dired
+     :config
+     (setq dired-dwim-target t))
+#+end_src
+
 ** DONE Git utility: Magit
 Set up Git version control from within Emacs using the package Magit.
 

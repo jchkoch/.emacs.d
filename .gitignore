@@ -43,3 +43,4 @@ srecode-map.el
 /.cache/
 /.mc-lists.el
 /request/
+/package-quickstart.el

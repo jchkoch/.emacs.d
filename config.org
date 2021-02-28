@@ -139,48 +139,22 @@ First ensure that the non-standard (custom) themes which I use are installed so 
 At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
 
 #+begin_src emacs-lisp
-  (use-package modus-vivendi-theme
-    :ensure t)
+  (use-package modus-themes
+    :ensure
+    :init
+    ;; Add all your customizations prior to loading the themes
+    (setq modus-themes-slanted-constructs t
+          modus-themes-bold-constructs nil)
 
-  (use-package modus-operandi-theme
-    :ensure t)
-#+end_src
-
-I also tend to switch themes between a light and dark theme and so I make it as easy as possible for myself to do so.
-The ~elisp~ code here simply allows Emacs to consider custom themes to be safe and allow these themes to be loaded and activated as the current theme.
-The cursor type is also modified to a *bar* not a /blinking box/.
-
-#+begin_src emacs-lisp
-  (use-package emacs
-    :config
-    (setq custom-safe-themes t)
+    ;; Set cursor type to a horizontal bar
     (set-default 'cursor-type 'bar)
 
-    (defun prot/modus-operandi ()
-      "Enable some Modus Operandi variables and load the theme.
-       This is used internally by `prot/modus-themes-toggle'."
-      (load-theme 'modus-operandi t))
-
-    (defun prot/modus-vivendi ()
-      "Enable some Modus Vivendi variables and load the theme.
-       This is used internally by `prot/modus-themes-toggle'."
-      (load-theme 'modus-vivendi t))
-
-    (defcustom prot/modus-themes-toggle-hook nil
-      "Hook that runs after `prot/modus-themes-toggle' is invoked."
-      :type 'hook)
-
-    (defun prot/modus-themes-toggle ()
-      "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'.
-       Also run `prot/modus-themes-toggle-hook'."
-      (interactive)
-      (if (eq (car custom-enabled-themes) 'modus-operandi)
-          (prot/modus-vivendi)
-        (prot/modus-operandi))
-      (run-hooks 'prot/modus-themes-toggle-hook))
-
-    :bind ("<f5>" . prot/modus-themes-toggle)
-    :hook (after-init . prot/modus-operandi))
+    ;; Load the theme files before enabling a theme
+    (modus-themes-load-themes)
+    :config
+    ;; Load the theme of your choice:
+    (modus-themes-load-operandi) ;; OR (modus-themes-load-vivendi)
+    :bind ("<f5>" . modus-themes-toggle))
 #+end_src
 
 *** DONE Mode line

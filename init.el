@@ -27,7 +27,7 @@
 (require 'package)
 
 (add-to-list 'package-archives
-             '("melpa"        . "https://melpa.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
 
 ;; (package-initialize)
 
@@ -58,18 +58,21 @@
   :config
   (setq vc-follow-symlinks t)) ; Because my dotfiles are managed that way
 
+;; Some basic settings
+(setq default-input-method "german-postfix") 
+
 ;; For my custom libraries
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;; since Emacs 27.1
-(let* ((conf "~/.emacs.d/config")
-       (el (concat conf ".el"))
-       (org (concat conf ".org")))
-  (if (file-exists-p el)
-      (load-file el)
-    (use-package org)
-    (org-babel-load-file org)))
+; (let* ((conf "~/.emacs.d/config")
+;        (el (concat conf ".el"))
+;        (org (concat conf ".org")))
+;   (if (file-exists-p el)
+;       (load-file el)
+;     (use-package org)
+;     (org-babel-load-file org)))
 
 ;; prior to Emacs 27.1
 ;; Load my Org configuration file
-;(org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
+(org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))

@@ -153,7 +153,7 @@ At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~
     (modus-themes-load-themes)
     :config
     ;; Load the theme of your choice:
-    (modus-themes-load-operandi) ;; OR (modus-themes-load-vivendi)
+    (modus-themes-load-vivendi) ;; OR (modus-themes-load-vivendi)
     :bind ("<f5>" . modus-themes-toggle))
 #+end_src
 
@@ -317,12 +317,10 @@ This is a new package to me so I am still experimenting with it. I don't really 
 
 * DONE Personal and security settings           :user_config_required:
 The two setting configured here are personal to each user using this configuration and therefore must be configured by each user uniquely.
-
-** DONE Default directory
-Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
+Personal user information is loaded through the file ~personal.org~.
 
 #+begin_src emacs-lisp
-  (setq default-directory "/winc/jk/myLife/")
+  (org-babel-load-file (expand-file-name "~/.emacs.d/personal.org"))
 #+end_src
 
 ** DONE Authenticate source
@@ -332,9 +330,7 @@ This package is primarily needed to allow access to my passwords stored in the s
 #+begin_src emacs-lisp
   (use-package auth-source
     :config
-    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
-    (setq user-full-name "James Koch")
-    (setq user-mail-address "jchkoch@gmail.com"))
+    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo")))
 #+end_src
 
 * DONE Complete framework and extras
@@ -541,8 +537,8 @@ Set up for =ob-ipython= package. Here the "base" virtual environment of the anac
   (use-package elpy
     :ensure t
     :init
-    (setq pyvenv-activate "/home/jkoch/anaconda3/envs/main")
-    (setq elpy-rpc-virtualenv-path 'current)
+    (setq elpy-rpc-python-command "python3")
+    (setq elpy-rpc-virtualenv "/winc/jk/programming/python/default-env")
     (elpy-enable))
 #+end_src
 

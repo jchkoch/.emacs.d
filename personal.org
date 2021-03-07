@@ -1,4 +1,3 @@
-# -*- buffer-auto-save-file-name: nil; -*-
 #+TITLE: Emacs Configuration
 #+SUBTITLE: Part I (Personal Information)
 #+AUTHOR: J. C. Koch
@@ -17,7 +16,9 @@ Set a user name and email address for Emacs to use if needed.
 : jckoch@ualberta.ca
 
 * Set default Emacs directory
-Change the default directory that emacs opens in to fit your needs.
+Change the default directory that emacs opens in to fit your needs. 
+Define the default directory for which =C=x C-f= starts the process of selecting a file to open with as well as defining a directory from which to load the ~org-agenda~.
+
 
 #+begin_src emacs-lisp
 (setq default-directory "/winc/jk/myLife/")
@@ -26,7 +27,7 @@ Change the default directory that emacs opens in to fit your needs.
 #+RESULTS:
 : /winc/jk/myLife/
 
-* Emacs Appearance & Themes
+* COMMENT Emacs Appearance & Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.
 

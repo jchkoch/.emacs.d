@@ -1353,8 +1353,6 @@ From John Kitchin. Downloaded (static) elisp file.
      (setq org-html-head-include-default-style nil)
      (setq org-html-preamble-format '(("en" "")))
 
-     (setq base-directory "/winc/jk/website/jckoch.gitlab.io/") ;; USER SPECIFIC
-
      ;; Header html files which could be common for all pages; however, have not gotten to work
      ;; instead I use in each org-mode source file a '#+INCLUDE: navbar-templates/navbar-index.org'
      ;; to include the desired HTML navigation bar. I choose this method as I wanted more flexibility

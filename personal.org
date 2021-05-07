@@ -21,11 +21,15 @@ Define the default directory for which =C=x C-f= starts the process of selecting
 
 
 #+begin_src emacs-lisp
-(setq default-directory "/winc/jk/myLife/")
+  (setq default-directory "/winc/jk/myLife/")
 #+end_src
 
-#+RESULTS:
-: /winc/jk/myLife/
+* Set base directory for publishing my personal website
+Set the base directory containing the source and local publish files for my personal website.
+
+#+begin_src emacs-lisp
+  (setq base-directory "/winc/jk/website/jckoch.gitlab.io/")
+#+end_src
 
 * COMMENT Emacs Appearance & Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 

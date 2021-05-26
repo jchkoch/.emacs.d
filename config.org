@@ -1337,127 +1337,190 @@ From John Kitchin. Downloaded (static) elisp file.
 *** DONE Org html publishing
 
 #+begin_src emacs-lisp
-   (use-package ox
-     :after org
-     :init
-     (defun my-html-preamble (arg)
-       (with-temp-buffer
-         (insert-file-contents my-blog-header-file)
-         (buffer-string)))
-     (defun my-html-postamble (arg)
-       (with-temp-buffer
-         (insert-file-contents my-blog-footer-file)
-         (buffer-string)))
-     :config
-     (setq org-publish-use-timestamps-flag t)
-     (setq org-html-head-include-default-style nil)
-     (setq org-html-preamble-format '(("en" "")))
+  (use-package ox
+    :after org
+    :init
+    (defun my-html-preamble (arg)
+      (with-temp-buffer
+        (insert-file-contents my-blog-header-file)
+        (buffer-string)))
+    (defun my-html-postamble (arg)
+      (with-temp-buffer
+        (insert-file-contents my-blog-footer-file)
+        (buffer-string)))
+    :config
+    (setq org-publish-use-timestamps-flag t)
+    (setq org-html-head-include-default-style nil)
+    (setq org-html-preamble-format '(("en" "")))
 
-     ;; Header html files which could be common for all pages; however, have not gotten to work
-     ;; instead I use in each org-mode source file a '#+INCLUDE: navbar-templates/navbar-index.org'
-     ;; to include the desired HTML navigation bar. I choose this method as I wanted more flexibility
-     ;; as to the format of the header/navigation bar on different parts of the website.
-     (setq my-blog-header-file (concat base-directory "src/html-templates/level-0-header.html"))
-     (setq  my-blog-footer-file (concat base-directory "src/html-templates/level-0-footer.html"))
+    ;; Header html files which could be common for all pages; however, have not gotten to work
+    ;; instead I use in each org-mode source file a '#+INCLUDE: navbar-templates/navbar-index.org'
+    ;; to include the desired HTML navigation bar. I choose this method as I wanted more flexibility
+    ;; as to the format of the header/navigation bar on different parts of the website.
+    (setq my-blog-header-file (concat base-directory "src/html-templates/header.html"))
+    (setq  my-blog-footer-file (concat base-directory "src/html-templates/footer.html"))
 
-     (setq org-publish-project-alist
-           '(
-             ("org-index"
-              :base-directory (concat base-directory "/src") ;; or specify full path as string
-              :base-extension "org"
-              :publishing-directory (concat base-directory "public_html")
-              :recursive nil
-              :publishing-function org-html-publish-to-html
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org-navbar"
-              :base-directory (concat base-directory "src/navbar-templates")
-              :base-extension "org"
-              :publishing-directory (concat base-directory "public_html/navbar-templates")
-              :recursive nil
-              :publishing-function org-html-publish-to-html
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org-blog"
-              :base-directory (concat base-directory "src/blog")
-              :base-extension "org"
-              :publishing-directory (concat base-directory "public_html/blog")
-              :recursive t
-              :publishing-function org-html-publish-to-html
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org-portfolio"
-              :base-directory (concat base-directory "src/portfolio")
-              :base-extension "org"
-              :publishing-directory (concat base-directory "public_html/portfolio")
-              :recursive t
-              :publishing-function org-html-publish-to-html
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org-publications"
-              :base-directory (concat base-directory "src/publications"
-              :base-extension "org"
-              :publishing-directory (concat base-directory "public_html/publications")
-              :recursive nil
-              :publishing-function org-html-publish-to-html
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org-static"
-              :base-directory (concat base-directory "src/")
-              :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
-              :publishing-directory (concat base-directory "public_html/")
-              :recursive t
-              :publishing-function org-publish-attachment
-              :htmlized-source t
-              :html-preamble my-html-preamble
-              :html-postamble my-html-postamble
-              )
-             ("org"
-              :components ("org-index" "org-navbar" "org-blog" "org-publications" "org-portfolio" "org-static")
+    (setq org-publish-project-alist
+          '(
+            ("org-index"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src" ;; specify full path as string
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
              )
-             ("thesis-main"
-              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
-              :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish"
-              :publishing-function org-latex-publish-to-latex
-              :body-only nil
-              :make-index nil
-              )
-             ("thesis-include"
-              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
-              :base-extension "tex"
-              :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
-              :recursive t
-              :publishing-function org-publish-attachment
-              :body-only t
-              :make-index nil
-              )
-             ("thesis-chapters"
-              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
-              :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
-              :publishing-function org-latex-publish-to-latex
-              :body-only t
-              :make-index nil
-              )
-             ("thesis-figure"
-              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/figure"
-              :base-extension "png\\|jpg\\|gif\\|pdf"
-              :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/figure"
-              :recursive t
-              :publishing-function org-publish-attachment
-              )
-             ("thesis"
-              :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure")
-              )))))
+            ("org-navbar"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/navbar-templates"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/navbar-templates"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-blog"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-portfolio"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/portfolio"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/portfolio"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-publications"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-static"
+             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
+             :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
+             :recursive t
+             :publishing-function org-publish-attachment
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org"
+             :components ("org-index" "org-navbar" "org-blog" "org-publications" "org-portfolio" "org-static")
+            )
+            ("org-index-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src" ;; or specify full path as string
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-navbar-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/navbar-templates"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/navbar-templates"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-blog-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/blog"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/blog"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-portfolio-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/portfolio"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/portfolio"
+             :recursive t
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-publications-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/publications"
+             :base-extension "org"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/publications"
+             :recursive nil
+             :publishing-function org-html-publish-to-html
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-static-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/"
+             :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/"
+             :recursive t
+             :publishing-function org-publish-attachment
+             :htmlized-source t
+             :html-preamble my-html-preamble
+             :html-postamble my-html-postamble
+             )
+            ("org-crkoch"
+             :components ("org-index-crkoch" "org-navbar-crkoch" "org-blog-crkoch" "org-publications-crkoch" "org-portfolio-crkoch" "org-static-crkoch")
+            )
+            ("thesis-main"
+             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
+             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish"
+             :publishing-function org-latex-publish-to-latex
+             :body-only nil
+             :make-index nil
+             )
+            ("thesis-include"
+             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
+             :base-extension "tex"
+             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
+             :recursive t
+             :publishing-function org-publish-attachment
+             :body-only t
+             :make-index nil
+             )
+            ("thesis-chapters"
+             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
+             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
+             :publishing-function org-latex-publish-to-latex
+             :body-only t
+             :make-index nil
+             )
+            ("thesis-figure"
+             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/figure"
+             :base-extension "png\\|jpg\\|gif\\|pdf"
+             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/figure"
+             :recursive t
+             :publishing-function org-publish-attachment
+             )
+            ("thesis"
+             :components ("thesis-main" "thesis-include" "thesis-chapters" "thesis-figure")
+             ))))
 #+end_src
 
 *** DONE Org \LaTeX Mode

@@ -361,7 +361,9 @@ Ivy-pass is an interactive interface for password completion in Emacs for the St
   (use-package ivy-pass
     :after ivy
     :delight
-    :bind (("C-c p" . ivy-pass))
+    :bind (("C-c p p" . ivy-pass)
+           ("C-c p f" . password-store-copy-field)
+           ("C-c p p" . password-store-copy))
     :commands ivy-pass)
 #+END_SRC
 

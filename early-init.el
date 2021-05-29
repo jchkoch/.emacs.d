@@ -46,3 +46,5 @@
 (setq inhibit-startup-echo-area-message "jkoch") ; read the docstring
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-buffer-menu t)
+
+;;; early-init.el ends here

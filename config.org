@@ -597,7 +597,7 @@ authoring documents with a fast and effective plain-text system.
 
 #+begin_src emacs-lisp
   (use-package org
-    :ensure org-plus-contrib
+    :ensure org-contrib
     :init
     (defun bh/verify-refile-target ()
       "Exclude todo keywords with a done state from refile targets"

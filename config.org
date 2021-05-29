@@ -1632,18 +1632,6 @@ From John Kitchin. Downloaded (static) elisp file.
     (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1))))
 #+end_src
 
-** REVIEW Spaced repetition language learning
-
-- State "REVIEW"     from "WAITING"    [2021-02-27 Sat 23:17]
-#+begin_src emacs-lisp
-  ;;(use-package pamparam
-  ;;  :ensure t
-  ;;  :config
-  ;;  (setq pamparam-path "/winc/jk/languagelearning/sverige/pamparamRepo/sverige.pam")
-  ;;  (setq pamparam-alist '(("/winc/jk/languagelearning/sverige/pamparamRepo/sverige.org"
-  ;;                          . "/winc/jk/languagelearning/sverige/pamparamRepo/sverige.pam"))))
-#+end_src
-
 ** DONE Undo and redo utility
 Package improves undo/redo commands within Emacs. Note that custom key binding for undo "C-z" replaces (removes) normal command to minimize the Emacs window.
 

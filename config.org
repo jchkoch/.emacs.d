@@ -523,12 +523,15 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
         python-shell-interpreter-args "-i --simple-prompt")
 #+end_src
 
-*** DONE ob-ipython
+*** CANCELLED ob-ipython                                 :CANCELLED:
+- State "CANCELLED"  from              [2021-05-29 Sat 23:25] \\
+  is no longer an option
 Set up for =ob-ipython= package. Here the "base" virtual environment of the anaconda python distribution is used by setting the =org-babel-python-command= to the location of the =ipython= executable (or symlink) of the anaconda python distribution.
 
 #+begin_src emacs-lisp
   (use-package ob-ipython
-     :load-path "dev-pkgs/ob-ipython"
+    :disabled
+    :load-path "dev-pkgs/ob-ipython"
      :config
      (setq org-babel-python-command "ipython"))
 #+end_src
@@ -1253,8 +1256,7 @@ His agenda view customisations are pure Emacs gold.
                                        (latex . t)
                                        (ledger . t)
                                        (ditaa . t)
-                                       (python . t)
-                                       (ipython . t))))
+                                       (python . t))))
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2> c" . org-edit-src-code)

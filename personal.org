@@ -31,6 +31,13 @@ Set the base directory containing the source and local publish files for my pers
   (setq base-directory "/winc/jk/website/jckoch.gitlab.io/")
 #+end_src
 
+* Set path to git executable
+Only required under Windows.
+
+#+begin_src emacs-lisp
+  (setq git-executable "")
+#+end_src
+
 * COMMENT Emacs Appearance & Themes
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.

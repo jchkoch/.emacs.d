@@ -1747,7 +1747,10 @@ Set up Git version control from within Emacs using the package Magit.
 
 #+begin_src emacs-lisp
   (use-package magit
-    :bind (("C-x g" . magit-status)))
+    :init (cond
+           ((eq system-type 'windows-nt)
+            (setq magit-git-executable git-executable)))
+     :bind (("C-x g" . magit-status)))
 #+end_src
 
 #+begin_src emacs-lisp

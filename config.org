@@ -1710,6 +1710,14 @@ For example, turn on when using split panes that the default destination for cop
      (setq dired-dwim-target t))
 #+end_src
 
+** NEXT File utility: Sunrise-Commander
+A implementation of the Midnight Commander in Emacs.
+
+#+begin_src emacs-lisp
+  (use-package sunrise
+    :load-path "~/.emacs.d/dev-pkgs/sunrise-commander/")
+#+end_src
+
 ** DONE Git utility: Magit
 Set up Git version control from within Emacs using the package Magit.
 
@@ -1780,7 +1788,7 @@ Plain-text double-entry accounting program.
     :after ledger-mode)
 #+END_SRC
 
-** NEXT RSS Feed Reader: Elfeed
+** DONE RSS Feed Reader: Elfeed
 
 #+begin_src emacs-lisp
   (use-package elfeed

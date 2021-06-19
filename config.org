@@ -145,10 +145,19 @@ At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~
     ;; Add all your customizations prior to loading the themes
     (setq modus-themes-slanted-constructs t
           modus-themes-bold-constructs nil)
-
+  
     ;; Set cursor type to a horizontal bar
     (set-default 'cursor-type 'bar)
-
+  
+    ;; Main typeface
+    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 110)
+  
+    ;; Proportionately spaced typeface
+    (set-face-attribute 'variable-pitch nil :family "DejaVu Serif" :height 1.0)
+  
+    ;; Monospaced typeface
+    (set-face-attribute 'fixed-pitch nil :family "DejaVu Sans Mono" :height 1.0)
+  
     ;; Load the theme files before enabling a theme
     (modus-themes-load-themes)
     :config
@@ -156,6 +165,11 @@ At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~
     (modus-themes-load-vivendi) ;; OR (modus-themes-load-vivendi)
     :bind ("<f5>" . modus-themes-toggle))
 #+end_src
+
+Regarding the typeface configuration it is taken directly from the dotemacs configuration of [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
+#+begin_quote
+Note the differences in the :height property. The default face must specify an absolute value, which is the point size × 10. So if you want to use a font at point size 11, you set the height to 110.1 Whereas every other face must have a value that is relative to the default, represented as a floating point (if you use an integer, then that means an absolute height). This is of paramount importance: it ensures that all fonts can scale gracefully when using something like the text-scale-adjust command which only operates on the base font size (i.e. the default face’s absolute height). 
+#+end_quote
 
 *** DONE Mode line
 

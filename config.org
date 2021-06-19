@@ -1780,6 +1780,24 @@ Plain-text double-entry accounting program.
     :after ledger-mode)
 #+END_SRC
 
+** NEXT RSS Feed Reader: Elfeed
+
+#+begin_src emacs-lisp
+  (use-package elfeed
+    :config
+    (setq elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory)
+          elfeed-show-entry-switch 'display-buffer)
+    :bind
+    ("C-x w" . elfeed ))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package elfeed-org
+    :config
+    (setq elfeed-show-entry-switch 'display-buffer)
+    (setq rmh-elfeed-org-files (list (concat default-directory "professional.org"))))
+#+end_src
+
 ** DONE Try new packages
 A package to try out other interesting GNU Emacs packages without having to install the packages.
 

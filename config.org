@@ -603,6 +603,9 @@ authoring documents with a fast and effective plain-text system.
       "Exclude todo keywords with a done state from refile targets"
       (not (member (nth 2 (org-heading-components)) org-done-keywords)))
     :config
+    ;; open org files folded
+    (setq org-startup-folded t)
+    ;; src blk templates
     (setq org-structure-template-alist
           '(("s" . "src")
             ("x" . "export latex")
@@ -1362,15 +1365,6 @@ From John Kitchin. Downloaded (static) elisp file.
              :htmlized-source t
              :html-postamble t
              )
-            ("org-navbar"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/navbar-templates"
-             :base-extension "org"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/navbar-templates"
-             :recursive nil
-             :publishing-function org-html-publish-to-html
-             :htmlized-source t
-             :html-postamble t
-             )
             ("org-blog"
              :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
              :base-extension "org"
@@ -1408,7 +1402,7 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble t
              )
             ("org"
-             :components ("org-index" "org-navbar" "org-blog" "org-publications" "org-portfolio" "org-static")
+             :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static")
             )
             ("org-index-crkoch"
              :base-directory "/winc/jk/website/crkoch-ualberta-website/src" ;; or specify full path as string
@@ -1420,30 +1414,20 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-preamble my-html-preamble
              :html-postamble my-html-postamble
              )
-            ("org-navbar-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/navbar-templates"
+            ("org-research-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/research"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/navbar-templates"
-             :recursive nil
-             :publishing-function org-html-publish-to-html
-             :htmlized-source t
-             :html-preamble my-html-preamble
-             :html-postamble my-html-postamble
-             )
-            ("org-blog-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/blog"
-             :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/blog"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/research"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
              :html-preamble my-html-preamble
              :html-postamble my-html-postamble
              )
-            ("org-portfolio-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/portfolio"
+            ("org-teaching-crkoch"
+             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/teaching"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/portfolio"
+             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/teaching"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
@@ -1471,7 +1455,7 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org-crkoch"
-             :components ("org-index-crkoch" "org-navbar-crkoch" "org-blog-crkoch" "org-publications-crkoch" "org-portfolio-crkoch" "org-static-crkoch")
+             :components ("org-index-crkoch" "org-research-crkoch" "org-publications-crkoch" "org-teaching-crkoch" "org-static-crkoch")
             )
             ("thesis-main"
              :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"

@@ -525,48 +525,14 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :hook (before-save . delete-trailing-whitespace))
 #+end_src
 
-** DONE Coding settings and completions
-*** DONE Python mode
+** TODO Coding settings and completions
+*** NEXT Python mode
 
 #+begin_src emacs-lisp
   (use-package python-mode
     :delight python-mode "PI"
-    :mode "\\.py\\'"
-    :init
-    (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i --simple-prompt"))
+    :mode "\\.py\\'")
 #+end_src
-
-*** DONE Elpy-Mode
-
-#+begin_src emacs-lisp
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable)
-    :config
-    (setq elpy-rpc-python-command "python3")
-    (setq elpy-rpc-virtualenv-path 'system))
-#+end_src
-
-*** DONE ob-ipython
-
-#+begin_src emacs-lisp
-  (use-package ob-ipython
-    :ensure t
-    :config
-    (setq ob-ipython-suppress-execution-count t))
-#+end_src
-
-#+begin_src emacs-lisp
-  (require 'lispy)
-  (add-to-list 'load-path "/home/jkoch/emacs-configs/scimax/.emacs.d")
-  (require 'scimax-org-babel-ipython-upstream)
-  (setq ob-ipython-execution-count 'ob-ipython-execution-count-suppress)
-#+end_src
-
-#+RESULTS:
-: ob-ipython-execution-count-suppress
 
 * DONE Applications and utilities
 ** DONE Org-Mode (getting things done)

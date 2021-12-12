@@ -63,7 +63,7 @@
   (setq vc-follow-symlinks t)) ; Because my dotfiles are managed that way
 
 ;; Some basic settings
-(setq default-input-method "german-postfix") 
+(setq default-input-method "german-postfix")
 
 ;; For my custom libraries
 (add-to-list 'load-path "~/.emacs.d/lisp")

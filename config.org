@@ -381,7 +381,7 @@ Ivy-pass is an interactive interface for password completion in Emacs for the St
     :commands ivy-pass)
 #+END_SRC
 
-* DONE General interface and interactions
+* TODO General interface and interactions
 This section contains configurations for aspects of the Emacs user interface.
 
 ** DONE Language settings for prose and code
@@ -449,8 +449,6 @@ On GNU/Linux most likely you need to download extra dictionaries from [[https://
     :bind (("<f8>" . ispell-word)
            ("M-<f8>" . jk/ispell-toggle-dictionaries)))
 #+END_SRC
-
-characterise
 
 *** DONE Flycheck (code linting)
 
@@ -529,9 +527,37 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
 *** NEXT Python mode
 
 #+begin_src emacs-lisp
-  (use-package python-mode
+  (use-package python-mode 
     :delight python-mode "PI"
-    :mode "\\.py\\'")
+    :mode "\\.py\\'"
+    :init (setq python-shell-interpreter "python3"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun set-exec-path-from-shell-PATH ()
+    "Set up Emacs' `exec-path' and PATH environment variable to match 
+     that used by the user's shell.
+     This is particularly useful under Mac OS X and macOS, where GUI
+     apps are not started from a shell."
+  
+    (interactive)
+    (let ((path-from-shell (replace-regexp-in-string
+                            "[ \t\n]*$" "" (shell-command-to-string
+                                            "$SHELL --login -c 'echo $PATH'"
+                                            ))))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+  
+  (set-exec-path-from-shell-PATH)
+#+end_src
+
+*** NEXT elpy-mode
+
+#+begin_src emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init (elpy-enable)
+          (setq elpy-rpc-python-command "python3"))
 #+end_src
 
 * DONE Applications and utilities
@@ -1755,3 +1781,4 @@ A package to try out other interesting GNU Emacs packages without having to inst
   (use-package try
     :ensure t)
 #+END_SRC
+ 

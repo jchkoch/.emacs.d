@@ -21,7 +21,8 @@ Define the default directory for which =C=x C-f= starts the process of selecting
 
 
 #+begin_src emacs-lisp
-  (setq default-directory "/winc/jk/myLife/")
+  (setq default-directory "/wind/jk/myLife/")
+  (setq org-directory "/wind/jk/myLife/")
 #+end_src
 
 * Set base directory for publishing my personal website

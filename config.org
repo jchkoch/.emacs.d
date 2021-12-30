@@ -551,13 +551,13 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
   (set-exec-path-from-shell-PATH)
 #+end_src
 
-*** NEXT elpy-mode
+*** TODO elpy-mode                                        :disabled:
 
 #+begin_src emacs-lisp
-  (use-package elpy
-    :ensure t
-    :init (elpy-enable)
-          (setq elpy-rpc-python-command "python3"))
+  ;; (use-package elpy
+  ;;   :ensure t
+  ;;   :init (elpy-enable)
+  ;;         (setq elpy-rpc-python-command "python3"))
 #+end_src
 
 * DONE Applications and utilities
@@ -1074,9 +1074,6 @@ His agenda view customisations are pure Emacs gold.
     :bind (("<f10>" . org-agenda)
            ("C-x h" . org-habit-toggle-habits)))
 #+end_src
-
-#+RESULTS:
-: org-habit-toggle-habits
 
 *** DONE Org time clocking
 **** DONE Custom clocking functions

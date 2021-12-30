@@ -1746,7 +1746,8 @@ Plain-text double-entry accounting program.
                 (setq-local tab-always-indent 'complete)
                 (setq-local completion-cycle-threshold t)
                 (setq-local ledger-complete-in-steps t)
-                (setq-local (ledger-clear-whole-transactions t)))))
+                (setq-local (ledger-clear-whole-transactions t))))
+    (setq ledger-post-amount-alignment-column '72))
 
   (use-package flycheck-ledger
     :after ledger-mode)

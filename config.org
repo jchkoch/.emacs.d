@@ -1520,6 +1520,39 @@ From John Kitchin. Downloaded (static) elisp file.
 #+END_SRC
 
 ** DONE View pdf documents
+#+begin_quote
+PDF Tools is, among other things, a replacement of DocView for PDF
+files.  The key difference is that pages are not pre-rendered by
+e.g. ghostscript and stored in the file-system, but rather created
+on-demand and stored in memory.
+
+This rendering is performed by a special library named, for
+whatever reason, poppler, running inside a server program.  This
+program is called ~epdfinfo~ and its job is to successively
+read requests from Emacs and produce the proper results, i.e. the
+PNG image of a PDF page.
+
+Actually, displaying PDF files is just one part of PDF Tools.
+Since poppler can provide us with all kinds of information about a
+document and is also able to modify it, there is a lot more we can
+do with it. [[http://www.dailymotion.com/video/x2bc1is_pdf-tools-tourdeforce_tech?forcedQuality%3Dhd720][Watch]]
+#+end_quote
+/--from  [[https://github.com/politza/pdf-tools/blob/master/README.org][pdf-tools GitHub Repository]]/
+
+It should be noted in order for the program ~epdfinfo~ to be built and installed the following packages needed to be installed on the system where Emacs is installed. For convenience the following shell script is provided for the OS ~openSUSE~.
+
+#+name: sh-script-pdf-tool-dependencies
+#+begin_src sh
+  su  # start a root session (beware of the dangers of running commands as the root user
+
+  zypper in autoconf automake gcc gcc-c++  # installation of basic linux utilities i.e. GNU C Compiler etc.
+
+  zypper in libpng16-devel zlib-devel libpoppler-glib-devel  # hard dependencies for pdf-tools
+#+end_src
+
+Note compared to the [[https://github.com/politza/pdf-tools/blob/master/README.org][README of the pdf-tool package]] that the dependencies are named slightly differently for the OS ~openSUSE~. For example, the endings of the package names for ~openSUSE~ are =-devel= not =-dev= and the =zlib1g-dev= package is named =zlib-devel= on ~openSUSE~. Additionally, the [[sh-script-pdf-tool-dependencies][script above]] requires ~openSUSE Leap 15.3~ running ~Emacs 27.2~. The package names may vary on older versions of ~openSUSE~.
+
+The following configuration sets up the usage of ~pdf-tools~.
 
 #+begin_src emacs-lisp
   (use-package pdf-tools

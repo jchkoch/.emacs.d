@@ -72,10 +72,11 @@ A last note is that I disable the "hello file" function because it seems to be v
     (tooltip-mode -1)
     :config
     (setq use-file-dialog nil)
-    (setq use-dialog-box t)         ; only for mouse events
+    (setq use-dialog-box t)            ; only for mouse events
     (setq inhibit-splash-screen t)
     (defalias 'yes-or-no-p 'y-or-n-p)
-    (global-visual-line-mode 1)
+    (global-visual-line-mode 1)        ; 1=visual line mode on everywhere; 0=visual line mode off
+    (global-linum-mode 0)              ; 1=turn on line numbers everywhere; 0=no line numbers by default
     (global-unset-key (kbd "C-z"))
     (global-unset-key (kbd "C-x C-z"))
     (global-unset-key (kbd "C-h h")))
@@ -344,7 +345,7 @@ Ivy-pass is an interactive interface for password completion in Emacs for the St
     :commands ivy-pass)
 #+END_SRC
 
-* TODO General interface and interactions
+* DONE General interface and interactions
 This section contains configurations for aspects of the Emacs user interface.
 
 ** DONE Language settings for prose and code
@@ -1035,7 +1036,9 @@ His agenda view customisations are pure Emacs gold.
 
     :hook ((org-agenda-mode . visual-line-mode))
     :bind (("<f10>" . org-agenda)
-           ("C-x h" . org-habit-toggle-habits)))
+           ("C-x h" . org-habit-toggle-habits)
+           ("C-c C-x F" . org-agenda-file-to-front)
+           ("C-c C-x r" . org-remove-file)))
 #+end_src
 
 *** DONE Org time clocking
@@ -1546,7 +1549,7 @@ Package improves undo/redo commands within Emacs. Note that custom key binding f
     :bind (("C-z" . undo-tree-undo)
            ("C-S-z" . redo))
     :config
-    (global-undo-tree-mode)              ; turn on everywhere
+    (global-undo-tree-mode 1)              ; turn on everywhere
     (defalias 'redo 'undo-tree-redo))
 #+end_src
 

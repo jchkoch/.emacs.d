@@ -17,9 +17,9 @@
 
 ;;; Commentary:
 
-;; Prior to Emacs, the `init.el' was supposed to handle the
+;; Prior to Emacs v27, the `init.el' was supposed to handle the
 ;; initialisation of the package manager, by means of calling
-;; `package-initialise'. Starting with Emacs, the default
+;; `package-initialise'. Starting with Emacs v27, the default
 ;; behaviour is to start the package manager before loading the init
 ;; file.
 

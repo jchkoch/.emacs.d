@@ -487,41 +487,32 @@ However, as [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c7
     :hook (before-save . delete-trailing-whitespace))
 #+end_src
 
-** TODO Coding settings and completions
-*** NEXT Python mode
+** DONE Coding settings and completions
+*** DONE Python mode
+Python mode to enable writing and running code with the ~python3~ interpreter in Emacs. See ~elpy-mode~ configuration in the [[* elpy-mode][next section]] for a basic IDE enviroment for auto-completion, syntax checking, etc.
 
 #+begin_src emacs-lisp
-  (use-package python-mode 
-    :delight python-mode "PI"
-    :mode "\\.py\\'"
-    :init (setq python-shell-interpreter "python3"))
+    (use-package python-mode 
+      :delight python-mode "PI"
+      :mode "\\.py\\'"
+      :init (setq python-shell-interpreter "python"))
 #+end_src
 
-#+begin_src emacs-lisp
-  (defun set-exec-path-from-shell-PATH ()
-    "Set up Emacs' `exec-path' and PATH environment variable to match 
-     that used by the user's shell.
-     This is particularly useful under Mac OS X and macOS, where GUI
-     apps are not started from a shell."
-  
-    (interactive)
-    (let ((path-from-shell (replace-regexp-in-string
-                            "[ \t\n]*$" "" (shell-command-to-string
-                                            "$SHELL --login -c 'echo $PATH'"
-                                            ))))
-      (setenv "PATH" path-from-shell)
-      (setq exec-path (split-string path-from-shell path-separator))))
-  
-  (set-exec-path-from-shell-PATH)
+*** DONE elpy-mode
+~Elpy-mode~ to provide a better IDE-like enviroment in Emacs for editing and writing python code. Set the virtualenv for python to a specifically created default virtualenv for your user on the system. This is to not install python packages using ~pip~ into the system python under linux. For example, create a default python virtualenv under your home directory with the following configuration added to your ~.bashrc~ file.
+
+#+begin_src sh
+  source ~/py-base/bin/activate
 #+end_src
 
-*** TODO elpy-mode                                        :disabled:
+Enable ~elpy-mode~ and set virtualenv path to the current system settings i.e. the base python virtualenv. Also, sets the python test runner to ~nose~ which must be installed in the base python virtualenv to work.
 
 #+begin_src emacs-lisp
-  ;; (use-package elpy
-  ;;   :ensure t
-  ;;   :init (elpy-enable)
-  ;;         (setq elpy-rpc-python-command "python3"))
+  (use-package elpy
+    :ensure t
+    :init (elpy-enable)
+          (setq elpy-rpc-virtualenv-path 'current)
+          (setq elpy-test-runner "nose"))
 #+end_src
 
 * DONE Applications and utilities

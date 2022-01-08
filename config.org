@@ -134,44 +134,7 @@ To maintain a clean and organized configuration, I prefer to have these automati
     (load custom-file))
 #+end_src
 
-** DONE Themes that I use
-First ensure that the non-standard (custom) themes which I use are installed so that they may be loaded in this configuration and activated as the current theme.
-At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
-
-#+begin_src emacs-lisp
-  (use-package modus-themes
-    :ensure
-    :init
-    ;; Add all your customizations prior to loading the themes
-    (setq modus-themes-slanted-constructs t
-          modus-themes-bold-constructs nil)
-  
-    ;; Set cursor type to a horizontal bar
-    (set-default 'cursor-type 'bar)
-  
-    ;; Main typeface
-    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 110)
-  
-    ;; Proportionately spaced typeface
-    (set-face-attribute 'variable-pitch nil :family "DejaVu Serif" :height 1.0)
-  
-    ;; Monospaced typeface
-    (set-face-attribute 'fixed-pitch nil :family "DejaVu Sans Mono" :height 1.0)
-  
-    ;; Load the theme files before enabling a theme
-    (modus-themes-load-themes)
-    :config
-    ;; Load the theme of your choice:
-    (modus-themes-load-vivendi) ;; OR (modus-themes-load-vivendi)
-    :bind ("<f5>" . modus-themes-toggle))
-#+end_src
-
-Regarding the typeface configuration it is taken directly from the dotemacs configuration of [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
-#+begin_quote
-Note the differences in the :height property. The default face must specify an absolute value, which is the point size × 10. So if you want to use a font at point size 11, you set the height to 110.1 Whereas every other face must have a value that is relative to the default, represented as a floating point (if you use an integer, then that means an absolute height). This is of paramount importance: it ensures that all fonts can scale gracefully when using something like the text-scale-adjust command which only operates on the base font size (i.e. the default face’s absolute height). 
-#+end_quote
-
-*** DONE Mode line
+** DONE Mode line
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -199,7 +162,7 @@ Note the differences in the :height property. The default face must specify an a
                     mode-line-end-spaces)))
 #+end_src
 
-**** DONE Battery status
+*** DONE Battery status
 As my primary computer where I use Emacs is a laptop, it is convenient to include the battery status in the mode line. The following code is attributed to [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] who writes:
 
  #+begin_quote
@@ -221,7 +184,7 @@ As my primary computer where I use Emacs is a laptop, it is convenient to includ
      :hook (after-init . display-battery-mode))
  #+end_src
 
-**** DONE Display the current time
+*** DONE Display the current time
 Adjust the format of how the current time of day is displayed on the mode line.
 I use the 24h clock and like to also know the date.
 For the date I use the typical European format of "%Y-%M-%D".
@@ -239,7 +202,7 @@ For the date I use the typical European format of "%Y-%M-%D".
      :hook (after-init . display-time-mode))
  #+end_src
 
-*** DONE Keycast mode
+** DONE Keycast mode
 To quote [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
 
 #+begin_quote
@@ -264,7 +227,7 @@ To quote [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780d
 #+RESULTS:
 : t
 
-*** DONE Fringe mode
+** DONE Fringe mode
 The fringe areas are to the right and left side of the Emacs frame. As [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]] explains:
 
 #+begin_quote
@@ -284,7 +247,7 @@ The fringe areas are to the right and left side of the Emacs frame. As [[https:/
 #+RESULTS:
 : t
 
-*** DONE Diff highlights in the left fringe               :disabled:
+** DONE Diff highlights in the left fringe                 :disabled:
 The ~diff-hl~ package uses either fringe area to display changes in the current buffer if the file in the buffer is under version control.
 This is a new package to me so I am still experimenting with it. I don't really like it. I find it too distracting from the editing or creation of content. I find myself being drawn to git and the depths of branching, merging, and re-basing instead of creating new content.
 
@@ -300,7 +263,7 @@ This is a new package to me so I am still experimenting with it. I don't really 
 
 #+RESULTS:
 
-*** DONE Toggle for line numbers and whitespace indicators
+** DONE Toggle for line numbers and whitespace indicators
 1. Display line numbers
    For the most part, I do not use these manual toggle very often; however, there are occasions where I want line numbers in a mode which I do not by default add line numbers.
    For these cases, I have these function to toggle line numbers on for a local buffer.

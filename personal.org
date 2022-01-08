@@ -33,13 +33,70 @@ Set the base directory containing the source and local publish files for my pers
 #+end_src
 
 * Set path to git executable
-Only required under Windows.
+Only required under Windows. If on Linux set to a blank string as by default set here.
 
 #+begin_src emacs-lisp
   (setq git-executable "")
 #+end_src
 
-* COMMENT Emacs Appearance & Themes
+* Emacs Appearance & Themes
+By default the following default theme using the ~modus~ package is used to define the appearance of Emacs for this configuration.
+If you prefer a different/alternative appearance to your Emacs setup or you use your own custom theme, you may override this by simpling enabling the =COMMENT= TODO keyword on the sub-heading [[* Default Theme]] (use key binding =C-c ;=) and disable either alternatives ([[* Alternative #1]] or [[* Alternative #2]]) or add your own custom code.
+
+** Default Theme
+First ensure that the non-standard (custom) themes which I use are installed so that they may be loaded in this configuration and activated as the current theme.
+At the moment, I have switched to using the ~modus-vivendi~ and ~modus-operandi~ themes developed by [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]].
+
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :ensure
+    :init
+    ;; Add all your customizations prior to loading the themes
+    (setq modus-themes-slanted-constructs t
+          modus-themes-bold-constructs nil)
+
+    ;; Set cursor type to a horizontal bar
+    (set-default 'cursor-type 'bar)
+
+    ;; Main typeface
+    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 120)
+
+    ;; Proportionately spaced typeface
+    (set-face-attribute 'variable-pitch nil :family "DejaVu Serif" :height 1.0)
+
+    ;; Monospaced typeface
+    (set-face-attribute 'fixed-pitch nil :family "DejaVu Sans Mono" :height 1.0)
+
+    ;; Load the theme files before enabling a theme
+    (modus-themes-load-themes)
+    :config
+    ;; Load the theme of your choice:
+    (modus-themes-load-vivendi) ;; for a dark theme OR (modus-themes-load-operendi) for a light theme
+    :bind ("<f5>" . modus-themes-toggle))
+#+end_src
+
+Regarding the typeface configuration it is taken directly from the dotemacs configuration of [[https://protesilaos.com/dotemacs/#h:9ff13b78-42b8-49fe-9e23-0307c780de93][Protesilaous Stavrou]]:
+#+begin_quote
+Note the differences in the :height property. The default face must specify an absolute value, which is the point size × 10. So if you want to use a font at point size 11, you set the height to 110. Whereas every other face must have a value that is relative to the default, represented as a floating point (if you use an integer, then that means an absolute height). This is of paramount importance: it ensures that all fonts can scale gracefully when using something like the text-scale-adjust command which only operates on the base font size (i.e. the default face’s absolute height).
+#+end_quote
+
+** COMMENT Alternative #1
+Set the default appearance of Emacs to a minimal white on black theme, font to Monospace-14, and change the cursor to a hbar.
+Set the cursort to stop blinking.
+
+#+begin_src emacs-lisp
+  (set-background-color "black")
+  (set-foreground-color "white")
+  (set-cursor-color "coral")
+
+  (add-to-list 'default-frame-alist
+               '(font . "Monospace-14"))
+
+  (set-default 'cursor-type 'hbar)
+  (blink-cursor-mode -1)
+#+end_src
+
+** COMMENT Alternative #2
 Set the default theme to the tango-dark, font to Monospace-14, and change the cursor to a hbar. 
 Set the cursor to stop blinking.
 

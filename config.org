@@ -515,6 +515,17 @@ Enable ~elpy-mode~ and set virtualenv path to the current system settings i.e. t
           (setq elpy-test-runner "nose"))
 #+end_src
 
+*** NEXT scimax ob-ipython
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/scimax/ob-ipython-upstream")
+  (require 'ob-ipython)
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/scimax")
+  (require 'scimax-ob)
+  (add-to-list 'load-path "~/.emacs.d/dev-pkgs/scimax")
+  (require 'scimax-org-babel-ipython-upstream)
+#+end_src
+
 * DONE Applications and utilities
 ** DONE Org-Mode (getting things done)
 To quote [[http://orgmode.org/][Carsten Dominik]],
@@ -1188,7 +1199,11 @@ His agenda view customisations are pure Emacs gold.
                                        (latex . t)
                                        (ledger . t)
                                        (ditaa . t)
-                                       (python . t))))
+                                       (python . t)
+                                       (ipython . t)
+                                       (octave . t)
+                                       (R . t)
+                                       (maxima . t))))
     (setq org-ditaa-jar-path "/home/jkoch/.emacs.d/dev-pkgs/ditaa0_9/ditaa0_9.jar")
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     :bind (("<f2> c" . org-edit-src-code)

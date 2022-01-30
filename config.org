@@ -293,6 +293,18 @@ This is a new package to me so I am still experimenting with it. I don't really 
     :commands jk/toggle-invisibles)
 #+end_src
 
+** DONE Which key mode
+The ~which-key~ package offers tab suggestions/completions on key commands in case you can't remember the entire key sequence of the command you would like to execute.
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :delight
+    :init (which-key-mode)
+    :config
+    (setq whick-key-idle-delay 0.3)
+    (which-key-setup-minibuffer))
+#+end_src
+
 * DONE Personal and security settings           :user_config_required:
 The two setting configured here are personal to each user using this configuration and therefore must be configured by each user uniquely.
 Personal user information is loaded through the file ~personal.org~.

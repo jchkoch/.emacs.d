@@ -1468,6 +1468,7 @@ From John Kitchin. Downloaded (static) elisp file.
     :delight org-ref "bibREF"
     :init
     (require 'org-ref)
+    (require 'org-ref-ivy)
     (require 'doi-utils)
     (require 'org-ref-pdf)
     (require 'org-ref-isbn)
@@ -1481,33 +1482,40 @@ From John Kitchin. Downloaded (static) elisp file.
                                            "=key="
                                            (cdr (assoc key (orhc-bibtex-candidates))))))
                              page)))
-
-    (defun my/org-ref-open-pdf-at-point ()    ; open pdf with system pdf viewer
-      "Open the pdf for bibtex key under point if it exists."
-      (interactive)
-      (let* ((results (org-ref-get-bibtex-key-and-file))
-             (key (car results))
-             (pdf-file (funcall org-ref-get-pdf-filename-function key)))
-        (if (file-exists-p pdf-file)
-            (find-file pdf-file)
-          (message "No PDF found for %s" key))))
     :config
-    (setq org-ref-bibliography-notes "/winc/jk/references/notes.org"
-          org-ref-default-bibliography '("/winc/jk/references/references.bib")
-          org-ref-pdf-directory "/winc/jk/references/pdfs/")
-    (setq bibtex-completion-pdf-open-function
-      (lambda (fpath)
-        (start-process "open" "*open*" "open" fpath)))
+    (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
+          org-ref-insert-cite-function 'org-ref-cite-insert-ivy
+          org-ref-insert-label-function 'org-ref-insert-label-link
+          org-ref-insert-ref-function 'org-ref-insert-ref-link
+          org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
+    
+    (setq org-ref-bibliography-notes "/wind/jk/references/notes.org"
+          org-ref-default-bibliography '("/wind/jk/references/references.bib")
+          org-ref-pdf-directory "/wind/jk/references/pdfs/")
+  
+    (setq bibtex-completion-bibliography '("/wind/jk/references/references.bib")
+          bibtex-completion-library-path '("/wind/jk/references/pdfs/")
+          bibtex-completion-notes-path "/wind/jk/references/notes/"
+          bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
+          
+          bibtex-completion-additional-search-fields '(keywords)
+          bibtex-completion-display-formats
+          '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
+            (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+            (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+            (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+            (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}"))
+          bibtex-completion-pdf-open-function
+          (lambda (fpath)
+            (start-process "open" "*open*" "open" fpath)))
+  
     (setq bibtex-autokey-year-length 4
           bibtex-autokey-name-year-separator "_"
           bibtex-autokey-year-title-separator "_"
           bibtex-autokey-titleword-separator ""
           bibtex-autokey-titlewords 3
           bibtex-autokey-titlewords-stretch 1
-          bibtex-autokey-titleword-length 5)
-    (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
-    (setq org-ref-completion-library 'org-ref-ivy-cite)
-    :bind ("C-c i" . org-ref-insert-ref-link))
+          bibtex-autokey-titleword-length 5))
 #+END_SRC
 
 *** DONE Org basic presentations

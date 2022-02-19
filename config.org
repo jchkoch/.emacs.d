@@ -1313,45 +1313,45 @@ From John Kitchin. Downloaded (static) elisp file.
     (setq org-publish-project-alist
           '(
             ("org-index"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src" ;; specify full path as string
+             :base-directory "/wind/jk/website/jckoch.gitlab.io/src" ;; specify full path as string
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html"
+             :publishing-directory "/wind/jk/website/jckoch.gitlab.io/public_html"
              :recursive nil
              :publishing-function org-html-publish-to-html
              :htmlized-source t
              :html-postamble t
              )
             ("org-blog"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/blog"
+             :base-directory "/wind/jk/website/jckoch.gitlab.io/src/blog"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/blog"
+             :publishing-directory "/wind/jk/website/jckoch.gitlab.io/public_html/blog"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
              :html-postamble t
              )
             ("org-portfolio"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/portfolio"
+             :base-directory "/wind/jk/website/jckoch.gitlab.io/src/portfolio"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/portfolio"
+             :publishing-directory "/wind/jk/website/jckoch.gitlab.io/public_html/portfolio"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
              :html-postamble t
              )
             ("org-publications"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/publications"
+             :base-directory "/wind/jk/website/jckoch.gitlab.io/src/publications"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/publications"
+             :publishing-directory "/wind/jk/website/jckoch.gitlab.io/public_html/publications"
              :recursive nil
              :publishing-function org-html-publish-to-html
              :htmlized-source t
              :html-postamble t
              )
             ("org-static"
-             :base-directory "/winc/jk/website/jckoch.gitlab.io/src/"
+             :base-directory "/wind/jk/website/jckoch.gitlab.io/src/"
              :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
-             :publishing-directory "/winc/jk/website/jckoch.gitlab.io/public_html/"
+             :publishing-directory "/wind/jk/website/jckoch.gitlab.io/public_html/"
              :recursive t
              :publishing-function org-publish-attachment
              :htmlized-source t
@@ -1361,9 +1361,9 @@ From John Kitchin. Downloaded (static) elisp file.
              :components ("org-index" "org-blog" "org-publications" "org-portfolio" "org-static")
             )
             ("org-index-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src" ;; or specify full path as string
+             :base-directory "/wind/jk/website/crkoch-ualberta-website/src" ;; or specify full path as string
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html"
+             :publishing-directory "/wind/jk/website/crkoch-ualberta-website/public_html"
              :recursive nil
              :publishing-function org-html-publish-to-html
              :htmlized-source t
@@ -1371,9 +1371,9 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org-research-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/research"
+             :base-directory "/wind/jk/website/crkoch-ualberta-website/src/research"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/research"
+             :publishing-directory "/wind/jk/website/crkoch-ualberta-website/public_html/research"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
@@ -1381,9 +1381,9 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org-teaching-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/teaching"
+             :base-directory "/wind/jk/website/crkoch-ualberta-website/src/teaching"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/teaching"
+             :publishing-directory "/wind/jk/website/crkoch-ualberta-website/public_html/teaching"
              :recursive t
              :publishing-function org-html-publish-to-html
              :htmlized-source t
@@ -1391,9 +1391,9 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org-publications-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/publications"
+             :base-directory "/wind/jk/website/crkoch-ualberta-website/src/publications"
              :base-extension "org"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/publications"
+             :publishing-directory "/wind/jk/website/crkoch-ualberta-website/public_html/publications"
              :recursive nil
              :publishing-function org-html-publish-to-html
              :htmlized-source t
@@ -1401,9 +1401,9 @@ From John Kitchin. Downloaded (static) elisp file.
              :html-postamble my-html-postamble
              )
             ("org-static-crkoch"
-             :base-directory "/winc/jk/website/crkoch-ualberta-website/src/"
+             :base-directory "/wind/jk/website/crkoch-ualberta-website/src/"
              :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|html"
-             :publishing-directory "/winc/jk/website/crkoch-ualberta-website/public_html/"
+             :publishing-directory "/wind/jk/website/crkoch-ualberta-website/public_html/"
              :recursive t
              :publishing-function org-publish-attachment
              :htmlized-source t
@@ -1414,32 +1414,32 @@ From John Kitchin. Downloaded (static) elisp file.
              :components ("org-index-crkoch" "org-research-crkoch" "org-publications-crkoch" "org-teaching-crkoch" "org-static-crkoch")
             )
             ("thesis-main"
-             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis"
-             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish"
+             :base-directory "/wind/jk/chalmers/courses/THESIS/thesis"
+             :publishing-directory "/wind/jk/chalmers/courses/THESIS/thesis/publish"
              :publishing-function org-latex-publish-to-latex
              :body-only nil
              :make-index nil
              )
             ("thesis-include"
-             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/include"
+             :base-directory "/wind/jk/chalmers/courses/THESIS/thesis/include"
              :base-extension "tex"
-             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/include"
+             :publishing-directory "/wind/jk/chalmers/courses/THESIS/thesis/publish/include"
              :recursive t
              :publishing-function org-publish-attachment
              :body-only t
              :make-index nil
              )
             ("thesis-chapters"
-             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/chapters"
-             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/chapters"
+             :base-directory "/wind/jk/chalmers/courses/THESIS/thesis/chapters"
+             :publishing-directory "/wind/jk/chalmers/courses/THESIS/thesis/publish/chapters"
              :publishing-function org-latex-publish-to-latex
              :body-only t
              :make-index nil
              )
             ("thesis-figure"
-             :base-directory "/winc/jk/chalmers/courses/THESIS/thesis/figure"
+             :base-directory "/wind/jk/chalmers/courses/THESIS/thesis/figure"
              :base-extension "png\\|jpg\\|gif\\|pdf"
-             :publishing-directory "/winc/jk/chalmers/courses/THESIS/thesis/publish/figure"
+             :publishing-directory "/wind/jk/chalmers/courses/THESIS/thesis/publish/figure"
              :recursive t
              :publishing-function org-publish-attachment
              )
